@@ -462,6 +462,14 @@ header .brand h1 span{font-size:inherit;letter-spacing:inherit;color:var(--fg);f
 #home .sect{text-align:center}
 #homeStats.statstrip, #stats.statstrip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;flex-wrap:nowrap;color:var(--fg);font-size:inherit}
 #homeStats.statstrip > div, #stats.statstrip > div{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;padding:0 4px}
+/* Escuchar el patrón */
+.listenrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 2px}
+.listen{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:transparent;color:var(--fg);border-radius:999px;padding:7px 14px 7px 11px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.listen svg{width:18px;height:18px;fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.listen[aria-pressed="true"]{background:var(--hl);border-color:var(--accent)}
+.listen:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#listenHint{color:var(--faint);font-size:12px}
+.listenrow .lnote{flex-basis:100%;color:var(--faint);font-size:12px;line-height:1.35}
 </style>
 </head>
 <body>
@@ -573,6 +581,7 @@ header .brand h1 span{font-size:inherit;letter-spacing:inherit;color:var(--fg);f
         <h2 id="exName"></h2>
         <div class="tags" id="exTags"></div>
         <div class="tabbox" id="tab"></div>
+        <div class="listenrow"><button type="button" class="listen" id="listenBtn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>Escuchar</span></button><small class="mono" id="listenHint"></small><small class="lnote">Solo para oír el patrón. Al practicar suena solo el metrónomo.</small></div>
         <p class="tip" id="exTip"></p>
         <div class="target2"><span>Rango <b class="mono" id="exRange"></b></span><span>Récord limpio <b class="mono" id="exBest"></b></span></div>
         <details class="legendd"><summary>Cómo leer la tablatura</summary><div class="legend" id="legend"></div></details>
@@ -2435,6 +2444,170 @@ function renderProgress(){
   }
   $("#storeNote").textContent = Store.mode === "db" ? "Tu progreso se guarda en tu cuenta y te acompaña en cualquier dispositivo." : "Tu progreso se guarda en este dispositivo.";
 }
+
+/* ============ Escuchar el patrón (solo guía, nunca durante la práctica) ============
+   Cuerda pulsada sintetizada (Karplus-Strong), afinación estándar. Sin archivos: funciona sin conexión. */
+const OPEN = {1:64, 2:59, 3:55, 4:50, 5:45, 6:40};
+const KS = {cache:new Map()};
+function ksBuffer(ctx, midi, kind){
+  const key = midi + "|" + kind; if(KS.cache.has(key)) return KS.cache.get(key);
+  const sr = ctx.sampleRate, f0 = 440 * Math.pow(2, (midi - 69)/12);
+  const N = Math.max(2, Math.round(sr/f0 - 0.5)), actual = sr/(N + 0.5);
+  const P = {pick:{len:2.4, bright:.72, decay:.9965}, finger:{len:2.4, bright:.38, decay:.996}, legato:{len:2.4, bright:.3, decay:.9965},
+             pm:{len:.55, bright:.3, decay:.975}, mute:{len:.14, bright:.5, decay:.85}}[kind];
+  const len = Math.floor(sr * P.len), out = new Float32Array(len);
+  // excitación: ruido filtrado + posición de púa (filtro peine)
+  const exc = new Float32Array(N); let lp = 0;
+  for(let i=0;i<N;i++){ lp += P.bright * ((Math.random()*2 - 1) - lp); exc[i] = lp; }
+  const pp = Math.max(1, Math.round(N * .13));
+  for(let i=N-1;i>=pp;i--) exc[i] -= exc[i-pp];
+  let mx = 0; for(let i=0;i<N;i++) mx = Math.max(mx, Math.abs(exc[i]));
+  for(let i=0;i<N;i++) out[i] = exc[i] / (mx || 1) * .5;
+  // cuerdas agudas pierden brillo antes, como en una guitarra real
+  const d = P.decay - (midi > 64 ? (midi - 64) * .00008 : 0);
+  out[N] = d * out[0];
+  for(let i=N+1;i<len;i++) out[i] = d * .5 * (out[i-N] + out[i-N-1]);
+  const fade = Math.min(len, Math.floor(sr*.03));
+  for(let i=0;i<fade;i++) out[len-1-i] *= i/fade;
+  const buf = ctx.createBuffer(1, len, sr); buf.copyToChannel ? buf.copyToChannel(out, 0) : buf.getChannelData(0).set(out);
+  const r = {buf, corr: f0/actual}; KS.cache.set(key, r); return r;
+}
+
+const L = {playing:false, voices:{}, queue:[], raf:0, end:0, bus:null, nodes:[]};
+function lBus(){
+  if(!L.bus){
+    const g = M.ctx.createGain(), f = M.ctx.createBiquadFilter();
+    f.type = "lowpass"; f.frequency.value = 5200; f.Q.value = .5;
+    const c = M.ctx.createDynamicsCompressor(); c.threshold.value = -10; c.ratio.value = 4;
+    g.connect(f).connect(c).connect(M.ctx.destination); L.bus = g;
+  }
+  L.bus.gain.value = 1.8 * (+$("#vol").value/100);
+  return L.bus;
+}
+function lStopVoice(s, t){
+  const v = L.voices[s]; if(!v) return;
+  try{ v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0, t, .012); v.src.stop(t + .15); }catch(e){}
+  if(v.lfo) try{ v.lfo.stop(t + .15); }catch(e){}
+  delete L.voices[s];
+}
+function lPluck(s, fret, t, opt){
+  const ctx = M.ctx;
+  lStopVoice(s, t);
+  const {buf, corr} = ksBuffer(ctx, OPEN[s] + fret, opt.kind || "pick");
+  const src = ctx.createBufferSource(), g = ctx.createGain();
+  src.buffer = buf; src.playbackRate.value = corr;
+  const cents = (opt.pre || 0) * 100; src.detune.setValueAtTime(cents, t);
+  g.gain.setValueAtTime(opt.vel, t);
+  src.connect(g).connect(lBus()); src.start(t);
+  L.nodes.push(src);
+  const v = {src, g, fret, cents, s}; L.voices[s] = v;
+  if(opt.cut) lStopVoice(s, t + opt.cut);
+  return v;
+}
+function lGlide(s, toFret, t, dur, toCents){
+  const v = L.voices[s]; if(!v) return false;
+  const target = toCents != null ? toCents : (toFret - v.fret) * 100;
+  try{ v.src.detune.setValueAtTime(v.cents, t); v.src.detune.linearRampToValueAtTime(target, t + dur); }catch(e){}
+  v.cents = target; return true;
+}
+function lVibrato(s, t, dur, depth){
+  const v = L.voices[s]; if(!v) return;
+  const o = M.ctx.createOscillator(), g = M.ctx.createGain();
+  o.frequency.value = 5.5; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(depth, t + Math.min(.12, dur/3));
+  o.connect(g).connect(v.src.detune); o.start(t); o.stop(t + dur); v.lfo = o; L.nodes.push(o);
+}
+
+/* Convierte cada paso del ejercicio en sonidos, según la mano */
+function lStep(ex, i, t, dur, nextGap){
+  if(ex.h === "D"){
+    const st = ex.parsed[i]; if(!st || st.rest) return;
+    const vel = st.acc ? 1 : .68;
+    if(st.strum){
+      if(st.ghost) return;
+      const ss = []; for(let s=st.lo; s>=st.hi; s--) ss.push(s);
+      if(st.dir !== "D") ss.reverse();
+      ss.forEach((s,k) => lPluck(s, 0, t + k*.011, {kind: st.mute ? "mute" : "pick", vel: vel * (st.dir === "D" ? .55 : .42)}));
+      return;
+    }
+    st.notes.forEach(nn => {
+      const pick = nn.k === "D" || nn.k === "U";
+      const kind = ex.mute ? "mute" : ex.pm ? "pm" : pick ? "pick" : "finger";
+      lPluck(nn.s, 0, t, {kind, vel: vel * (pick && nn.k === "U" ? .9 : 1)});
+    });
+    return;
+  }
+  const st = ex.steps[i]; if(!st || st.rest || st.hold) return;
+  if(st.pulse){ lVibrato(st.s, t, dur, 28); return; }
+  const notes = st.notes || [];
+  const chord = notes.length > 1;
+  notes.forEach((nn, k) => {
+    const tt = t + (chord ? (notes.length - 1 - k) * .009 : 0), tech = nn.t || "";
+    if(tech === "x"){ lPluck(nn.s, 0, tt, {kind:"mute", vel:.55}); return; }
+    if(tech === "h" || tech === "p"){
+      lPluck(nn.s, nn.f, tt, {kind:"legato", vel: tech === "h" ? .5 : .46}); return; }
+    if(tech === "s"){ if(lGlide(nn.s, nn.f, tt, Math.min(.14, dur*.6)))return; }
+    if(tech === "r"){ if(lGlide(nn.s, nn.f, tt, Math.min(.18, dur*.7))) return; }
+    const b = tech.match(/^(p?)b(\d)$/);
+    if(b && b[1]){ lPluck(nn.s, nn.f, tt, {vel:.72, pre:+b[2]}); return; }
+    const vel = ex.h === "A" ? .7 : .72;
+    lPluck(nn.s, nn.f, tt, {vel, kind: ex.h === "A" ? "pick" : "pick", cut: tech === "st" ? dur*.45 : 0});
+    if(b) lGlide(nn.s, null, tt + dur*.08, Math.min(.22, dur*.5), (+b[2]) * 100);
+    if(tech === "v") lVibrato(nn.s, tt + Math.min(.1, nextGap*.25), Math.max(.15, nextGap), 30);
+  });
+}
+
+function listenStop(){
+  if(!L.playing) return;
+  L.playing = false; cancelAnimationFrame(L.raf);
+  const t = M.ctx.currentTime;
+  Object.keys(L.voices).forEach(s => lStopVoice(s, t));
+  L.nodes.forEach(n => { try{ n.stop(t + .05); }catch(e){} }); L.nodes = []; L.queue = [];
+  highlight(-1); listenUI();
+}
+async function listenStart(){
+  if(M.playing) stop(false);
+  if(!M.ctx) M.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if(M.ctx.state === "suspended") await M.ctx.resume();
+  const ex = exById(S0.cur), n = ex.steps.length;
+  const loops = Math.max(1, Math.min(4, Math.ceil(4 / Math.max(1, ex.nBeats))));
+  L.playing = true; L.voices = {}; L.nodes = []; L.queue = [];
+  let t = M.ctx.currentTime + .12;
+  const durOf = i => 60 / M.bpm / ex.info[i].sub;
+  for(let r=0; r<loops; r++) for(let i=0; i<n; i++){
+    const dur = durOf(i);
+    let gap = dur, j = i + 1; while(j < n && ex.steps[j] && (ex.steps[j].hold || ex.steps[j].pulse)){ gap += durOf(j); j++; }
+    if(ex.info[i].k === 0){ // pulso suave para situar el ritmo
+      const o = M.ctx.createOscillator(), g = M.ctx.createGain();
+      o.type = "triangle"; o.frequency.value = (ex.info[i].b % 4 === 0) ? 1760 : 1175;
+      const v = .18 * (+$("#vol").value/100);
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(v,.0002), t + .002); g.gain.exponentialRampToValueAtTime(.0001, t + .04);
+      o.connect(g).connect(M.ctx.destination); o.start(t); o.stop(t + .05); L.nodes.push(o);
+    }
+    lStep(ex, i, t, dur, gap);
+    L.queue.push({t, i}); t += dur;
+  }
+  L.end = t + .9;
+  listenUI(); lDraw();
+}
+function lDraw(){
+  if(!L.playing) return;
+  const now = M.ctx.currentTime;
+  while(L.queue.length && L.queue[0].t <= now) highlight(L.queue.shift().i);
+  if(!L.queue.length && now > L.end - .8) highlight(-1);
+  if(now >= L.end){ L.playing = false; L.nodes = []; L.voices = {}; listenUI(); return; }
+  L.raf = requestAnimationFrame(lDraw);
+}
+function listenUI(){
+  const b = $("#listenBtn"); if(!b) return;
+  b.setAttribute("aria-pressed", L.playing);
+  b.querySelector("span").textContent = L.playing ? "Parar" : "Escuchar";
+  $("#listenHint").textContent = L.playing ? "" : `a ${M.bpm} BPM`;
+}
+$("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
+{ const _start = start; start = async function(){ listenStop(); return _start(); }; }
+{ const _select = select; select = function(id, item){ listenStop(); _select(id, item); listenUI(); }; }
+{ const _setBpm = setBpm; setBpm = function(v){ _setBpm(v); if(!L.playing) listenUI(); }; }
+{ const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
 select(S0.last[HAND] || (ALL.has(S0.cur) && ALL.get(S0.cur).h === HAND ? S0.cur : EX[0].id));
