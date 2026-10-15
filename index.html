@@ -538,6 +538,37 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
 #tab{touch-action:pan-x pan-y}
 .standlabel{flex-wrap:wrap;row-gap:1px;white-space:nowrap}
 .standlabel .pos{flex-basis:100%;margin-left:16px}
+/* Plus */
+.plussheet{gap:12px}
+.plushead{display:flex;align-items:center;gap:10px}
+.plushead svg{width:22px;height:22px;fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.plushead h3{margin:0;font-size:21px;font-weight:600}
+.plusben{margin:0;padding:0 0 0 18px;display:flex;flex-direction:column;gap:6px;font-size:15px;color:var(--fg)}
+.plusben li.free{color:var(--muted);font-size:14px;list-style:none;margin-left:-18px;padding-top:4px;border-top:1px solid var(--line)}
+.plusbuy{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.plusbuy .btn{text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;min-height:48px}
+.btn.off{opacity:.5;cursor:default}
+.pnote{margin:0;color:var(--faint);font-size:12.5px}
+.plusrow{display:flex;gap:8px}
+.plusrow input{flex:1;min-width:0;font:inherit;font-family:var(--f-mono);font-size:13px;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);color:var(--fg)}
+.pmsg{margin:0;min-height:1.2em;font-size:13px;color:var(--fg)}
+.locknote{display:flex;align-items:center;gap:12px;margin:12px 0 2px;padding:12px 14px;border-radius:14px;background:var(--hl);color:var(--fg)}
+.locknote[hidden]{display:none}
+.locknote svg,.plusbanner svg{width:20px;height:20px;flex:none;fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.locknote > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.locknote b{font-weight:600;font-size:14px}
+.locknote span{font-size:13px;color:var(--muted)}
+.locknote .btn{flex:none}
+#list .item.locked .nm{color:var(--muted)}
+#list .item .lk svg{width:13px;height:13px;fill:none;stroke:var(--faint);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-1px;margin-right:4px}
+.playbig.lockedplay{opacity:.55}
+.plusbanner{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.plusbanner[hidden]{display:none}
+.plusbanner > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.plusbanner b{font-weight:600;font-size:14.5px}
+.plusbanner span{font-size:13px;color:var(--muted);line-height:1.4}
+.plusbanner .btn{flex:none}
+.plusbanner.ending{border-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -2928,6 +2959,172 @@ document.addEventListener("keydown", e => {
   if(e.key === "ArrowRight"){ e.preventDefault(); navEx(1); }
   if(e.key === "ArrowLeft"){ e.preventDefault(); navEx(-1); }
 });
+
+/* ============ Plus: prueba de 14 días, modo gratuito y códigos firmados (sin conexión) ============ */
+const DS_PUBLIC_KEY = {"kty":"EC","crv":"P-256","x":"HJOCYSfOvlqfMWNYlkWJaZmgDkBQqjvANe9uULc6G9s","y":"O_YaTjbNdwAQClXPaWr_lDpHz_u2B3LRaTWIK2LC_b4"};
+const PLUS_URL_YEAR = "", PLUS_URL_LIFE = "";   // enlaces de Payhip: vacíos = «muy pronto»
+const TRIAL_DAYS = 14;
+const PLX = (window.DS_LANG === "en") ? {
+  plus: "Plus", title: "Dextra Sinistra Plus",
+  b1: n => `${n.toLocaleString("en-US")} exercises from levels II to IV`, b2: n => `Both hands: ${n} exercises`, b3: "The 6 guided plans, step by step",
+  b4: "Free forever: tools, progress and the 87 level I exercises",
+  year: "€19.99 a year", life: "€49.99 forever", yearSub: "The year starts when you activate your code.",
+  soon: "Coming soon: you’ll be able to buy it here.", haveCode: "Have a code?", codePh: "Paste your code here", activate: "Activate",
+  notNow: "Not now", bad: "That code isn’t valid. Copy the whole thing, without spaces.", used: "This code is already active.",
+  hasLife: "You already have Plus forever: no need to renew.", thanks: "Plus activated. Thank you!",
+  extended: d => `Plus active until ${d}. Thank you!`,
+  trialLeft: n => n === 1 ? "Plus trial · 1 day left" : `Plus trial · ${n} days left`,
+  trialBody: "Everything is unlocked. When it ends you keep the 87 level I exercises and all your progress.",
+  trialEnded: "Your Plus trial has ended", trialEndedBody: n => `You still have 87 free exercises and all your progress. Plus unlocks the other ${n.toLocaleString("en-US")}, both hands and the guided plans.`,
+  seePlus: "See Plus", lockTitle: "Plus exercise", lockBody: "You can view it and listen to it. To practice and log it, unlock Plus.",
+  lockedPlan: "Guided plans are part of Plus.", statusLife: "Plus forever. Thank you for your support.",
+  statusYear: d => `Plus active until ${d}.`, statusExpired: d => `Your Plus ended on ${d}. Everything you logged is still here.`,
+  statusTrial: n => `Plus trial: ${n === 1 ? "1 day" : n + " days"} left.`, statusFree: "Free version: 87 level I exercises.",
+  renew: "Renew", plusSec: "Plus", locale: "en-US"
+} : {
+  plus: "Plus", title: "Dextra Sinistra Plus",
+  b1: n => `${n.toLocaleString("es-ES")} ejercicios de los niveles II a IV`, b2: n => `Ambas manos: ${n} ejercicios`, b3: "Los 6 planes guiados, paso a paso",
+  b4: "Gratis para siempre: herramientas, progreso y los 87 ejercicios de nivel I",
+  year: "19,99 € al año", life: "49,99 € para siempre", yearSub: "El año empieza a contar cuando activas tu código.",
+  soon: "Muy pronto podrás comprarlo aquí.", haveCode: "¿Tienes un código?", codePh: "Pega aquí tu código", activate: "Activar",
+  notNow: "Ahora no", bad: "Ese código no es válido. Cópialo entero, sin espacios.", used: "Este código ya está activado.",
+  hasLife: "Ya tienes Plus para siempre: no necesitas renovarlo.", thanks: "Plus activado. ¡Gracias!",
+  extended: d => `Plus activo hasta el ${d}. ¡Gracias!`,
+  trialLeft: n => n === 1 ? "Prueba de Plus · queda 1 día" : `Prueba de Plus · quedan ${n} días`,
+  trialBody: "Todo está desbloqueado. Al terminar conservas los 87 ejercicios de nivel I y todo tu progreso.",
+  trialEnded: "Tu prueba de Plus ha terminado", trialEndedBody: n => `Sigues teniendo 87 ejercicios gratis y todo tu progreso. Plus desbloquea los otros ${n.toLocaleString("es-ES")}, las dos manos a la vez y los planes guiados.`,
+  seePlus: "Ver Plus", lockTitle: "Ejercicio de Plus", lockBody: "Puedes verlo y escucharlo. Para practicarlo y registrarlo, desbloquea Plus.",
+  lockedPlan: "Los planes guiados son parte de Plus.", statusLife: "Plus para siempre. Gracias por tu apoyo.",
+  statusYear: d => `Plus activo hasta el ${d}.`, statusExpired: d => `Tu Plus terminó el ${d}. Todo lo que registraste sigue aquí.`,
+  statusTrial: n => `Prueba de Plus: ${n === 1 ? "queda 1 día" : "quedan " + n + " días"}.`, statusFree: "Versión gratuita: 87 ejercicios de nivel I.",
+  renew: "Renovar", plusSec: "Plus", locale: "es-ES"
+};
+const PL = Object.assign({trialStart: null, code: null, plan: null, exp: null, used: []}, LS.get("dys-plus", {}));
+const savePL = () => LS.set("dys-plus", PL);
+const isoDay = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+if(!PL.trialStart){ PL.trialStart = isoDay(new Date()); savePL(); }
+let plusSigOK = false;
+function trialLeft(){ const d = Math.floor((Date.now() - new Date(PL.trialStart + "T00:00:00").getTime()) / 864e5); return Math.max(0, TRIAL_DAYS - d); }
+function plusState(){ if(!PL.code || !plusSigOK) return "none"; if(PL.plan === "year" && PL.exp && PL.exp < isoDay(new Date())) return "expired"; return PL.plan === "life" ? "life" : "year"; }
+function isPlus(){ const s = plusState(); return s === "life" || s === "year" || trialLeft() > 0; }
+const isFree = e => (e.h === "D" || e.h === "S") && e.lvl === 1;
+const canPractice = e => isPlus() || isFree(e);
+const fmtDay = d => new Date(d + "T00:00:00").toLocaleDateString(PLX.locale, {day:"numeric", month:"long", year:"numeric"});
+
+function b64uToBytes(s){ s = s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length % 4) s += "="; const bin = atob(s); const a = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) a[i] = bin.charCodeAt(i); return a; }
+async function verifyDSCode(code){
+  try{
+    code = String(code || "").replace(/\s+/g, ""); if(!code.startsWith("DS-")) return null;
+    if(!(window.crypto && crypto.subtle)) return null;
+    const body = code.slice(3); if(body.length !== 94) return null;
+    const pb = b64uToBytes(body.slice(0, 8)), sg = b64uToBytes(body.slice(8));
+    const key = await crypto.subtle.importKey("jwk", DS_PUBLIC_KEY, {name:"ECDSA", namedCurve:"P-256"}, false, ["verify"]);
+    if(!await crypto.subtle.verify({name:"ECDSA", hash:"SHA-256"}, key, sg, pb)) return null;
+    const plan = (pb[0] & 15) === 2 ? "year" : (pb[0] & 15) === 1 ? "life" : null; if(!plan) return null;
+    return {plan, v: pb[0] >> 4};
+  }catch(e){ return null; }
+}
+async function checkPlus(){ plusSigOK = PL.code ? !!(await verifyDSCode(PL.code)) : false; refreshPlusUI(); }
+async function activatePlus(code, msgEl){
+  const say = t => { if(msgEl) msgEl.textContent = t; };
+  const info = await verifyDSCode(code); if(!info){ say(PLX.bad); return false; }
+  const clean = String(code).replace(/\s+/g, ""), key = clean.slice(-24), today = isoDay(new Date());
+  if(PL.used.includes(key)){ say(PLX.used); return false; }
+  if(plusState() === "life"){ say(PLX.hasLife); return false; }
+  if(info.plan === "life"){ Object.assign(PL, {code: clean, plan: "life", exp: null}); }
+  else {
+    const base = (plusState() === "year" && PL.exp > today) ? PL.exp : today;
+    const d = new Date(base + "T00:00:00"); d.setFullYear(d.getFullYear() + 1);
+    Object.assign(PL, {code: clean, plan: "year", exp: isoDay(d)});
+  }
+  PL.used.push(key); savePL(); plusSigOK = true;
+  say(PL.plan === "life" ? PLX.thanks : PLX.extended(fmtDay(PL.exp)));
+  refreshPlusUI(); return true;
+}
+
+/* Hoja de Plus */
+const lockedCount = () => [...ALL.values()].filter(e => !isFree(e)).length;
+const ICO_LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>';
+{
+  const m = document.createElement("div"); m.className = "modal"; m.id = "plusModal"; m.hidden = true;
+  const n23 = [...ALL.values()].filter(e => e.h !== "A" && e.lvl > 1).length, nA = HANDS.A.EX.length;
+  const buy = (PLUS_URL_YEAR && PLUS_URL_LIFE)
+    ? `<div class="plusbuy"><a class="btn primary big" href="${PLUS_URL_YEAR}" target="_blank" rel="noopener">${PLX.year}</a><a class="btn big" href="${PLUS_URL_LIFE}" target="_blank" rel="noopener">${PLX.life}</a></div>`
+    : `<div class="plusbuy"><span class="btn big off">${PLX.year}</span><span class="btn big off">${PLX.life}</span></div><p class="pnote">${PLX.soon}</p>`;
+  m.innerHTML = `<div class="sheet plussheet" role="dialog" aria-modal="true" aria-labelledby="plusTitle">
+    <div class="grab" aria-hidden="true"></div>
+    <div class="plushead">${ICO_LOCK}<h3 id="plusTitle">${PLX.title}</h3></div>
+    <ul class="plusben"><li>${PLX.b1(n23)}</li><li>${PLX.b2(nA)}</li><li>${PLX.b3}</li><li class="free">${PLX.b4}</li></ul>
+    ${buy}<p class="pnote">${PLX.yearSub}</p>
+    <label class="mnote" for="plusCode">${PLX.haveCode}</label>
+    <div class="plusrow"><input type="text" id="plusCode" placeholder="${PLX.codePh}" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="btn" id="plusAct">${PLX.activate}</button></div>
+    <p class="pmsg" id="plusMsg" role="status"></p>
+    <div class="acts"><button type="button" class="btn ghost" id="plusClose">${PLX.notNow}</button></div>
+  </div>`;
+  document.body.appendChild(m);
+  m.addEventListener("click", e => { if(e.target === m) m.hidden = true; });
+  $("#plusClose").onclick = () => m.hidden = true;
+  $("#plusAct").onclick = async () => { if(await activatePlus($("#plusCode").value, $("#plusMsg"))){ $("#plusCode").value = ""; setTimeout(() => m.hidden = true, 1600); } };
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && !m.hidden) m.hidden = true; });
+}
+function openPlus(){ if(M.playing) stop(false); $("#plusMsg").textContent = ""; $("#plusModal").hidden = false; }
+
+/* Candados: practicar, registrar, planes y sesión aleatoria */
+{ const _start = start; start = async function(){ if(!canPractice(exById(S0.cur))){ openPlus(); return; } return _start(); }; }
+{ const _om = openModal; openModal = function(){ if(!canPractice(exById(S0.cur))){ openPlus(); return; } return _om(); }; }
+$("#logBtn").onclick = () => { if(M.playing) stop(false); openModal(); };
+{ const _sps = startPlanSession; startPlanSession = function(){ if(!isPlus()){ openPlus(); return; } return _sps(); }; }
+$("#tpls").addEventListener("click", e => { const b = e.target.closest("[data-tpl]"); if(b && b.dataset.tpl !== "libre" && !isPlus()){ e.stopPropagation(); e.preventDefault(); openPlus(); } }, true);
+{ const _mk = $("#mkSession").onclick; $("#mkSession").onclick = () => {
+    if(isPlus()) return _mk();
+    if(HAND === "A"){ openPlus(); return; }
+    const lv = S0.lvl; S0.lvl = "1"; try{ _mk(); } finally { S0.lvl = lv; }
+    Session.list = Session.list.filter(it => isFree(exById(it.id)));
+    if(Session.list.length) select(Session.list[0].id, Session.list[0]); else renderQueue();
+  }; }
+
+/* Marcas en la lista, la tarjeta, el inicio y Ajustes */
+{ const _rl = renderList; renderList = function(){ _rl(); if(isPlus()) return;
+    const items = filtered(); document.querySelectorAll("#list .item").forEach((b, i) => { const e = items[i]; if(e && !isFree(e)){ b.classList.add("locked"); const mt = b.querySelector(".meta"); if(mt && !mt.querySelector(".lk")) mt.insertAdjacentHTML("afterbegin", `<span class="lk">${ICO_LOCK}</span>`); } }); }; }
+function lockNote(){
+  let el = $("#lockNote");
+  if(!el){ el = document.createElement("div"); el.id = "lockNote"; el.className = "locknote"; $("#exTags").after(el); }
+  const e = exById(S0.cur), locked = !canPractice(e);
+  el.hidden = !locked;
+  if(locked) el.innerHTML = `${ICO_LOCK}<div><b>${PLX.lockTitle}</b><span>${PLX.lockBody}</span></div><button type="button" class="btn" data-plus>${PLX.seePlus}</button>`;
+  $("#playBtn").classList.toggle("lockedplay", locked);
+}
+{ const _sel = select; select = function(id, item){ _sel(id, item); lockNote(); }; }
+document.addEventListener("click", e => { if(e.target.closest("[data-plus]")) openPlus(); });
+function plusBanner(){
+  let el = $("#plusBanner");
+  if(!el){ el = document.createElement("div"); el.id = "plusBanner"; el.className = "plusbanner"; $("#continue").before(el); }
+  const s = plusState(), t = trialLeft();
+  if(s === "life" || s === "year"){ el.hidden = true; return; }
+  el.hidden = false;
+  if(t > 0) el.innerHTML = `<div><b>${PLX.trialLeft(t)}</b><span>${PLX.trialBody}</span></div><button type="button" class="btn" data-plus>${PLX.seePlus}</button>`;
+  else el.innerHTML = `<div><b>${s === "expired" ? PLX.statusExpired(fmtDay(PL.exp)) : PLX.trialEnded}</b><span>${PLX.trialEndedBody(lockedCount())}</span></div><button type="button" class="btn primary" data-plus>${s === "expired" ? PLX.renew : PLX.seePlus}</button>`;
+  el.classList.toggle("ending", t > 0 && t <= 3);
+}
+{ const _rh = renderHome; renderHome = function(){ _rh(); plusBanner(); }; }
+function plusStatusText(){
+  const s = plusState();
+  if(s === "life") return PLX.statusLife;
+  if(s === "year") return PLX.statusYear(fmtDay(PL.exp));
+  if(s === "expired") return PLX.statusExpired(fmtDay(PL.exp));
+  return trialLeft() > 0 ? PLX.statusTrial(trialLeft()) : PLX.statusFree;
+}
+{
+  const sec = document.createElement("div"); sec.innerHTML = `<div class="sect">${PLX.plusSec}</div><div class="card setcard"><div class="setrow"><div><b>${PLX.title}</b><small id="plusStatus"></small></div><button type="button" class="btn" data-plus>${PLX.seePlus}</button></div></div>`;
+  const first = $("#settings .sect"); [...sec.children].forEach(c => first.before(c));
+}
+function refreshPlusUI(){
+  const st = $("#plusStatus"); if(st) st.textContent = plusStatusText();
+  if(!$("#home").hidden) plusBanner();
+  renderList(); lockNote();
+}
+{ const _rs = renderSettings; renderSettings = function(){ _rs(); const st = $("#plusStatus"); if(st) st.textContent = plusStatusText(); }; }
+checkPlus();
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
 select(S0.last[HAND] || (ALL.has(S0.cur) && ALL.get(S0.cur).h === HAND ? S0.cur : EX[0].id));
