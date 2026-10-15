@@ -2841,65 +2841,6 @@ const LANG = window.DS_LANG || "es";
 function goLang(v){ if(v === LANG) return; LS.set("dys-lang", v); location.href = v === "en" ? "en.html" : "./"; }
 document.querySelectorAll("#prefLang button").forEach(b => b.onclick = () => goLang(b.dataset.v));
 segUI("prefLang", LANG);
-/* ============ Nota raíz en escalas y arpegios (Sinistra y Ambas: alturas reales) ============ */
-const ROOT_TUNE = {6:40,5:45,4:50,3:55,2:59,1:64};
-const ROOT_BY_CAT = {"Escala mayor":0, "Pentatónica":9, "Menor armónica":9, "Menor melódica":9, "3 notas por cuerda":9,
-  "Arpegios de tríada":0, "Arpegios de cuatriada":0, "Frases combinadas":9};
-const ROOT_NAME = {0:"Do", 4:"Mi", 9:"La"};
-function rootOf(e){
-  if(e.cat === "Escala en una cuerda"){ const m = e.name.match(/de (La|Mi) /); return m ? (m[1] === "Mi" ? 4 : 9) : null; }
-  return ROOT_BY_CAT[e.cat] ?? null;
-}
-["S","A"].forEach(h => HANDS[h].EX.forEach(e => {
-  const r = rootOf(e); if(r == null) return;
-  let any = false;
-  e.steps.forEach(st => (st && st.notes || []).forEach(nn => { if(nn.t !== "x" && (ROOT_TUNE[nn.s] + nn.f) % 12 === r){ nn.root = true; any = true; } }));
-  if(any){ e.tags = (e.tags || []).concat("Raíz: " + ROOT_NAME[r]); e.rootPc = r; }
-}));
-HANDS.S.legend += " · número en recuadro = nota raíz";
-HANDS.A.legend += " · número en recuadro = nota raíz";
-function fretMark(cx, yy, nn, fingerCol){
-  const fx = nn.t === "x" ? "×" : String(nn.f), wide = fx.length > 1 ? 9 : 6;
-  let h;
-  if(nn.root && nn.t !== "x"){
-    h = `<rect x="${cx-wide-2}" y="${yy-9}" width="${2*wide+4}" height="18" rx="4" fill="var(--fg)"/>`;
-    h += `<text x="${cx}" y="${yy+4}" text-anchor="middle" font-size="12" font-weight="600" font-family="var(--f-mono)" fill="var(--bg)">${fx}</text>`;
-  } else {
-    h = `<rect x="${cx-wide-1}" y="${yy-8}" width="${2*wide+2}" height="16" fill="var(--raise)"/>`;
-    h += `<text x="${cx}" y="${yy+4}" text-anchor="middle" font-size="12" font-family="var(--f-mono)" fill="${nn.t === "x" ? "var(--muted)" : "var(--fg)"}">${fx}</text>`;
-  }
-  if(nn.d > 0 && nn.t !== "x") h += `<text x="${cx+wide+2}" y="${yy+9}" font-size="8.5" font-family="var(--f-mono)" fill="${fingerCol}">${nn.d}</text>`;
-  return h;
-}
-/* «h» y «p» solo cuando el ligado es en la misma cuerda; el ataque al cambiar de cuerda (hammer-on from nowhere) va sin símbolo */
-function renderTabS(ex){
-  const n = ex.steps.length, W = Math.max(32, Math.min(42, 680/n)), top = 50, gap = 16;
-  let {h, L, y, height} = tabFrame(ex, W, top, gap);
-  const lastF = {}; let lastChord = "", prevS = null;
-  ex.steps.forEach((st,i) => {
-    const cx = L + i*W + W/2 - 2;
-    h += `<text x="${cx}" y="${height-8}" text-anchor="middle" font-size="10" fill="var(--faint)" font-family="var(--f-mono)">${countLabel(ex.info[i])}</text>`;
-    const topText = (txt, col="var(--fg)", it=false) => h += `<text x="${cx}" y="${top-14}" text-anchor="middle" font-size="12" fill="${col}" font-family="var(--f-mono)" ${it?'font-style="italic"':''}>${txt}</text>`;
-    if(st.rest){ topText("·","var(--faint)"); prevS = null; return; }
-    if(st.hold){ topText("=","var(--faint)"); return; }
-    if(st.pulse){ topText("~","var(--accent)"); h += `<text x="${cx}" y="${y(st.s)+4}" text-anchor="middle" font-size="13" fill="var(--accent)" font-family="var(--f-mono)">~</text>`; return; }
-    const notes = st.notes;
-    if(st.label && notes.length > 1){
-      const lab = st.label === lastChord && notes[0].t !== "x" ? "" : st.label; lastChord = st.label;
-      const allX = notes.every(x => x.t === "x");
-      topText(allX ? "×" : (lab || "|"), allX ? "var(--muted)" : "var(--fg)");
-    } else {
-      let lab = techLabel(notes[0], lastF[notes[0].s]);
-      if((lab === "h" || lab === "p") && prevS !== notes[0].s) lab = "";
-      if(lab) topText(lab, "var(--fg)", lab === "h" || lab === "p");
-    }
-    notes.forEach(nn => { h += fretMark(cx, y(nn.s), nn, "var(--accent)"); lastF[nn.s] = nn.f; });
-    prevS = notes.length === 1 ? notes[0].s : null;
-  });
-  $("#tab").innerHTML = h + `</svg>`;
-  tabCols = [...document.querySelectorAll("#tab rect.col")];
-}
-HANDS.S.legend += " · sin h al empezar cuerda = hammer-on from nowhere";
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
 select(S0.last[HAND] || (ALL.has(S0.cur) && ALL.get(S0.cur).h === HAND ? S0.cur : EX[0].id));
