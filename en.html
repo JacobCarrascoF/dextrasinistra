@@ -2872,6 +2872,35 @@ function fretMark(cx, yy, nn, fingerCol){
   if(nn.d > 0 && nn.t !== "x") h += `<text x="${cx+wide+2}" y="${yy+9}" font-size="8.5" font-family="var(--f-mono)" fill="${fingerCol}">${nn.d}</text>`;
   return h;
 }
+/* «h» y «p» solo cuando el ligado es en la misma cuerda; el ataque al cambiar de cuerda (hammer-on from nowhere) va sin símbolo */
+function renderTabS(ex){
+  const n = ex.steps.length, W = Math.max(32, Math.min(42, 680/n)), top = 50, gap = 16;
+  let {h, L, y, height} = tabFrame(ex, W, top, gap);
+  const lastF = {}; let lastChord = "", prevS = null;
+  ex.steps.forEach((st,i) => {
+    const cx = L + i*W + W/2 - 2;
+    h += `<text x="${cx}" y="${height-8}" text-anchor="middle" font-size="10" fill="var(--faint)" font-family="var(--f-mono)">${countLabel(ex.info[i])}</text>`;
+    const topText = (txt, col="var(--fg)", it=false) => h += `<text x="${cx}" y="${top-14}" text-anchor="middle" font-size="12" fill="${col}" font-family="var(--f-mono)" ${it?'font-style="italic"':''}>${txt}</text>`;
+    if(st.rest){ topText("·","var(--faint)"); prevS = null; return; }
+    if(st.hold){ topText("=","var(--faint)"); return; }
+    if(st.pulse){ topText("~","var(--accent)"); h += `<text x="${cx}" y="${y(st.s)+4}" text-anchor="middle" font-size="13" fill="var(--accent)" font-family="var(--f-mono)">~</text>`; return; }
+    const notes = st.notes;
+    if(st.label && notes.length > 1){
+      const lab = st.label === lastChord && notes[0].t !== "x" ? "" : st.label; lastChord = st.label;
+      const allX = notes.every(x => x.t === "x");
+      topText(allX ? "×" : (lab || "|"), allX ? "var(--muted)" : "var(--fg)");
+    } else {
+      let lab = techLabel(notes[0], lastF[notes[0].s]);
+      if((lab === "h" || lab === "p") && prevS !== notes[0].s) lab = "";
+      if(lab) topText(lab, "var(--fg)", lab === "h" || lab === "p");
+    }
+    notes.forEach(nn => { h += fretMark(cx, y(nn.s), nn, "var(--accent)"); lastF[nn.s] = nn.f; });
+    prevS = notes.length === 1 ? notes[0].s : null;
+  });
+  $("#tab").innerHTML = h + `</svg>`;
+  tabCols = [...document.querySelectorAll("#tab rect.col")];
+}
+HANDS.S.legend += " · no h on the first note of a string = hammer-on from nowhere";
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
 (function(){
