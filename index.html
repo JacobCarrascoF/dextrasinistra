@@ -439,12 +439,13 @@ nav.views button[aria-pressed="true"]{color:var(--accent)}
   header.top{padding-block:14px 10px;gap:12px}
   .handseg{width:100%;justify-content:space-between}
   .handseg button{flex:1;justify-content:center;padding:7px 6px}
-  nav.views{position:fixed;left:0;right:0;bottom:0;margin:0;border-radius:0;z-index:5;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px calc(8px + env(safe-area-inset-bottom, 0px));background:var(--surface);border-top:1px solid var(--line);gap:0}
+  nav.views{position:fixed;left:0;right:0;bottom:0;margin:0;border-radius:0;z-index:5;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 4px calc(8px + env(safe-area-inset-bottom, 0px));background:var(--surface);border-top:1px solid var(--line);gap:0}
   nav.views button{flex-direction:column;gap:3px;padding:6px 2px;font-size:11px;background:transparent!important;box-shadow:none!important}
   nav.views svg{width:24px;height:24px}
   .handline{margin-top:0;margin-bottom:14px}
   .hello h2{font-size:28px}
-  body.practicing header.top,body.practicing .handline{display:none}
+  body.practicing header.top .brand,body.practicing header.top .handseg,body.practicing .handline{display:none}
+  body.practicing header.top{padding:0;min-height:0}
   body.practicing{padding-top:12px}
   .handcard{flex-direction:column}
   .handcard .face{width:auto;height:92px}
@@ -470,6 +471,52 @@ header .brand h1 span{font-size:inherit;letter-spacing:inherit;color:var(--fg);f
 .listen:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #listenHint{color:var(--faint);font-size:12px}
 .listenrow .lnote{flex-basis:100%;color:var(--faint);font-size:12px;line-height:1.35}
+
+/* Barra inferior siempre visible: la flecha de volver sobra */
+#backHome{display:none!important}
+:root[data-theme="dark"]{--card:#3B4252}
+:root[data-theme="light"]{color-scheme:light}
+/* Ajustes */
+#settings{display:flex;flex-direction:column;gap:12px;max-width:720px}
+#settings[hidden]{display:none}
+.setcard{display:flex;flex-direction:column;gap:0;padding:6px 16px}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.setcard > .setrow:last-child{border-bottom:0}
+.setrow > div:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.setrow b{font-weight:500;font-size:15px}
+.setrow small{color:var(--faint);font-size:12.5px;line-height:1.35}
+.seg{display:flex;gap:3px;background:var(--surface);padding:3px;border-radius:999px;flex:none}
+.seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:6px 11px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--raise);color:var(--fg);box-shadow:0 1px 2px rgba(46,52,64,.1)}
+.seg button:disabled{opacity:.45;cursor:not-allowed}
+#prefDur button{padding:6px 8px}
+.sw{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:13px;background:var(--line2);position:relative;flex:none;cursor:pointer;transition:background .15s;margin:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(46,52,64,.25);transition:transform .15s}
+.sw:checked{background:var(--accent)}
+.sw:checked::after{transform:translateX(18px)}
+.sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.setp{margin:12px 0 4px;color:var(--muted);font-size:14px;line-height:1.5}
+.setp.small{font-size:13px;color:var(--fg);min-height:1px;margin:6px 0}
+.setbtns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+.setbtns .btn{flex:1;text-align:center;cursor:pointer}
+.btn.danger{background:transparent;color:var(--red);border:1px solid color-mix(in srgb, var(--red) 45%, transparent);margin:6px 0 12px}
+.about .abouthead{display:flex;align-items:center;gap:12px;padding:12px 0 2px}
+.about .abouthead svg{width:48px;height:48px;flex:none}
+.about .abouthead b{font-size:17px;font-weight:600;display:block}
+.about .abouthead small{color:var(--faint);font-size:12px}
+details.legal{border-top:1px solid var(--line)}
+.setcard details.legal:first-child{border-top:0}
+details.legal summary{list-style:none;cursor:pointer;padding:13px 0;font-weight:500;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+details.legal summary::-webkit-details-marker{display:none}
+details.legal summary::after{content:"+";color:var(--faint);font-family:var(--f-mono);font-size:16px}
+details.legal[open] summary::after{content:"−"}
+details.legal > div{padding:0 0 12px;color:var(--muted);font-size:14px;line-height:1.55}
+details.legal p{margin:0 0 8px}
+details.legal b{color:var(--fg);font-weight:500}
+.todo{background:color-mix(in srgb, var(--yellow) 22%, transparent);color:var(--fg);border-radius:4px;padding:0 4px}
+#settings .foot{text-align:center}
+.seg button[aria-pressed="true"]{outline:1px solid var(--line2)}
+body.insettings header.top .handseg, body.insettings .handline{display:none}
 </style>
 </head>
 <body>
@@ -491,6 +538,7 @@ header .brand h1 span{font-size:inherit;letter-spacing:inherit;color:var(--fg);f
       <button id="v-practice" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3.5h6l4 16.5H5z"/><path d="M12 16 16.5 7"/></svg><span>Practicar</span></button>
       <button id="v-plan" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Plan</span></button>
       <button id="v-progress" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M10 20V6M15 20v-9M20 20V9"/></svg><span>Progreso</span></button>
+      <button id="v-settings" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg><span>Ajustes</span></button>
     </nav>
   </header>
   <div class="handline" aria-hidden="true"></div>
@@ -634,6 +682,94 @@ header .brand h1 span{font-size:inherit;letter-spacing:inherit;color:var(--fg);f
     <div class="sect">Historial</div>
     <div class="card"><div class="tablewrap" id="history"></div></div>
     <p class="foot" id="storeNote"></p>
+  </main>
+
+  <main id="settings" hidden>
+    <div class="phead"><h2>Ajustes</h2></div>
+
+    <div class="sect">Apariencia</div>
+    <div class="card setcard">
+      <div class="setrow"><div><b>Tema</b><small>Automático sigue al sistema del teléfono.</small></div>
+        <div class="seg" id="prefTheme" role="group" aria-label="Tema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Oscuro</button></div></div>
+      <div class="setrow"><div><b>Idioma</b><small id="langNote">La versión en inglés está en preparación.</small></div>
+        <div class="seg" id="prefLang" role="group" aria-label="Idioma"><button data-v="es" aria-pressed="true">ES</button><button data-v="en" disabled title="En preparación">EN</button></div></div>
+    </div>
+
+    <div class="sect">Práctica</div>
+    <div class="card setcard">
+      <label class="setrow"><div><b>Compás de cuenta previa</b><small>Cuatro tiempos de click antes de empezar.</small></div><input type="checkbox" class="sw" id="prefCount"></label>
+      <label class="setrow"><div><b>Click en subdivisión</b><small>Marca también las notas entre tiempos.</small></div><input type="checkbox" class="sw" id="prefSub"></label>
+      <label class="setrow"><div><b>Pantalla encendida</b><small>Evita que el teléfono se bloquee mientras suena el metrónomo.</small></div><input type="checkbox" class="sw" id="prefWake"></label>
+      <div class="setrow"><div><b>Duración por defecto</b><small>Tiempo de cada ejercicio en práctica libre.</small></div><div class="seg" id="prefDur" role="group" aria-label="Duración"></div></div>
+    </div>
+
+    <div class="sect">Tus datos</div>
+    <div class="card setcard">
+      <p class="setp" id="dataWhere"></p>
+      <div class="setbtns">
+        <button class="btn" id="dataExport">Exportar copia</button>
+        <label class="btn" id="dataImportL">Importar copia<input type="file" id="dataImport" accept="application/json,.json" hidden></label>
+      </div>
+      <p class="setp small" id="dataMsg" role="status"></p>
+      <button class="btn danger" id="dataWipe">Borrar todo el progreso</button>
+    </div>
+
+    <div class="sect">Acerca de</div>
+    <div class="card setcard about">
+      <div class="abouthead"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 200 200" aria-hidden="true" aria-label="Las dos bobinas juntas forman la pastilla humbucker completa">
+        <defs>
+          <clipPath id="hb-tile"><rect x="0" y="0" width="200" height="200" rx="46"></rect></clipPath>
+        </defs>
+        <g clip-path="url(#hb-tile)">
+          <rect x="0" y="0" width="100" height="200" fill="#2E3440"></rect>
+          <rect x="100" y="0" width="100" height="200" fill="#ECEFF4"></rect>
+        </g>
+        <rect x="38" y="24" width="124" height="152" rx="20" fill="none" stroke="#9AA5B8" stroke-width="2"></rect>
+        <rect x="52" y="36" width="46" height="128" rx="23" fill="#D08770"></rect>
+        <rect x="102" y="36" width="46" height="128" rx="23" fill="#5E81AC"></rect>
+        <circle cx="75" cy="52" r="6" fill="#2E3440"></circle>
+        <circle cx="75" cy="71.2" r="6" fill="#2E3440"></circle>
+        <circle cx="75" cy="90.4" r="6" fill="#2E3440"></circle>
+        <circle cx="75" cy="109.6" r="6" fill="#2E3440"></circle>
+        <circle cx="75" cy="128.8" r="6" fill="#2E3440"></circle>
+        <circle cx="75" cy="148" r="6" fill="#2E3440"></circle>
+        <circle cx="125" cy="52" r="6" fill="#ECEFF4"></circle>
+        <circle cx="125" cy="71.2" r="6" fill="#ECEFF4"></circle>
+        <circle cx="125" cy="90.4" r="6" fill="#ECEFF4"></circle>
+        <circle cx="125" cy="109.6" r="6" fill="#ECEFF4"></circle>
+        <circle cx="125" cy="128.8" r="6" fill="#ECEFF4"></circle>
+        <circle cx="125" cy="148" r="6" fill="#ECEFF4"></circle>
+      </svg>
+<div><b>Dextra Sinistra</b><small class="mono" id="appVer"></small></div></div>
+      <p class="setp">Técnica de guitarra eléctrica por manos: <b>Dextra</b> para la mano que pulsa, <b>Sinistra</b> para la que pisa y <b>Ambas</b> para sincronizarlas. Cada ejercicio trae tablatura, metrónomo, reloj y registro.</p>
+      <details class="legal"><summary>Cómo funciona la numeración</summary><div>
+        <p>Cada ejercicio tiene un código: <span class="mono">D-</span> Dextra, <span class="mono">S-</span> Sinistra, <span class="mono">A-</span> Ambas. Los números del <span class="mono">1000</span> al <span class="mono">1612</span> son mapas compartidos: <span class="mono">D-1204</span> es el patrón de púa, <span class="mono">S-1204</span> la digitación sobre el mismo recorrido y <span class="mono">A-1204</span> las dos manos a la vez.</p>
+        <p>Del <span class="mono">2000</span> en adelante son ejercicios propios de Dextra; del <span class="mono">3000</span> en adelante, propios de Sinistra.</p></div></details>
+      <details class="legal"><summary>Método de trabajo</summary><div>
+        <p>1. Empieza en el tempo mínimo del rango, aunque te parezca lento.</p>
+        <p>2. Registra cómo ha salido. <b>Limpio</b>: la próxima vez sube 4 BPM. <b>Controlado</b>: repite el tempo. <b>Con tensión</b>: baja un 10 %.</p>
+        <p>3. El récord solo cuenta las pasadas limpias: sin notas que se pisen, con la púa a tiempo y sin tensión en hombro, antebrazo ni mano.</p>
+        <p>4. Mejor 20 minutos cada día que dos horas un día a la semana.</p></div></details>
+    </div>
+
+    <div class="sect">Legal</div>
+    <div class="card setcard">
+      <details class="legal"><summary>Aviso legal</summary><div>
+        <p><b>Titular:</b> <span class="todo">[Nombre y apellidos o razón social]</span> · <b>NIF:</b> <span class="todo">[NIF]</span><br><b>Domicilio:</b> <span class="todo">[Dirección]</span> · <b>Contacto:</b> <span class="todo">[email]</span></p>
+        <p>Dextra Sinistra, sus ejercicios, textos, tablaturas, numeración, diseño y logotipo son obra protegida. Se permite su uso personal dentro de la aplicación. No se permite copiarlos, distribuirlos ni reutilizarlos en otros productos sin autorización escrita.</p></div></details>
+      <details class="legal"><summary>Privacidad</summary><div>
+        <p><b>Sin cuentas ni seguimiento.</b> La aplicación no pide registro, no usa analítica ni publicidad y no instala cookies de terceros.</p>
+        <p><b>Dónde están tus datos.</b> Tus sesiones, notas y planes se guardan en este dispositivo, en el almacenamiento del navegador. No se envían a ningún servidor del titular. Si borras los datos del navegador o desinstalas la app, se pierden: usa «Exportar copia» para guardarlos.</p>
+        <p><b>Servicios externos.</b> Al abrir la app, el navegador descarga las tipografías desde Google Fonts y la página desde el alojamiento web, de modo que esos proveedores reciben tu dirección IP como en cualquier visita web.</p>
+        <p><b>Tus derechos.</b> Como el titular no guarda tus datos, puedes consultarlos, exportarlos y borrarlos tú mismo desde esta pantalla. Para cualquier duda: <span class="todo">[email]</span>.</p></div></details>
+      <details class="legal"><summary>Condiciones de uso</summary><div>
+        <p>La app se ofrece para el estudio personal de la guitarra. Su contenido es orientativo y no sustituye a un profesor.</p>
+        <p><b>Salud.</b> Practica sin dolor. Si notas dolor, hormigueo, pérdida de control de un dedo o tensión que no desaparece al parar, deja de practicar y consulta a un profesional sanitario. Haz pausas y calienta antes de trabajar tempos altos.</p>
+        <p>El titular puede actualizar los ejercicios y funciones. Estas condiciones se rigen por la legislación española.</p></div></details>
+      <details class="legal"><summary>Créditos y licencias</summary><div>
+        <p>Tipografías Instrument Sans y JetBrains Mono, bajo SIL Open Font License 1.1. Colores basados en la paleta Nord (licencia MIT). Sonido de cuerda sintetizado en el propio dispositivo.</p></div></details>
+    </div>
+    <p class="foot">© 2026 Dextra Sinistra. Todos los derechos reservados.</p>
   </main>
 </div>
 
@@ -2608,6 +2744,90 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _select = select; select = function(id, item){ listenStop(); _select(id, item); listenUI(); }; }
 { const _setBpm = setBpm; setBpm = function(v){ _setBpm(v); if(!L.playing) listenUI(); }; }
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
+
+/* ============ Ajustes, datos, acerca de y legal ============ */
+const APP_VER = "0.9 beta · octubre 2026";
+const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
+const savePrefs = () => LS.set("dys-prefs", PREF);
+function applyTheme(){
+  const r = document.documentElement;
+  if(PREF.theme === "auto") delete r.dataset.theme; else r.dataset.theme = PREF.theme;
+  const dark = PREF.theme === "dark" || (PREF.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute("content", dark ? "#2E3440" : "#ECEFF4"));
+}
+function segUI(id, val){ document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute("aria-pressed", b.dataset.v === String(val))); }
+document.querySelectorAll("#prefTheme button").forEach(b => b.onclick = () => { PREF.theme = b.dataset.v; savePrefs(); applyTheme(); segUI("prefTheme", PREF.theme); });
+
+/* Preferencias de práctica: se reflejan en los ajustes del metrónomo y viceversa */
+function syncPracticePrefs(){
+  $("#oCount").checked = PREF.count; $("#oSub").checked = PREF.sub;
+  $("#prefCount").checked = PREF.count; $("#prefSub").checked = PREF.sub; $("#prefWake").checked = PREF.wake;
+}
+[["prefCount","count"],["prefSub","sub"],["prefWake","wake"]].forEach(([id,k]) => $("#"+id).onchange = e => { PREF[k] = e.target.checked; savePrefs(); syncPracticePrefs(); });
+$("#oCount").addEventListener("change", e => { PREF.count = e.target.checked; savePrefs(); syncPracticePrefs(); });
+$("#oSub").addEventListener("change", e => { PREF.sub = e.target.checked; savePrefs(); syncPracticePrefs(); });
+function renderPrefDur(){
+  const el = $("#prefDur"); el.innerHTML = "";
+  DURS.forEach(d => { const b = document.createElement("button"); b.className = "mono"; b.dataset.v = d; b.textContent = (d/60) + "′";
+    b.onclick = () => { S0.dur = d; saveUI(); renderDurs(); paintClock(); segUI("prefDur", d); }; el.appendChild(b); });
+  segUI("prefDur", S0.dur);
+}
+{ const _start = start; start = async function(){ await _start(); if(!PREF.wake){ try{ M.wake?.release(); M.wake = null; }catch(e){} } }; }
+
+/* Tus datos */
+function dataWhere(){
+  const n = Store.items.length, reg = n === 1 ? "registro guardado" : "registros guardados";
+  $("#dataWhere").innerHTML = Store.mode === "db"
+    ? `<b>${n}</b> ${reg} en tu cuenta de la versión de prueba.`
+    : `<b>${n}</b> ${reg} en este dispositivo. Si borras los datos del navegador o desinstalas la app, se pierden: exporta una copia de vez en cuando.`;
+}
+function msg(t){ $("#dataMsg").textContent = t; }
+$("#dataExport").onclick = () => {
+  const data = {app:"dextra-sinistra", v:1, exported: new Date().toISOString(), log: Store.items, plan: PlanState, ui: LS.get("dys-ui", {}), prefs: PREF};
+  const blob = new Blob([JSON.stringify(data, null, 1)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = `dextra-sinistra-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  msg(`Copia exportada con ${Store.items.length} ${Store.items.length === 1 ? "registro" : "registros"}.`);
+};
+$("#dataImport").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if(!f) return;
+  try{
+    const d = JSON.parse(await f.text());
+    if(d.app !== "dextra-sinistra" || !Array.isArray(d.log)) throw new Error("formato");
+    const have = new Set(Store.items.map(i => i.id)); let added = 0;
+    for(const it of d.log){
+      if(!it || !it.id || !it.ex || have.has(it.id) || !ALL.has(it.ex)) continue;
+      Store.items.push(it); added++;
+      if(Store.mode === "db" && Store.col){ const {id, ...body} = it; try{ await Store.col.doc(id).set(body); }catch(err){} }
+    }
+    if(Store.mode !== "db") LS.set("dys-log", Store.items);
+    if(d.plan && d.plan.D && d.plan.S){ Object.assign(PlanState, d.plan); savePlan(); }
+    Store.changed(); dataWhere();
+    msg(added ? `${added === 1 ? "Importado 1 registro nuevo" : "Importados " + added + " registros nuevos"}. Los que ya tenías no se han duplicado.` : "No había registros nuevos en esa copia.");
+  }catch(err){ msg("Ese archivo no es una copia de Dextra Sinistra."); }
+};
+$("#dataWipe").onclick = async () => {
+  if(!confirm("¿Borrar todo el progreso? Se eliminan los registros, récords y el avance de los planes. No se puede deshacer.")) return;
+  if(!confirm("Confirma otra vez: se borra todo.")) return;
+  if(Store.mode === "db" && Store.col){ for(const it of Store.items){ try{ await Store.col.doc(it.id).delete(); }catch(e){} } }
+  Store.items = []; LS.set("dys-log", []);
+  Object.assign(PlanState, {hand:"D", D:{tpl:"libre", days:{}}, S:{tpl:"libre", days:{}}}); savePlan();
+  Store.changed(); dataWhere(); msg("Progreso borrado.");
+};
+
+/* Vista de ajustes */
+function renderSettings(){ segUI("prefTheme", PREF.theme); syncPracticePrefs(); renderPrefDur(); dataWhere(); msg(""); $("#appVer").textContent = "Versión " + APP_VER; }
+{ const _s = show; show = function(v){
+    _s(v === "settings" ? "__none" : v);
+    $("#settings").hidden = v !== "settings"; document.body.classList.toggle("insettings", v === "settings"); $("#v-settings").setAttribute("aria-pressed", v === "settings");
+    if(v === "settings"){ renderSettings(); window.scrollTo(0,0); }
+  }; }
+$("#v-settings").onclick = () => show("settings");
+$("#backHome").onclick = () => show("home");
+Store.listeners.push(() => { if(!$("#settings").hidden) dataWhere(); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", applyTheme);
+applyTheme(); syncPracticePrefs();
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
 select(S0.last[HAND] || (ALL.has(S0.cur) && ALL.get(S0.cur).h === HAND ? S0.cur : EX[0].id));
