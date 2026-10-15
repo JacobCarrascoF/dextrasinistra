@@ -525,6 +525,19 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
   .sess .row .tm:not(.mono){grid-column:2;grid-row:2;justify-self:start}
   .sess .row .tm.mono{grid-column:3;grid-row:1}
 }
+/* Anterior / siguiente */
+.navbtn:disabled{opacity:.35;cursor:default}
+.navbtn[hidden]{display:none!important}
+.standlabel .pos{margin-left:auto;font-size:12px;color:var(--faint);flex:none}
+.standlabel{min-width:0}
+@keyframes swl{from{transform:translateX(28px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes swr{from{transform:translateX(-28px);opacity:.4}to{transform:none;opacity:1}}
+.excard.swl{animation:swl .2s ease-out}
+.excard.swr{animation:swr .2s ease-out}
+.excard{touch-action:pan-y}
+#tab{touch-action:pan-x pan-y}
+.standlabel{flex-wrap:wrap;row-gap:1px;white-space:nowrap}
+.standlabel .pos{flex-basis:100%;margin-left:16px}
 </style>
 </head>
 <body>
@@ -629,7 +642,9 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
     <section class="stand" aria-label="Atril">
       <div class="standbar">
         <button class="iconbtn onlym" id="backHome" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button class="iconbtn navbtn" id="exPrev" aria-label="Ejercicio anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
         <div class="standmid"><div id="standLabel" class="standlabel"></div><div class="queue" id="queue" hidden></div></div>
+        <button class="iconbtn navbtn" id="exNext" aria-label="Ejercicio siguiente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         <button class="iconbtn onlym" id="libBtn" aria-label="Ver la lista de ejercicios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h9"/></svg></button>
       </div>
       <div class="card excard">
@@ -2871,6 +2886,48 @@ function fretMark(cx, yy, nn, fingerCol){
   if(nn.d > 0 && nn.t !== "x") h += `<text x="${cx+wide+2}" y="${yy+9}" font-size="8.5" font-family="var(--f-mono)" fill="${fingerCol}">${nn.d}</text>`;
   return h;
 }
+/* ============ Práctica libre: anterior / siguiente (botones, deslizar, flechas) ============ */
+function navList(){ return filtered(); }
+function navState(){
+  const items = navList(), i = items.findIndex(e => e.id === S0.cur);
+  return {items, i};
+}
+function navEx(d){
+  if(Session.list.length) return;
+  const {items, i} = navState(); if(!items.length) return;
+  const j = i < 0 ? (d > 0 ? 0 : items.length - 1) : i + d;
+  if(j < 0 || j >= items.length) return;
+  const card = $(".excard");
+  select(items[j].id);
+  if(card && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+    card.classList.remove("swl","swr"); void card.offsetWidth; card.classList.add(d > 0 ? "swl" : "swr");
+  }
+}
+function updateNav(){
+  const free = !Session.list.length, {items, i} = navState();
+  ["#exPrev","#exNext"].forEach(s => $(s).hidden = !free);
+  if(!free) return;
+  $("#exPrev").disabled = !items.length || i === 0; $("#exNext").disabled = !items.length || i === items.length - 1;
+  const lab = $("#standLabel"); let pos = lab.querySelector(".pos");
+  if(!pos){ pos = document.createElement("span"); pos.className = "pos mono"; lab.appendChild(pos); }
+  pos.textContent = i >= 0 ? `${i + 1} / ${items.length}` : `– / ${items.length}`;
+}
+$("#exPrev").onclick = () => navEx(-1);
+$("#exNext").onclick = () => navEx(1);
+{ const _rq = renderQueue; renderQueue = function(){ _rq(); updateNav(); }; }
+{ const _rl = renderList; renderList = function(){ _rl(); updateNav(); }; }
+/* Deslizar sobre la tarjeta (no sobre la tablatura, que tiene su propio desplazamiento) */
+{ let sx = 0, sy = 0, st = 0, ok = false;
+  const card = $(".excard");
+  card.addEventListener("touchstart", e => { const t = e.touches[0]; ok = e.touches.length === 1 && !e.target.closest("#tab, details, button, input"); sx = t.clientX; sy = t.clientY; st = Date.now(); }, {passive:true});
+  card.addEventListener("touchend", e => { if(!ok) return; const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if(Math.abs(dx) > 60 && Math.abs(dx) > 1.6 * Math.abs(dy) && Date.now() - st < 700) navEx(dx < 0 ? 1 : -1); }, {passive:true});
+}
+document.addEventListener("keydown", e => {
+  if(!$("#modal").hidden || e.target.matches("input,select,textarea") || $("#practice").hidden) return;
+  if(e.key === "ArrowRight"){ e.preventDefault(); navEx(1); }
+  if(e.key === "ArrowLeft"){ e.preventDefault(); navEx(-1); }
+});
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
 select(S0.last[HAND] || (ALL.has(S0.cur) && ALL.get(S0.cur).h === HAND ? S0.cur : EX[0].id));
