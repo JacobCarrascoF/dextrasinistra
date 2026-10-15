@@ -16,6 +16,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>[hidden]{display:none!important}html,body{margin:0}
 @media (display-mode: standalone){ header.top, .standbar{padding-top:max(10px, env(safe-area-inset-top))} body{overscroll-behavior-y:none} }</style>
+<script id="langgo">try{var l=JSON.parse(localStorage.getItem("dys-lang")||"null");if(l==="en"||(!l&&/^en\b/i.test(navigator.language||"")))location.replace("en.html");}catch(e){}</script>
 <title>Dextra Sinistra</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -517,6 +518,13 @@ details.legal b{color:var(--fg);font-weight:500}
 #settings .foot{text-align:center}
 .seg button[aria-pressed="true"]{outline:1px solid var(--line2)}
 body.insettings header.top .handseg, body.insettings .handline{display:none}
+/* Filas de sesión del plan: tempo debajo del nombre en móvil */
+@media (max-width:560px){
+  .sess .row{grid-template-columns:10px minmax(0,1fr) 34px;row-gap:5px;align-items:start}
+  .sess .row > .dot{margin-top:6px}
+  .sess .row .tm:not(.mono){grid-column:2;grid-row:2;justify-self:start}
+  .sess .row .tm.mono{grid-column:3;grid-row:1}
+}
 </style>
 </head>
 <body>
@@ -691,8 +699,8 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
     <div class="card setcard">
       <div class="setrow"><div><b>Tema</b><small>Automático sigue al sistema del teléfono.</small></div>
         <div class="seg" id="prefTheme" role="group" aria-label="Tema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Oscuro</button></div></div>
-      <div class="setrow"><div><b>Idioma</b><small id="langNote">La versión en inglés está en preparación.</small></div>
-        <div class="seg" id="prefLang" role="group" aria-label="Idioma"><button data-v="es" aria-pressed="true">ES</button><button data-v="en" disabled title="En preparación">EN</button></div></div>
+      <div class="setrow"><div><b>Idioma</b><small id="langNote">Español o inglés. Tu progreso es el mismo en los dos.</small></div>
+        <div class="seg" id="prefLang" role="group" aria-label="Idioma"><button data-v="es" aria-pressed="true">ES</button><button data-v="en" aria-pressed="false">EN</button></div></div>
     </div>
 
     <div class="sect">Práctica</div>
@@ -2431,7 +2439,7 @@ document.querySelectorAll("[data-go-hand]").forEach(b => b.onclick = () => { if(
 /* ---- Selector de mano en Plan ---- */
 function renderPlanHands(){
   $("#planHands").innerHTML = ["D","S"].map(h => `<button class="chip" data-ph="${h}" aria-pressed="${PlanState.hand === h}"><span class="dot" style="background:var(--acc-${h.toLowerCase()})"></span>Planes de ${HANDS[h].name} · ${HANDS[h].sub.split(" · ")[0].toLowerCase()}</button>`).join("") +
-    `<span class="count" style="align-self:center">Los planes de las dos manos a la vez llegarán cuando decidas el formato final.</span>`;
+    `<span class="count" style="align-self:center">Los planes para las dos manos a la vez llegarán pronto.</span>`;
   $("#planHands").querySelectorAll("[data-ph]").forEach(b => b.onclick = () => { PlanState.hand = b.dataset.ph; savePlan(); renderPlan(); });
 }
 
@@ -2828,6 +2836,11 @@ $("#backHome").onclick = () => show("home");
 Store.listeners.push(() => { if(!$("#settings").hidden) dataWhere(); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", applyTheme);
 applyTheme(); syncPracticePrefs();
+/* Idioma: dos versiones de la página (es: ./ · en: en.html); el progreso es el mismo */
+const LANG = window.DS_LANG || "es";
+function goLang(v){ if(v === LANG) return; LS.set("dys-lang", v); location.href = v === "en" ? "en.html" : "./"; }
+document.querySelectorAll("#prefLang button").forEach(b => b.onclick = () => goLang(b.dataset.v));
+segUI("prefLang", LANG);
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
 select(S0.last[HAND] || (ALL.has(S0.cur) && ALL.get(S0.cur).h === HAND ? S0.cur : EX[0].id));
