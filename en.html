@@ -848,6 +848,7 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
+window.DS_BUILD = "16/10/2026 09:50";
 const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
@@ -2877,7 +2878,7 @@ $("#dataWipe").onclick = async () => {
 };
 
 /* Vista de ajustes */
-function renderSettings(){ segUI("prefTheme", PREF.theme); syncPracticePrefs(); renderPrefDur(); dataWhere(); msg(""); $("#appVer").textContent = "Version " + APP_VER; }
+function renderSettings(){ segUI("prefTheme", PREF.theme); syncPracticePrefs(); renderPrefDur(); dataWhere(); msg(""); $("#appVer").textContent = "Version " + APP_VER + (window.DS_BUILD ? " · " + window.DS_BUILD : ""); }
 { const _s = show; show = function(v){
     _s(v === "settings" ? "__none" : v);
     $("#settings").hidden = v !== "settings"; document.body.classList.toggle("insettings", v === "settings"); $("#v-settings").setAttribute("aria-pressed", v === "settings");
@@ -3193,7 +3194,16 @@ renderDurs(); playUI("Start"); show("home");
 Store.init();
 </script>
 <script>
-if("serviceWorker" in navigator){ addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {})); }
+if("serviceWorker" in navigator){
+  const hadSW = !!navigator.serviceWorker.controller;
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js", {updateViaCache: "none"}).then(reg => {
+    reg.update();
+    document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible") reg.update(); });
+  }).catch(() => {}));
+  // cuando entra una versión nueva, se recarga sola una vez
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if(hadSW && !reloaded){ reloaded = true; location.reload(); } });
+}
 </script>
 </body>
 </html>

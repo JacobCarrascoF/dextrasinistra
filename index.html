@@ -847,7 +847,8 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>const DEX = (function(){
+<script>window.DS_BUILD = "16/10/2026 09:50";
+const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
   alt:{n:"Alternate picking", c:"var(--frost)"},
@@ -2876,7 +2877,7 @@ $("#dataWipe").onclick = async () => {
 };
 
 /* Vista de ajustes */
-function renderSettings(){ segUI("prefTheme", PREF.theme); syncPracticePrefs(); renderPrefDur(); dataWhere(); msg(""); $("#appVer").textContent = "Versión " + APP_VER; }
+function renderSettings(){ segUI("prefTheme", PREF.theme); syncPracticePrefs(); renderPrefDur(); dataWhere(); msg(""); $("#appVer").textContent = "Versión " + APP_VER + (window.DS_BUILD ? " · " + window.DS_BUILD : ""); }
 { const _s = show; show = function(v){
     _s(v === "settings" ? "__none" : v);
     $("#settings").hidden = v !== "settings"; document.body.classList.toggle("insettings", v === "settings"); $("#v-settings").setAttribute("aria-pressed", v === "settings");
@@ -3157,7 +3158,16 @@ renderDurs(); playUI("Empezar"); show("home");
 Store.init();
 </script>
 <script>
-if("serviceWorker" in navigator){ addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {})); }
+if("serviceWorker" in navigator){
+  const hadSW = !!navigator.serviceWorker.controller;
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js", {updateViaCache: "none"}).then(reg => {
+    reg.update();
+    document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible") reg.update(); });
+  }).catch(() => {}));
+  // cuando entra una versión nueva, se recarga sola una vez
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if(hadSW && !reloaded){ reloaded = true; location.reload(); } });
+}
 </script>
 </body>
 </html>
