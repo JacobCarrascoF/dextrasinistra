@@ -569,6 +569,11 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
 .plusbanner span{font-size:13px;color:var(--muted);line-height:1.4}
 .plusbanner .btn{flex:none}
 .plusbanner.ending{border-color:var(--accent)}
+/* +1′ y reiniciar */
+.durs{flex-wrap:wrap;align-items:center}
+.durs .dsep{width:1px;height:20px;background:var(--line2);margin:0 4px}
+.durs .clkbtn{display:inline-flex;align-items:center;justify-content:center;min-width:40px}
+.durs .clkbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 </style>
 </head>
 <body>
@@ -2960,6 +2965,26 @@ document.addEventListener("keydown", e => {
   if(e.key === "ArrowRight"){ e.preventDefault(); navEx(1); }
   if(e.key === "ArrowLeft"){ e.preventDefault(); navEx(-1); }
 });
+/* ============ Reloj: +1 minuto y volver a empezar ============ */
+const CLK = (window.DS_LANG === "en")
+  ? {add:"Add one minute", restart:"Start the timer again", restartT:"Restart"}
+  : {add:"Añadir un minuto", restart:"Volver a empezar el reloj", restartT:"Reiniciar"};
+S0.extra = 0;
+{ const _rd = renderDurs; renderDurs = function(){ _rd();
+    const el = $("#durs");
+    if(S0.extra) el.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", "false"));
+    const sep = document.createElement("span"); sep.className = "dsep"; el.appendChild(sep);
+    const add = document.createElement("button"); add.className = "mono clkbtn"; add.id = "addMin"; add.textContent = "+1′"; add.setAttribute("aria-label", CLK.add); add.title = CLK.add;
+    add.onclick = () => { S0.dur += 60; S0.extra += 60; renderDurs(); paintClock(); };
+    const rs = document.createElement("button"); rs.className = "clkbtn"; rs.id = "restartClock"; rs.setAttribute("aria-label", CLK.restart); rs.title = CLK.restartT;
+    rs.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v4h4"/></svg>';
+    rs.onclick = () => { const was = M.playing; if(was) stop(false); Clock.elapsed = 0; paintClock(); if(was) start(); else playUI("Start"); };
+    el.appendChild(add); el.appendChild(rs);
+  }; }
+/* Al cambiar de ejercicio, los minutos añadidos no se arrastran */
+{ const _sel = select; select = function(id, item){ if(S0.extra){ S0.dur -= S0.extra; S0.extra = 0; } _sel(id, item); renderDurs(); }; }
+/* Elegir una duración fija borra los minutos añadidos */
+document.addEventListener("click", e => { const b = e.target.closest("#durs button:not(.clkbtn)"); if(b) S0.extra = 0; }, true);
 
 /* ============ Plus: prueba de 14 días, modo gratuito y códigos firmados (sin conexión) ============ */
 const DS_PUBLIC_KEY = {"kty":"EC","crv":"P-256","x":"HJOCYSfOvlqfMWNYlkWJaZmgDkBQqjvANe9uULc6G9s","y":"O_YaTjbNdwAQClXPaWr_lDpHz_u2B3LRaTWIK2LC_b4"};
