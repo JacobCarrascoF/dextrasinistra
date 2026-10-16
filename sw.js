@@ -1,5 +1,5 @@
 // Dextra Sinistra · funciona sin conexión. Sube VERSION al publicar cambios.
-const VERSION = "ds-v12";
+const VERSION = "ds-v13";
 const CORE = ["./", "index.html", "en.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png"];
 self.addEventListener("install", e => {
   // cache:"reload" salta la caché HTTP del navegador (GitHub Pages guarda 10 minutos)
@@ -11,7 +11,7 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if(e.request.mode === "navigate"){
     // página: siempre a la red sin caché; si no hay conexión, la copia guardada de esa misma página
-    const key = /en\.html$/.test(url.pathname) ? "en.html" : "index.html";
+    const key = /\/en(\.html)?$/.test(url.pathname) ? "en.html" : "index.html";
     e.respondWith(fetch(url.href, {cache: "no-store", credentials: "same-origin"})
       .then(r => { if(r.ok){ const cp = r.clone(); caches.open(VERSION).then(c => c.put(key, cp)); } return r; })
       .catch(() => caches.match(key)));

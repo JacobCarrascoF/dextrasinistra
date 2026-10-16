@@ -1,0 +1,6 @@
+{
+  // Dextra Sinistra · web estática en Cloudflare (Workers con archivos estáticos)
+  "name": "dextrasinistra",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./" }
+}
