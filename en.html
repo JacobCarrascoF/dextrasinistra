@@ -634,6 +634,96 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
 .deskonly{display:none}
 @media (min-width:861px){.deskonly{display:inline}.libseg{display:none}}
 .streakline,.plusline{justify-content:flex-start}
+/* ===== Inicio v0.11 ===== */
+#continue.contcard2{display:flex;flex-direction:column;gap:0;padding:0;border:1px solid var(--line);border-radius:20px;background:var(--card);overflow:hidden}
+.contcard2 button{border:0;background:transparent;color:var(--fg);font:inherit;text-align:left;cursor:pointer;width:100%;display:flex;align-items:center;gap:14px}
+.contcard2 .resume{padding:16px 16px 16px 18px}
+.contcard2 .rtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.contcard2 .eyebrow{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.contcard2 .resume b{font-size:18px;font-weight:600;line-height:1.25}
+.contcard2 .rmeta{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contcard2 .rplay{width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.contcard2 .rplay svg{width:20px;height:20px;fill:currentColor}
+.contcard2 .rplay.sm{width:38px;height:38px}
+.contcard2 .rplay.sm svg{width:15px;height:15px}
+.contcard2 .planrow{border-top:1px solid var(--line);padding:12px 16px 12px 18px;justify-content:space-between}
+.contcard2 .planrow > span:first-child{display:flex;flex-direction:column;gap:1px;min-width:0}
+.contcard2 .planrow b{font-size:14.5px;font-weight:500}
+.contcard2 .planrow small{font-size:12.5px;color:var(--faint)}
+.contcard2 .planrow .go{color:var(--accent);font-size:13.5px;font-weight:500;white-space:nowrap}
+.contcard2 button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+/* Manos: filas grandes */
+.hands:has(.hc2){display:flex;flex-direction:column;gap:10px}
+.handcard.hc2{flex-direction:row;align-items:center;border-radius:18px;min-height:96px}
+.handcard.hc2 .face{width:96px;height:auto;align-self:stretch;flex:0 0 96px}
+.handcard.hc2 .face svg{width:84px;height:84px}
+.handcard.hc2 .txt{flex:1;align-items:flex-start;text-align:left;padding:12px 16px;gap:1px}
+.handcard.hc2 .txt b{font-size:19px}
+.handcard.hc2 .txt span{font-size:13.5px}
+.handcard.hc2 .txt small{font-size:12px;margin-top:3px}
+.handcard.hc2 .chev{color:var(--faint);font-size:24px;padding-right:16px;line-height:1}
+@media (min-width:761px){.hands:has(.hc2){display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Inicio v0.11b: todo en una pantalla */
+@media (max-width:760px){
+  #home{gap:14px}
+  .hello h2{font-size:26px}
+  .streakline{margin-top:-6px}
+  .plusline{margin-top:-8px}
+}
+.contcard2 .resume b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#home .sect{font-size:11px;letter-spacing:.1em;margin:4px 0 -4px;color:var(--faint)}
+.handcard.hc2{min-height:76px;border-radius:16px}
+.handcard.hc2 .face{width:80px;flex-basis:80px}
+.handcard.hc2 .face svg{width:70px;height:70px}
+.handcard.hc2 .txt{padding:10px 14px}
+.handcard.hc2 .txt b{font-size:18px}
+.handcard.hc2 .txt span{font-size:13px}
+.handcard.hc2 .txt small{margin-top:1px}
+.hands:has(.hc2){gap:8px}
+/* Buscador general */
+
+
+.gsbtn svg,.gsbox svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round}
+.iconbtn svg{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;width:20px;height:20px}
+.standbar{gap:8px}
+.gsearch{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;flex-direction:column;padding:calc(10px + env(safe-area-inset-top, 0px)) 16px 0;max-width:720px;margin:0 auto}
+.gsearch[hidden]{display:none}
+@media (min-width:761px){.gsearch{inset:40px auto auto 50%;transform:translateX(-50%);width:min(680px,92vw);max-height:80vh;border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 60px rgba(46,52,64,.25);padding:14px 16px 0}}
+.gshead{display:flex;align-items:center;gap:10px}
+.gsbox{flex:1;display:flex;align-items:center;gap:8px;background:var(--raise);border:1px solid var(--line2);border-radius:14px;padding:0 12px;height:48px;color:var(--faint)}
+.gsbox:focus-within{border-color:var(--accent)}
+.gsbox input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:16px;color:var(--fg);outline:none;height:100%}
+.gscount{font-size:12.5px;color:var(--faint);padding:10px 2px 6px;line-height:1.4}
+.gslist{flex:1;overflow-y:auto;margin:0 -16px;padding:0 16px calc(16px + env(safe-area-inset-bottom, 0px))}
+.gsitem{width:100%;display:flex;align-items:center;gap:12px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--fg);font:inherit;text-align:left;padding:11px 2px;cursor:pointer}
+.gsitem:hover,.gsitem:focus-visible{background:var(--hl);outline:none}
+.gsitem .dot{width:8px;height:8px;flex:none}
+.gst{min-width:0;display:flex;flex-direction:column;gap:2px}
+.gst b{font-weight:500;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gst small{font-size:12.5px;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gst .lk svg{width:12px;height:12px;fill:none;stroke:var(--faint);stroke-width:2;vertical-align:-1px;margin-right:4px}
+.gsitem.locked b{color:var(--muted)}
+.gsmore{font-size:12.5px;color:var(--faint);padding:12px 2px;text-align:center}
+body.gsopen{overflow:hidden}
+body.gsopen .miniplayer{display:none}
+.gsbox input::-webkit-search-cancel-button{display:none}
+@media (max-width:760px){
+  .standbar .iconbtn{width:40px;height:40px}
+  .standbar .standmid{min-width:0;flex:1}
+  .standlabel{flex-wrap:nowrap!important;overflow:hidden}
+}
+.standlabel .lt{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:760px){ .standlabel{flex-wrap:wrap!important} .standlabel .lt{flex:1 1 0} .standlabel .pos{flex-basis:100%} }
+@media (max-width:760px){ header.top .brand{flex:1} .brand .gsbtn{margin-left:auto} }
+@media (min-width:761px){
+  .brand .gsbtn{width:38px;height:38px;margin-left:4px}
+  .gsearch{box-shadow:0 0 0 100vmax rgba(46,52,64,.35),0 20px 60px rgba(46,52,64,.25)}
+  .handcard.hc2{flex-direction:column;align-items:stretch}
+  .handcard.hc2 .face{width:auto;flex:none;height:120px}
+  .handcard.hc2 .face svg{width:84px;height:84px}
+  .handcard.hc2 .txt{align-items:center;text-align:center}
+  .handcard.hc2 .chev{display:none}
+}
 </style>
 </head>
 <body>
@@ -908,7 +998,7 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "16/10/2026 16:10";
+window.DS_BUILD = "16/10/2026 16:30";
 const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
@@ -2866,7 +2956,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "0.10 beta · October 2026";
+const APP_VER = "0.11 beta · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -3214,7 +3304,7 @@ checkPlus();
 /* ============ Estructura compacta (v0.10) ============ */
 const EN9 = window.DS_LANG === "en";
 const T9 = EN9 ? {
-  streakDays: n => n === 1 ? "day streak" : "day streak", week:"this week", clean:"clean runs",
+  streakDays: n => n === 1 ? "day streak" : "day streak", week:"this week", clean: n => n === 1 ? "clean run" : "clean runs",
   random:"Random session", randomA:"Random session · 5 fretboard maps", randomD:"Random session · one exercise per area",
   ambasPlans:"Plans for both hands together are coming soon. Meanwhile you can follow a plan for each hand:",
   seeD:"Dextra plans", seeS:"Sinistra plans", close:"Close", toConsole:"Go to the metronome",
@@ -3222,7 +3312,7 @@ const T9 = EN9 ? {
   hands:"Hand", listenTitle:"Just to hear the pattern. When you practice, only the metronome plays.",
   dataWhere: n => `<b>${n}</b> ${n === 1 ? "log" : "logs"} on this device. Export a backup now and then.`
 } : {
-  streakDays: n => n === 1 ? "día de racha" : "días de racha", week:"esta semana", clean:"limpias",
+  streakDays: n => n === 1 ? "día de racha" : "días de racha", week:"esta semana", clean: n => n === 1 ? "limpia" : "limpias",
   random:"Sesión aleatoria", randomA:"Random session · 5 fretboard maps", randomD:"Sesión aleatoria · un ejercicio por rama",
   ambasPlans:"Los planes para las dos manos a la vez llegarán pronto. Mientras, puedes seguir un plan para cada mano:",
   seeD:"Planes de Dextra", seeS:"Planes de Sinistra", close:"Cerrar", toConsole:"Ir al metrónomo",
@@ -3248,7 +3338,7 @@ const ICO9 = {
     const days = new Set(it.map(i => dayKey(i.t))); let streak = 0;
     for(let k = 0; k < 400; k++){ if(days.has(dayKey(now - k*864e5))) streak++; else if(k > 0) break; }
     const clean = it.filter(i => now - i.t < 7*864e5 && i.q === 3).length;
-    hs.innerHTML = `<span class="fl${streak ? " on" : ""}">${ICO9.flame}<b class="mono">${streak}</b> ${T9.streakDays(streak)}</span><span><b class="mono">${week}′</b> ${T9.week}</span><span><b class="mono">${clean}</b> ${T9.clean}</span>`;
+    hs.innerHTML = `<span class="fl${streak ? " on" : ""}">${ICO9.flame}<b class="mono">${streak}</b> ${T9.streakDays(streak)}</span><span><b class="mono">${week}′</b> ${T9.week}</span><span><b class="mono">${clean}</b> ${T9.clean(clean)}</span>`;
   };
 }
 
@@ -3344,6 +3434,103 @@ const ICO9 = {
 
 /* 7 · Ajustes: texto de datos más corto */
 { const _dw = dataWhere; dataWhere = function(){ _dw(); if(Store.mode !== "db") $("#dataWhere").innerHTML = T9.dataWhere(Store.items.length); }; }
+
+/* ============ Inicio compacto: seguir donde lo dejaste + manos grandes (v0.11) ============ */
+const T10 = window.DS_LANG === "en" ? {
+  resume:"Pick up where you left off", start:"Start here", plan:"plan", week:"Week", day:"day", exs:"exercises",
+  noPlan:"No guided plan", seePlans:"See plans", planOf:(h,n) => `${h} · ${n} plan`, done:"Plan completed", next:"Choose the next level",
+  deload:"deload", lv:"Beginner · Intermediate · Advanced", go:"Play", ex:"exercises", ph:"phrases"
+} : {
+  resume:"Seguir donde lo dejaste", start:"Empieza por aquí", plan:"plan", week:"Semana", day:"day", exs:"ejercicios",
+  noPlan:"Sin plan guiado", seePlans:"Ver planes", planOf:(h,n) => `${h} · Plan ${n}`, done:"Plan completado", next:"Elige el siguiente nivel",
+  deload:"descarga", lv:"Inicial · Intermedio · Avanzado", go:"Tocar", ex:"ejercicios", ph:"frases"
+};
+{
+  const _rh = renderHome;
+  renderHome = function(){
+    _rh();
+    const c = $("#continue"); c.className = "contcard2";
+    /* 1 · último ejercicio (de cualquier mano) */
+    const last = ALL.get(S0.cur) || EX[0], logged = Store.items.length > 0;
+    const bpm = S0.bpm[last.id] || last.bpm[0];
+    let html = `<button class="resume" id="hResume" style="--accent:var(--acc-${last.h === "S" ? "s" : "d"})">
+      <span class="rtxt"><span class="eyebrow">${logged ? T10.resume : T10.start}</span>
+      <b>${last.name}</b><span class="rmeta"><span class="mono">${last.code}</span> · ${HANDS[last.h].short} · <span class="mono">${bpm} BPM</span></span></span>
+      <span class="rplay" aria-hidden="true">${ICO.play}</span></button>`;
+    /* 2 · plan guiado: una fila */
+    const h = PlanState.hand, ps = PlanState[h], p = HANDS[h].PLANS[ps.tpl];
+    if(p){
+      const pos = planPos(p, ps.days[ps.tpl] || 0);
+      if(pos.finished) html += `<button class="planrow" id="hPlan2"><span><b>${T10.planOf(HANDS[h].name, p.n)}</b><small>${T10.done} · ${T10.next}</small></span><span class="go">›</span></button>`;
+      else { const bl = sessionBlocks(pos), tot = bl.reduce((a,b) => a + b.min, 0);
+        html += `<button class="planrow" id="hCont2" style="--accent:var(--acc-${h === "S" ? "s" : "d"})"><span><b>${T10.planOf(HANDS[h].name, p.n)}</b><small>${T10.week} ${pos.week} · ${T10.day} ${pos.dw} · ${bl.length} ${T10.exs} · ${tot} min${pos.deload ? " · " + T10.deload : ""}</small></span><span class="rplay sm" aria-hidden="true">${ICO.play}</span></button>`; }
+    } else html += `<button class="planrow" id="hPlan2"><span><b>${T10.noPlan}</b><small>${T10.lv}</small></span><span class="go">${T10.seePlans} ›</span></button>`;
+    c.innerHTML = html;
+    $("#hResume").onclick = () => { select(last.id); show("practice"); };
+    if($("#hCont2")) $("#hCont2").onclick = startPlanSession;
+    if($("#hPlan2")) $("#hPlan2").onclick = () => show("plan");
+  };
+  document.querySelectorAll(".handcard").forEach(b => { b.classList.add("hc2"); const sm = b.querySelector("small"); if(sm) sm.innerHTML = sm.innerHTML.replace(/<br>/g, " "); b.insertAdjacentHTML("beforeend", '<span class="chev" aria-hidden="true">›</span>'); });
+}
+
+/* ============ Buscador general: todos los ejercicios de las tres manos ============ */
+const T11 = window.DS_LANG === "en" ? {
+  btn:"Search all exercises", ph:"Search: D-1204, sweep, bend, A minor…", close:"Close", none:"No exercises match.",
+  count:(n,t) => `${n} of ${t} exercises`, more:n => `and ${n} more: narrow your search`, hint:"Type a code, technique, rhythm, key or string. Every word must match.",
+  level:"Level"
+} : {
+  btn:"Buscar en todos los ejercicios", ph:"Buscar: D-1204, sweep, bend, La menor…", close:"Cerrar", none:"Ningún ejercicio coincide.",
+  count:(n,t) => `${n} of ${t} exercises`, more:n => `y ${n} más: afina la búsqueda`, hint:"Escribe un código, técnica, ritmo, tonalidad o cuerda. Tienen que coincidir todas las palabras.",
+  level:"Nivel"
+};
+const ICO_SEARCH = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>';
+const norm11 = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+let GIDX = null;
+function gIndex(){
+  if(GIDX) return GIDX;
+  GIDX = [...ALL.values()].map((e, i) => ({e, i, n: " " + norm11(e.name + " " + e.code + " " + e.code.replace("-", "")).replace(/[^a-z0-9#½]+/g, " ") + " ",
+    t: " " + norm11([e.code, e.code.replace("-", ""), e.name, e.cat, e.subLabel, brOf(e).n, HANDS[e.h].name, HANDS[e.h].short, HANDS[e.h].sub, T11.level + " " + ROMAN[e.lvl], ...(e.tags || [])].join(" ")).replace(/[^a-z0-9#½]+/g, " ") + " "}));
+  return GIDX;
+}
+{
+  const ov = document.createElement("div"); ov.id = "gsearch"; ov.className = "gsearch"; ov.hidden = true;
+  ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-label", T11.btn);
+  ov.innerHTML = `<div class="gshead"><label class="gsbox">${ICO_SEARCH}<input id="gsQ" type="search" autocomplete="off" enterkeyhint="go" placeholder="${T11.ph}" aria-label="${T11.btn}"></label><button type="button" class="iconbtn" id="gsClose" aria-label="${T11.close}">${ICO9.x}</button></div><div class="gscount" id="gsCount"></div><div class="gslist" id="gsList" role="list"></div>`;
+  document.body.appendChild(ov);
+  const MAX = 80;
+  let res = [];
+  function run(){
+    const words = norm11($("#gsQ").value).split(/\s+/).filter(Boolean);
+    const idx = gIndex(), list = $("#gsList");
+    if(!words.length){ res = []; $("#gsCount").textContent = T11.hint; list.innerHTML = ""; return; }
+    /* cada palabra tiene que empezar una palabra del ejercicio; primero los que lo cumplen en el nombre */
+    const ws = words.map(w => " " + w.replace(/[^a-z0-9#½]+/g, " ").trim());
+    res = idx.filter(x => ws.every(w => x.t.includes(w))).map(x => ({x, s: ws.filter(w => x.n.includes(w)).length}))
+      .sort((a, b) => b.s - a.s || a.x.i - b.x.i).map(r => r.x.e);
+    $("#gsCount").textContent = res.length ? T11.count(res.length, idx.length) : T11.none;
+    list.innerHTML = res.slice(0, MAX).map((e, i) => {
+      const lock = typeof isFree === "function" && !isPlus() && !isFree(e);
+      return `<button type="button" class="gsitem${lock ? " locked" : ""}" data-i="${i}" role="listitem"><span class="dot" style="background:${brOf(e).c}"></span><span class="gst"><b>${e.name}</b><small>${lock ? `<span class="lk">${ICO_LOCK}</span>` : ""}<span class="mono">${e.code}</span> · ${HANDS[e.h].short} · ${brOf(e).n} · ${ROMAN[e.lvl]}</small></span></button>`;
+    }).join("") + (res.length > MAX ? `<div class="gsmore">${T11.more(res.length - MAX)}</div>` : "");
+    list.querySelectorAll(".gsitem").forEach(b => b.onclick = () => pick(res[+b.dataset.i]));
+  }
+  function pick(e){ if(!e) return; close(); if(M.playing) stop(false); select(e.id); show("practice"); window.scrollTo(0,0); }
+  function open(){ ov.hidden = false; document.body.classList.add("gsopen"); $("#gsQ").focus(); run(); setTimeout(() => $("#gsQ").focus(), 30); }
+  function close(){ ov.hidden = true; document.body.classList.remove("gsopen"); }
+  let tmr; $("#gsQ").addEventListener("input", () => { clearTimeout(tmr); tmr = setTimeout(run, 90); });
+  $("#gsQ").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); clearTimeout(tmr); run(); pick(res[0]); } if(e.key === "Escape") close(); });
+  $("#gsClose").onclick = close;
+  ov.addEventListener("keydown", e => { if(e.key === "Escape") close(); });
+  /* botones: cabecera (todas las vistas) y barra del ejercicio */
+  const mkBtn = id => { const b = document.createElement("button"); b.type = "button"; b.id = id; b.className = "iconbtn gsbtn"; b.setAttribute("aria-label", T11.btn); b.title = T11.btn; b.innerHTML = ICO_SEARCH; b.onclick = open; return b; };
+  $("header.top .brand").append(mkBtn("gsOpen"));
+  $("#libBtn").before(mkBtn("gsOpen2"));
+  document.addEventListener("keydown", e => { if(e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) && ov.hidden){ e.preventDefault(); open(); } });
+}
+/* etiqueta de la barra del ejercicio: el texto se recorta con puntos suspensivos en vez de partir la línea */
+{ const _rq = renderQueue; renderQueue = function(){ _rq(); const lab = $("#standLabel");
+    [...lab.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim()).forEach(n => { const s = document.createElement("span"); s.className = "lt"; s.textContent = n.textContent; n.replaceWith(s); }); };
+  renderQueue(); }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
 (function(){
