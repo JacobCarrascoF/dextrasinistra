@@ -4,6 +4,6 @@ Ejercicios de guitarra para mano derecha (Dextra), mano izquierda (Sinistra) y a
 
 App web instalable (PWA): se abre a pantalla completa y funciona sin conexión.
 
-**Abrir:** https://jacobcarrascof.github.io/dextrasinistra/ · **English:** https://jacobcarrascof.github.io/dextrasinistra/en.html
+**Abrir:** https://dextrasinistra.com · **English:** https://dextrasinistra.com/en.html
 
 © 2026 Jacob Carrasco. Todos los derechos reservados.
