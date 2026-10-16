@@ -724,6 +724,34 @@ body.gsopen .miniplayer{display:none}
   .handcard.hc2 .txt{align-items:center;text-align:center}
   .handcard.hc2 .chev{display:none}
 }
+/* ===== v0.12: selector de mano siempre arriba ===== */
+@media (max-width:760px){
+  body[data-view="home"] header.top .handseg,body[data-view="progress"] header.top .handseg,body.insettings header.top .handseg,body.practicing header.top .handseg{display:flex!important}
+  header.top{gap:8px;padding-bottom:8px!important}
+  header.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--acc-d)}
+  body[data-hand="S"] header.top::after{background:var(--acc-s)}
+  body[data-hand="A"] header.top::after{background:linear-gradient(90deg,var(--acc-s) 0 50%,var(--acc-d) 50% 100%)}
+  header.top{box-shadow:none}
+  .handseg{padding:3px}
+  .handseg button{padding:5px 6px;font-size:14.5px}
+  body.practicing header.top{position:sticky;top:0;padding:calc(8px + env(safe-area-inset-top, 0px)) 16px 8px!important;min-height:0}
+  body.practicing header.top .brand{display:none}
+  .standbar{top:var(--hh,0px);box-shadow:0 1px 0 var(--line)}
+  .libhead{top:var(--hh,0px)}
+}
+.libseg{display:none!important}
+.deskonly{display:inline!important}
+@media (max-width:760px){
+  .handcard.hc2{min-height:68px}
+  .handcard.hc2 .face{width:72px;flex-basis:72px}
+  .handcard.hc2 .face svg{width:62px;height:62px}
+  .handcard.hc2 .txt{padding:8px 14px}
+  .handcard.hc2 .txt b{font-size:17px}
+  .hands:has(.hc2){gap:6px}
+  .hello .date{font-size:13px}
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .handseg button[aria-pressed="true"]{background:var(--line2)}}
+:root[data-theme="dark"] .handseg button[aria-pressed="true"]{background:var(--line2)}
 </style>
 </head>
 <body>
@@ -998,7 +1026,7 @@ body.gsopen .miniplayer{display:none}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "16/10/2026 16:30";
+window.DS_BUILD = "16/10/2026 16:38";
 const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
@@ -2956,7 +2984,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "0.11 beta · October 2026";
+const APP_VER = "0.12 beta · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -3531,6 +3559,9 @@ function gIndex(){
 { const _rq = renderQueue; renderQueue = function(){ _rq(); const lab = $("#standLabel");
     [...lab.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim()).forEach(n => { const s = document.createElement("span"); s.className = "lt"; s.textContent = n.textContent; n.replaceWith(s); }); };
   renderQueue(); }
+/* altura de la cabecera fija, para que la barra del ejercicio se pegue justo debajo */
+{ const hh = () => document.documentElement.style.setProperty("--hh", $("header.top").offsetHeight + "px");
+  new ResizeObserver(hh).observe($("header.top")); addEventListener("resize", hh); hh(); }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
 (function(){
