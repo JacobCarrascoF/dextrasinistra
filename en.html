@@ -848,7 +848,7 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "16/10/2026 12:42";
+window.DS_BUILD = "16/10/2026 16:02";
 const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
@@ -2344,9 +2344,9 @@ const HANDS = {
   D:{name:"Dextra", short:"Dextra", sub:"Right hand · picking", EX:DEX.EX, BRANCHES:DEX.BRANCHES, PLANS:DEX.PLANS, exByName:DEX.exByName, ph:"Search: D-1204, string 3, sextuplets, inside…",
      legend:"⊓ downstroke · V upstroke · m a c fingers (middle, ring, pinky) · p i m a e right-hand fingers · dashed stroke = motion without sound · × = muted note or strum"},
   S:{name:"Sinistra", short:"Sinistra", sub:"Left hand · fretting", EX:SIN.EX, BRANCHES:SIN.BRANCHES, PLANS:SIN.PLANS, exByName:SIN.exByName, ph:"Search: S-1204, trill, vibrato, barre…",
-     legend:"Number = fret · small number = finger (1 index, 2 middle, 3 ring, 4 pinky; 0 = open) · h hammer-on · p pull-off · / \\ slide · ↗ ↘ position shift · b½ b1 b1½ b2 bend · pb pre-bend · r release · ~ vibrato cycle · • fret and release · × muted · = hold"},
+     legend:"Number = fret (0 = open) · h hammer-on · p pull-off · / \\ slide · ↗ ↘ position shift · b½ b1 b1½ b2 bend · pb pre-bend · r release · ~ vibrato cycle · • fret and release · × muted · = hold"},
   A:{name:"Both hands", short:"Both", sub:"Sync · pick and finger together", EX:AMB, BRANCHES:{map:{n:"Fretboard maps", c:"var(--acc-d)"}}, PLANS:{}, exByName: n => AMB.find(e => e.name === n), ph:"Search: A-1204, major, arpeggio, thirds…",
-     legend:"Top, in blue: pick direction (Dextra). On each string: the fret and, in small orange, the left-hand finger (Sinistra). A-1204 combines D-1204 and S-1204."}
+     legend:"Top, in blue: pick direction (Dextra). On each string: the fret the left hand plays (Sinistra). A-1204 combines D-1204 and S-1204."}
 };
 const ALL = new Map(); [DEX.EX, SIN.EX, AMB].forEach(a => a.forEach(e => ALL.set(e.id, e)));
 const brOf = e => HANDS[e.h].BRANCHES[e.b];
@@ -2409,7 +2409,6 @@ function fretMark(cx, yy, nn, fingerCol){
   const fx = nn.t === "x" ? "×" : String(nn.f), wide = fx.length > 1 ? 9 : 6;
   let h = `<rect x="${cx-wide-1}" y="${yy-8}" width="${2*wide+2}" height="16" fill="var(--raise)"/>`;
   h += `<text x="${cx}" y="${yy+4}" text-anchor="middle" font-size="12" font-family="var(--f-mono)" fill="${nn.t === "x" ? "var(--muted)" : "var(--fg)"}">${fx}</text>`;
-  if(nn.d > 0 && nn.t !== "x") h += `<text x="${cx+wide+1}" y="${yy+8}" font-size="8.5" font-family="var(--f-mono)" fill="${fingerCol}">${nn.d}</text>`;
   return h;
 }
 function renderTabS(ex){
@@ -2807,7 +2806,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "0.9.1 beta · October 2026";
+const APP_VER = "0.9.2 beta · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -2921,7 +2920,6 @@ function fretMark(cx, yy, nn, fingerCol){
     h = `<rect x="${cx-wide-1}" y="${yy-8}" width="${2*wide+2}" height="16" fill="var(--raise)"/>`;
     h += `<text x="${cx}" y="${yy+4}" text-anchor="middle" font-size="12" font-family="var(--f-mono)" fill="${nn.t === "x" ? "var(--muted)" : "var(--fg)"}">${fx}</text>`;
   }
-  if(nn.d > 0 && nn.t !== "x") h += `<text x="${cx+wide+2}" y="${yy+9}" font-size="8.5" font-family="var(--f-mono)" fill="${fingerCol}">${nn.d}</text>`;
   return h;
 }
 /* ============ Práctica libre: anterior / siguiente (botones, deslizar, flechas) ============ */

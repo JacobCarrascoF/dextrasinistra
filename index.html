@@ -847,7 +847,7 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "16/10/2026 12:42";
+<script>window.DS_BUILD = "16/10/2026 16:02";
 const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
@@ -2343,9 +2343,9 @@ const HANDS = {
   D:{name:"Dextra", short:"Dextra", sub:"Mano derecha · pulsar", EX:DEX.EX, BRANCHES:DEX.BRANCHES, PLANS:DEX.PLANS, exByName:DEX.exByName, ph:"Buscar: D-1204, cuerda 3, seisillos, inside…",
      legend:"⊓ púa abajo · V púa arriba · m a c dedos (medio, anular, meñique) · p i m a e dedos de mano derecha · trazo discontinuo = movimiento sin sonar · × = nota o rasgueo apagado"},
   S:{name:"Sinistra", short:"Sinistra", sub:"Mano izquierda · pisar", EX:SIN.EX, BRANCHES:SIN.BRANCHES, PLANS:SIN.PLANS, exByName:SIN.exByName, ph:"Buscar: S-1204, trino, vibrato, cejilla…",
-     legend:"Número = traste · número pequeño = dedo (1 índice, 2 medio, 3 anular, 4 meñique; 0 = al aire) · h hammer-on · p pull-off · / \\ slide · ↗ ↘ cambio de posición · b½ b1 b1½ b2 bend · pb pre-bend · r release · ~ ciclo de vibrato · • pisar y cortar · × apagado · = mantener"},
+     legend:"Número = traste (0 = al aire) · h hammer-on · p pull-off · / \\ slide · ↗ ↘ cambio de posición · b½ b1 b1½ b2 bend · pb pre-bend · r release · ~ ciclo de vibrato · • pisar y cortar · × apagado · = mantener"},
   A:{name:"Ambas manos", short:"Ambas", sub:"Sincronía · púa y dedo a la vez", EX:AMB, BRANCHES:{map:{n:"Mapas del mástil", c:"var(--acc-d)"}}, PLANS:{}, exByName: n => AMB.find(e => e.name === n), ph:"Buscar: A-1204, mayor, arpegio, terceras…",
-     legend:"Arriba, en azul: dirección de púa (Dextra). En cada cuerda: el traste y, en naranja pequeño, el dedo de la izquierda (Sinistra). A-1204 combina D-1204 y S-1204."}
+     legend:"Arriba, en azul: dirección de púa (Dextra). En cada cuerda: el traste que pisa la izquierda (Sinistra). A-1204 combina D-1204 y S-1204."}
 };
 const ALL = new Map(); [DEX.EX, SIN.EX, AMB].forEach(a => a.forEach(e => ALL.set(e.id, e)));
 const brOf = e => HANDS[e.h].BRANCHES[e.b];
@@ -2408,7 +2408,6 @@ function fretMark(cx, yy, nn, fingerCol){
   const fx = nn.t === "x" ? "×" : String(nn.f), wide = fx.length > 1 ? 9 : 6;
   let h = `<rect x="${cx-wide-1}" y="${yy-8}" width="${2*wide+2}" height="16" fill="var(--raise)"/>`;
   h += `<text x="${cx}" y="${yy+4}" text-anchor="middle" font-size="12" font-family="var(--f-mono)" fill="${nn.t === "x" ? "var(--muted)" : "var(--fg)"}">${fx}</text>`;
-  if(nn.d > 0 && nn.t !== "x") h += `<text x="${cx+wide+1}" y="${yy+8}" font-size="8.5" font-family="var(--f-mono)" fill="${fingerCol}">${nn.d}</text>`;
   return h;
 }
 function renderTabS(ex){
@@ -2806,7 +2805,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "0.9.1 beta · octubre 2026";
+const APP_VER = "0.9.2 beta · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -2920,7 +2919,6 @@ function fretMark(cx, yy, nn, fingerCol){
     h = `<rect x="${cx-wide-1}" y="${yy-8}" width="${2*wide+2}" height="16" fill="var(--raise)"/>`;
     h += `<text x="${cx}" y="${yy+4}" text-anchor="middle" font-size="12" font-family="var(--f-mono)" fill="${nn.t === "x" ? "var(--muted)" : "var(--fg)"}">${fx}</text>`;
   }
-  if(nn.d > 0 && nn.t !== "x") h += `<text x="${cx+wide+2}" y="${yy+9}" font-size="8.5" font-family="var(--f-mono)" fill="${fingerCol}">${nn.d}</text>`;
   return h;
 }
 /* ============ Práctica libre: anterior / siguiente (botones, deslizar, flechas) ============ */
