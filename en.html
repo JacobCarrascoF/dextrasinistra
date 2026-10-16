@@ -848,7 +848,7 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "16/10/2026 12:20";
+window.DS_BUILD = "16/10/2026 12:42";
 const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
@@ -2807,7 +2807,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "0.9 beta · October 2026";
+const APP_VER = "0.9.1 beta · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){

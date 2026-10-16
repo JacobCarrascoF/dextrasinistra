@@ -847,7 +847,7 @@ body.insettings header.top .handseg, body.insettings .handline{display:none}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "16/10/2026 12:20";
+<script>window.DS_BUILD = "16/10/2026 12:42";
 const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
@@ -2806,7 +2806,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "0.9 beta · octubre 2026";
+const APP_VER = "0.9.1 beta · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
