@@ -795,7 +795,7 @@ body.gsopen .miniplayer{display:none}
           <circle cx="125" cy="128.8" r="6" fill="#ECEFF4"></circle>
           <circle cx="125" cy="148" r="6" fill="#ECEFF4"></circle>
         </svg>
-</div><div class="txt"><b>Dextra</b><span>Pulsar</span><small class="mono">1.085<br>ejercicios</small></div></button>
+</div><div class="txt"><b>Dextra</b><span>Pulsar</span><small class="mono">2.645<br>ejercicios</small></div></button>
       <button class="handcard" data-go-hand="S"><div class="face s"><svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 200 200" aria-hidden="true" aria-label="Icono de Sinistra: bobina izquierda de una pastilla humbucker en naranja, con la bobina derecha solo dibujada">
           <rect x="1" y="1" width="198" height="198" rx="46" fill="#2E3440" stroke="#434C5E" stroke-width="2"></rect>
           <rect x="38" y="24" width="124" height="152" rx="20" fill="none" stroke="#4C566A" stroke-width="2"></rect>
@@ -808,7 +808,7 @@ body.gsopen .miniplayer{display:none}
           <circle cx="75" cy="128.8" r="6" fill="#2E3440"></circle>
           <circle cx="75" cy="148" r="6" fill="#2E3440"></circle>
         </svg>
-</div><div class="txt"><b>Sinistra</b><span>Pisar</span><small class="mono">923<br>ejercicios</small></div></button>
+</div><div class="txt"><b>Sinistra</b><span>Pisar</span><small class="mono">2.955<br>ejercicios</small></div></button>
       <button class="handcard" data-go-hand="A"><div class="face a"><svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 200 200" aria-hidden="true" aria-label="Las dos bobinas juntas forman la pastilla humbucker completa">
         <defs>
           <clipPath id="hb-tile"><rect x="0" y="0" width="200" height="200" rx="46"></rect></clipPath>
@@ -833,7 +833,7 @@ body.gsopen .miniplayer{display:none}
         <circle cx="125" cy="128.8" r="6" fill="#ECEFF4"></circle>
         <circle cx="125" cy="148" r="6" fill="#ECEFF4"></circle>
       </svg>
-</div><div class="txt"><b>Ambas</b><span>Sincronía</span><small class="mono">613<br>frases</small></div></button>
+</div><div class="txt"><b>Ambas</b><span>Sincronía</span><small class="mono">2.645<br>frases</small></div></button>
     </div>
     <div id="homeStats" class="statstrip"></div>
     <p class="foot" id="homeFoot">Las cifras salen de lo que registras al terminar cada ejercicio.</p>
@@ -981,7 +981,7 @@ body.gsopen .miniplayer{display:none}
       <p class="setp">Técnica de guitarra eléctrica por manos: <b>Dextra</b> para la mano que pulsa, <b>Sinistra</b> para la que pisa y <b>Ambas</b> para sincronizarlas. Cada ejercicio trae tablatura, metrónomo, reloj y registro.</p>
       <details class="legal"><summary>Cómo funciona la numeración</summary><div>
         <p>Cada ejercicio tiene un código: <span class="mono">D-</span> Dextra, <span class="mono">S-</span> Sinistra, <span class="mono">A-</span> Ambas. Los números del <span class="mono">1000</span> al <span class="mono">1612</span> son mapas compartidos: <span class="mono">D-1204</span> es el patrón de púa, <span class="mono">S-1204</span> la digitación sobre el mismo recorrido y <span class="mono">A-1204</span> las dos manos a la vez.</p>
-        <p>Del <span class="mono">2000</span> en adelante son ejercicios propios de Dextra; del <span class="mono">3000</span> en adelante, propios de Sinistra.</p></div></details>
+        <p>Del <span class="mono">2000</span> en adelante son ejercicios propios de Dextra; del <span class="mono">3000</span> en adelante, propios de Sinistra. Los enclosures van del <span class="mono">4000</span> al <span class="mono">6999</span> y comparten número en las tres manos; en Dextra, los que tienen la misma púa se muestran una sola vez.</p></div></details>
       <details class="legal"><summary>Método de trabajo</summary><div>
         <p>1. Empieza en el tempo mínimo del rango, aunque te parezca lento.</p>
         <p>2. Registra cómo ha salido. <b>Limpio</b>: la próxima vez sube 4 BPM. <b>Controlado</b>: repite el tempo. <b>Con tensión</b>: baja un 10 %.</p>
@@ -1025,7 +1025,185 @@ body.gsopen .miniplayer{display:none}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "16/10/2026 16:38";
+<script>window.DS_BUILD = "19/10/2026 09:27";
+/* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
+   Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
+   Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
+   m7♭5 con Do locrio. Todo dentro de 5 trastes; una aproximación puede ir hasta dos cuerdas lejos del objetivo.
+   Numeración 4000–6999, compartida por las tres manos. El orden de generación fija los números:
+   los contextos y tipos nuevos se añaden SIEMPRE al final de CTX_DEF y de TYPES. */
+const ENC = (function(){
+  const TUNE = {6:40,5:45,4:50,3:55,2:59,1:64};
+  const MAJ = [0,2,4,5,7,9,11], DOR = [0,2,3,5,7,9,10], MIX = [0,2,4,5,7,9,10], LOC = [0,1,3,5,6,8,10];
+  const TYPES = [
+    {k:"SD-IC", n:"SD→IC", d:"superior diatónica y luego inferior cromática", seq:["SD","IC"]},
+    {k:"IC-SD", n:"IC→SD", d:"inferior cromática y luego superior diatónica", seq:["IC","SD"]},
+    {k:"SC-IC", n:"SC→IC", d:"superior cromática y luego inferior cromática", seq:["SC","IC"]},
+    {k:"IC-SC", n:"IC→SC", d:"inferior cromática y luego superior cromática", seq:["IC","SC"]},
+    {k:"SD-ID", n:"SD→ID", d:"superior diatónica y luego inferior diatónica", seq:["SD","ID"]},
+    {k:"ID-SD", n:"ID→SD", d:"inferior diatónica y luego superior diatónica", seq:["ID","SD"]},
+    {k:"SD-2IC", n:"SD→2IC", d:"superior diatónica y luego doble cromática inferior", seq:["SD","IC2","IC"]},
+    {k:"ID-2SC", n:"ID→2SC", d:"inferior diatónica y luego doble cromática superior", seq:["ID","SC2","SC"]},
+    {k:"ALT-AB", n:"alterna SD→IC / IC→SD", d:"alternando: un objetivo por arriba (SD→IC) y el siguiente por abajo (IC→SD)", alt:["SD-IC","IC-SD"]},
+    {k:"ALT-BA", n:"alterna IC→SD / SD→IC", d:"alternando: un objetivo por abajo (IC→SD) y el siguiente por arriba (SD→IC)", alt:["IC-SD","SD-IC"]},
+    {k:"ALT-CR", n:"alterna SC→IC / IC→SC", d:"alternando cromáticas: SC→IC en un objetivo e IC→SC en el siguiente", alt:["SC-IC","IC-SC"]}
+  ];
+  const TBY = Object.fromEntries(TYPES.map(t => [t.k, t]));
+  const CTX_DEF = [
+    {cat:"Enclosures en tríadas", n:"Tríada mayor", pcs:[0,4,7], sc:MAJ, scn:"Do mayor", w:5},
+    {cat:"Enclosures en tríadas", n:"Tríada menor", pcs:[0,3,7], sc:DOR, scn:"Do dórico", w:5},
+    {cat:"Enclosures en cuatriadas", n:"Maj7", pcs:[0,4,7,11], sc:MAJ, scn:"Do mayor", w:5},
+    {cat:"Enclosures en cuatriadas", n:"m7", pcs:[0,3,7,10], sc:DOR, scn:"Do dórico", w:5},
+    {cat:"Enclosures en cuatriadas", n:"7", pcs:[0,4,7,10], sc:MIX, scn:"Do mixolidio", w:5},
+    {cat:"Enclosures en cuatriadas", n:"m7♭5", pcs:[0,3,6,10], sc:LOC, scn:"Do locrio", w:5},
+    {cat:"Enclosures en escala mayor", n:"Mayor", pcs:MAJ, sc:MAJ, scn:"Do mayor", w:4, scale:true}
+  ];
+  function posMap(pcs, f0, w){
+    const n = [];
+    for(const s of [6,5,4,3,2,1]) for(let f=f0; f<f0+w; f++){ const m = TUNE[s]+f; if(pcs.includes(m%12) && !n.some(x => x.m === m)) n.push({s,f,m}); }
+    return n.sort((a,b) => a.m - b.m);
+  }
+  const distOf = map => [6,5,4,3,2,1].map(s => map.filter(x => x.s === s).length).join("·");
+  function uniqueMaps(pcs, w, ok = () => true){
+    const seen = new Set(), out = [];
+    for(let f0=1; f0<=12; f0++){ const map = posMap(pcs, f0, w), d = distOf(map); if(seen.has(d) || !ok(map)) continue; seen.add(d); out.push({f0, map}); }
+    return out;
+  }
+  const mod = (a, n) => ((a % n) + n) % n;
+  function neigh(m, sc, up){ let k = m + (up ? 1 : -1); while(!sc.includes(mod(k,12))) k += up ? 1 : -1; return k; }
+  const pitch = (r, m, sc) => ({SD:neigh(m,sc,true), ID:neigh(m,sc,false), SC:m+1, IC:m-1, SC2:m+2, IC2:m-2})[r];
+  function place(p, ts, prevS, x){
+    let best = null;
+    for(const s of [6,5,4,3,2,1]){
+      const f = p - TUNE[s];
+      if(f < Math.max(0, x) || f > x + 4 || Math.abs(s - ts) > 2) continue;
+      const cost = 3*Math.abs(s - ts) + Math.abs(s - (prevS ?? ts));
+      if(!best || cost < best.c) best = {c:cost, s, f};
+    }
+    return best;
+  }
+  function build1(targets, ctx, type, dir, x){
+    const codes = type.alt || [type.k];
+    const need = new Set(codes.flatMap(c => TBY[c].seq));
+    const ok = targets.filter(t => [...need].every(r => place(pitch(r, t.m, ctx.sc), t.s, null, x)));
+    if(ok.length < 3) return null;
+    const tg = dir === "asc" ? ok : ok.slice().reverse();
+    const cells = []; let prev = null;
+    for(let i=0;i<tg.length;i++){
+      const t = tg[i], tc = TBY[codes[i % codes.length]], cell = [];
+      for(const r of tc.seq){ const p = pitch(r, t.m, ctx.sc), b = place(p, t.s, prev, x); if(!b) return null; cell.push({s:b.s, f:b.f, m:p, r}); prev = b.s; }
+      cell.push({s:t.s, f:t.f, m:t.m, r:"T"}); prev = t.s;
+      cells.push(cell);
+    }
+    return {cells, skipped: targets.length - ok.length};
+  }
+  function build(targets, ctx, type, dir){
+    const lo = Math.min(...targets.map(t => t.f)), hi = Math.max(...targets.map(t => t.f));
+    let best = null;
+    for(let x = hi - 4; x <= lo; x++){
+      const r = build1(targets, ctx, type, dir, x); if(!r) continue;
+      const jumps = r.cells.reduce((a,c) => a + c.slice(1).reduce((b,n,i) => b + Math.abs(n.s - c[i].s), 0), 0);
+      if(!best || r.cells.length > best.r.cells.length || (r.cells.length === best.r.cells.length && jumps < best.j)) best = {r, j:jumps, x};
+    }
+    return best;
+  }
+  /* digitación: caja de 4 trastes con más notas; la nota de fuera se toca extendiendo el 1 o el 4 */
+  function fingers(notes){
+    const lo = Math.min(...notes.map(n => n.f)), hi = Math.max(...notes.map(n => n.f));
+    let b = lo;
+    if(hi - lo >= 4){ const cnt = x => notes.filter(n => n.f >= x && n.f <= x + 3).length; b = cnt(lo + 1) > cnt(lo) ? lo + 1 : lo; }
+    notes.forEach(n => { n.d = n.f === 0 ? 0 : Math.max(1, Math.min(4, n.f - b + 1)); });
+    return hi - lo >= 4 ? (b === lo ? 4 : 1) : 0;
+  }
+  const specs = [];
+  let num = 4000;
+  CTX_DEF.forEach(c => {
+    const forms = c.scale ? uniqueMaps(c.pcs, c.w, m => m.length >= 14) : uniqueMaps(c.pcs, c.w);
+    forms.forEach((fm, i) => {
+      const ctxName = c.scale ? `${c.n} · posición ${i+1}` : `${c.n} · forma ${i+1}`;
+      TYPES.forEach(t => ["asc","desc"].forEach(dir => {
+        const best = build(fm.map, c, t, dir);
+        if(!best) return;
+        const cells = best.r.cells, sub = cells[0].length === 3 ? 3 : 4;
+        const notes = cells.flat(), ext = fingers(notes);
+        /* rejilla: la primera aproximación es anacrusa; el objetivo cae en el tiempo; el último tiempo deja silencio */
+        const grid = [null]; let k = 0;
+        cells[0].slice(0, -1).forEach(() => grid.push(k++));
+        cells.forEach((cell, ci) => {
+          grid.push(k++);
+          if(ci + 1 < cells.length) cells[ci+1].slice(0, -1).forEach(() => grid.push(k++));
+          else for(let q=1;q<sub;q++) grid.push(null);
+        });
+        const lvl = (!c.scale && c.pcs.length === 3 && t.seq && t.seq.length === 2) ? 3 : 4;
+        specs.push({ctx:c, ctxName, cat:c.cat, t, dir, notes, grid, sub, lvl, ext, skipped:best.r.skipped,
+          span:[Math.min(...notes.map(n => n.f)), Math.max(...notes.map(n => n.f))], form:fm});
+      }));
+    });
+  });
+  const DIRN = {asc:"ascendente", desc:"descendente"};
+  /* púa: mismo cálculo que los mapas de la app */
+  function pickDirs(strs, mode){
+    let prev = null, ps = null;
+    return strs.map((s,i) => {
+      let d;
+      if(i === 0) d = "D";
+      else if(mode === "econ" && s !== ps && Math.abs(s - ps) === 1){ const toward = s < ps ? "D" : "U"; d = prev === toward ? toward : (prev === "D" ? "U" : "D"); }
+      else d = prev === "D" ? "U" : "D";
+      prev = d; ps = s; return s + d;
+    });
+  }
+  /* cada especificación da alternate y, si cambia algún golpe, economy; un número por variante */
+  const items = [];
+  specs.forEach(sp => ["alt","econ"].forEach(mode => {
+    const strs = sp.notes.map(n => n.s);
+    const dirs = pickDirs(strs, mode);
+    if(mode === "econ" && dirs.join() === pickDirs(strs, "alt").join()) return;
+    const it = dirs[Symbol.iterator]();
+    const toks = sp.grid.map(g => g == null ? "-" : it.next().value);
+    items.push(Object.assign({}, sp, {mode, toks, num: num++, base:`${sp.ctxName} · enclosure ${sp.t.n} · ${DIRN[sp.dir]}`}));
+  }));
+  /* Dextra: mismo patrón de púa = mismo ejercicio; se muestra el primero y se indica para qué más sirve */
+  const firstBy = new Map(), alias = {}, also = {};
+  items.forEach(it => {
+    const key = it.toks.join(" ");
+    if(firstBy.has(key)){ const r = firstBy.get(key); alias[it.num] = r.num; (also[r.num] = also[r.num] || []).push(it); }
+    else firstBy.set(key, it);
+  });
+  const EN = typeof window !== "undefined" && window.DS_LANG === "en";
+  const TEN = {"SD-IC":"upper diatonic, then lower chromatic","IC-SD":"lower chromatic, then upper diatonic","SC-IC":"upper chromatic, then lower chromatic",
+    "IC-SC":"lower chromatic, then upper chromatic","SD-ID":"upper diatonic, then lower diatonic","ID-SD":"lower diatonic, then upper diatonic",
+    "SD-2IC":"upper diatonic, then double chromatic from below","ID-2SC":"lower diatonic, then double chromatic from above",
+    "ALT-AB":"alternating: one target from above (UD→LC) and the next from below (LC→UD)","ALT-BA":"alternating: one target from below (LC→UD) and the next from above (UD→LC)",
+    "ALT-CR":"alternating chromatics: UC→LC on one target and LC→UC on the next"};
+  const CEN = {"Tríada mayor":"the C major triad","Tríada menor":"the C minor triad","Maj7":"the CMaj7 arpeggio","m7":"the Cm7 arpeggio","7":"the C7 arpeggio","m7♭5":"the Cm7♭5 arpeggio","Mayor":"the C major scale"};
+  const SEN = {"Do mayor":"C major","Do dórico":"C Dorian","Do mixolidio":"C Mixolydian","Do locrio":"C Locrian"};
+  const codeEn = s => s.replace(/S([DC])/g, "U$1").replace(/I([DC])/g, "L$1").replace(/alterna/g, "alternating");
+  const nameEn = s => codeEn(s.replace("Tríada mayor", "Major triad").replace("Tríada menor", "Minor triad").replace("forma", "shape").replace("posición", "position").replace(/^Mayor/, "Major"));
+  const tip = (it, hand) => {
+    const s = [];
+    if(EN){
+      s.push(`Enclosure ${TEN[it.t.k]}, on ${CEN[it.ctx.n]}; the diatonic neighbours come from ${SEN[it.ctx.scn]}.`);
+      s.push("Every target lands on the beat: the first approach note is a pickup and the last beat leaves a rest to start again.");
+      s.push(`Everything between frets ${it.span[0]} and ${it.span[1]}.`);
+      if(it.ext === 4) s.push("The highest fret needs a finger 4 stretch.");
+      if(it.ext === 1) s.push("The lowest fret needs a finger 1 stretch.");
+      if(it.skipped === 1) s.push("One outer note of the shape is left out because it can't be enclosed without leaving the position.");
+      if(it.skipped > 1) s.push(`${it.skipped} outer notes of the shape are left out because they can't be enclosed without leaving the position.`);
+      if(hand === "D" && also[it.num]){ const ns = [...new Set(also[it.num].map(a => nameEn(a.ctxName + " · " + a.t.n)))]; s.push(`For the right hand it also covers: ${ns.join("; ")}.`); }
+      return s.join(" ");
+    }
+    s.push(`Enclosure ${it.t.d}, sobre ${it.ctx.n === "Mayor" ? "la escala de Do mayor" : (it.ctx.n.startsWith("Tríada") ? "la " + it.ctx.n.toLowerCase() + " de Do" : "el arpegio " + it.ctx.n + " de Do")}; las notas diatónicas salen de ${it.ctx.scn}.`);
+    s.push("Cada objetivo cae en el tiempo: la primera aproximación entra como anacrusa y el último tiempo deja silencio para volver.");
+    s.push(`Todo entre los trastes ${it.span[0]} y ${it.span[1]}.`);
+    if(it.ext === 4) s.push("El traste más alto pide extender el 4.");
+    if(it.ext === 1) s.push("El traste más bajo pide extender el 1.");
+    if(it.skipped === 1) s.push("Se omite 1 nota extrema de la forma porque no se puede rodear sin salir de posición.");
+    if(it.skipped > 1) s.push(`Se omiten ${it.skipped} notas extremas de la forma porque no se pueden rodear sin salir de posición.`);
+    if(hand === "D" && also[it.num]){ const ns = [...new Set(also[it.num].map(a => a.ctxName + " · " + a.t.n))]; s.push(`Para la mano derecha sirve también para: ${ns.join("; ")}.`); }
+    return s.join(" ");
+  };
+  return {items, alias, also, tip, DIRN, PICK:{alt:"alternate", econ:"economy"}};
+})();
 const DEX = (function(){
 /* ============ Datos: ramas ============ */
 const BRANCHES = {
@@ -1034,7 +1212,8 @@ const BRANCHES = {
   swp:{n:"Sweep y economy", c:"var(--purple)"},
   map:{n:"Escalas y arpegios", c:"var(--yellow)"},
   ras:{n:"Rasgado", c:"var(--orange)"},
-  rit:{n:"Rítmica", c:"var(--green)"}
+  rit:{n:"Rítmica", c:"var(--green)"},
+  enc:{n:"Enclosures", c:"var(--red)"}
 };
 const SUBN = {1:"negras",2:"corcheas",3:"tresillos",4:"semicorcheas",5:"quintillos",6:"seisillos",7:"septillos",8:"fusas"};
 const ROMAN = ["","I","II","III","IV"];
@@ -1532,6 +1711,15 @@ SEG_LO.forEach(lo => SEG_HI.forEach(hi => {
  {n:"pentatónica 6-5-4 + arpegio 3-2-1", s:[6,6,5,5,4,4,3,2,1]}, {n:"arpegio 6-5-4 + 2 nps 3-2-1", s:[6,5,4,3,3,2,2,1,1]}].forEach(fr =>
   ["updown","downup"].forEach(seq => ["alt","econ"].forEach(mode => addMap("Frases combinadas", fr.n, fr.s, seq, mode, 4, distOf(fr.s), "Escala y arpegio encadenados: cambia de mecanismo sin cambiar el pulso."))));
 
+
+/* ======================= ENCLOSURES · púa (mismo número en Sinistra y Ambas) ======================= */
+ENC.items.forEach(it => {
+  if(ENC.alias[it.num]) return;
+  add("enc", it.cat, `${it.base} · ${ENC.PICK[it.mode]}`, it.sub, it.toks.slice(), {nps: it.mode === "econ" ? 10 : 9, lvl: it.lvl, mute:true,
+    tags:["enclosure", ENC.PICK[it.mode]], tip: ENC.tip(it, "D")});
+  EX[EX.length-1].num0 = it.num;
+});
+
 /* ======================= PLANES GUIADOS ======================= */
 const PLANS = {
   ini: {n:"Inicial", weeks:8, days:5, min:25, deload:[],
@@ -1598,9 +1786,9 @@ const OLD2NEW = {};
   const used = new Set(Object.values(NUM));
   let nextShared = Math.max(999, ...[...used].filter(n => n < 2000)) + 1, nextOwn = Math.max(1999, ...[...used].filter(n => n >= 2000)) + 1;
   EX.forEach(e => {
-    let n = NUM[e.name];
+    let n = e.num0 ?? NUM[e.name];
     if(n === undefined){ n = e.b === "map" ? nextShared++ : nextOwn++; console.warn("Ejercicio sin número fijo:", e.name, n); }
-    e.num = n; e.code = "D-" + n; e.shared = n < 2000;
+    e.num = n; e.code = "D-" + n; e.shared = n < 2000 || (n >= 4000 && n < 7000);
     OLD2NEW[e.id] = e.code; e.id = e.code;
   });
 })();
@@ -1617,7 +1805,8 @@ const BRANCHES = {
   bnd:{n:"Bends y vibrato", c:"var(--orange)"},
   aco:{n:"Acordes y cejilla", c:"var(--green)"},
   apa:{n:"Apagado", c:"var(--red)"},
-  map:{n:"Escalas y arpegios", c:"var(--yellow)"}
+  map:{n:"Escalas y arpegios", c:"var(--yellow)"},
+  enc:{n:"Enclosures", c:"var(--red)"}
 };
 const SUBN = {1:"negras",2:"corcheas",3:"tresillos",4:"semicorcheas",5:"quintillos",6:"seisillos",7:"septillos",8:"fusas"};
 const ROMAN = ["","I","II","III","IV"];
@@ -1944,6 +2133,16 @@ SEG_LO.forEach(lo => SEG_HI.forEach(hi => {
  {n:"pentatónica 6-5-4 + arpegio 3-2-1", s:[6,6,5,5,4,4,3,2,1]}, {n:"arpegio 6-5-4 + 2 nps 3-2-1", s:[6,5,4,3,3,2,2,1,1]}].forEach(fr =>
   ["updown","downup"].forEach(seq => ["alt","econ"].forEach(mode => addMap("Frases combinadas", fr.n, phraseNotes(fr.s), seq, mode, 4, distOfN(fr.s.map(s => ({s}))), "Escala y arpegio encadenados en La menor, 5.ª posición."))));
 
+
+/* ======================= ENCLOSURES · digitación (mismo número en Dextra y Ambas) ======================= */
+ENC.items.forEach(it => {
+  const st = it.mode === "alt" ? legato(it.notes.map(n => N(n.s, n.f, n.d))) : it.notes.map(n => N(n.s, n.f, n.d, "st"));
+  const steps = it.grid.map(g => g == null ? null : st[g]);
+  add("enc", it.cat, `${it.base} · ${ART[it.mode]}`, it.sub, steps, {nps: it.mode === "alt" ? 8 : 7, lvl: it.lvl, dname: `${it.base} · ${PICK[it.mode]}`,
+    tags:["enclosure", ART[it.mode]], tip: ART_TIP[it.mode] + " " + ENC.tip(it, "S")});
+  EX[EX.length-1].num0 = it.num;
+});
+
 /* ======================= PLANES GUIADOS (Sinistra) ======================= */
 const PLANS = {
   ini: {n:"Inicial", weeks:8, days:5, min:25, deload:[],
@@ -2007,10 +2206,10 @@ const OLD2NEW = {};
 (function(){
   let nextOwn = Math.max(2999, ...Object.values(NUM).filter(n => n >= 3000)) + 1;
   EX.forEach(e => {
-    let n = NUM[e.name];
+    let n = e.num0 ?? NUM[e.name];
     if(n === undefined){ n = nextOwn++; console.warn("Ejercicio sin número fijo:", e.name, n); }
-    e.num = n; e.code = "S-" + n; e.shared = n < 2000;
-    if(e.shared) e.tip += ` Mismo mapa que D-${n} en Dextra.`;
+    e.num = n; e.code = "S-" + n; e.shared = n < 2000 || (n >= 4000 && n < 7000);
+    if(e.shared) e.tip += ` Mismo mapa que D-${ENC.alias[n] || n} en Dextra.`;
     OLD2NEW[e.id] = e.code; e.id = e.code;
   });
 })();
@@ -2500,8 +2699,11 @@ SIN.EX.forEach(e => { e.h = "S"; });
 const AMB = [];
 (function(){
   const sBy = new Map(SIN.EX.map(e => [e.num, e]));
-  DEX.EX.filter(e => e.shared).forEach(d => {
-    const s = sBy.get(d.num); if(!s || s.steps.length !== d.parsed.length) return;
+  const dBy = new Map(DEX.EX.map(e => [e.num, e]));
+  const pairs = DEX.EX.filter(e => e.shared).map(d => [d, sBy.get(d.num), d.num]);
+  SIN.EX.filter(e => ENC.alias[e.num]).forEach(s => pairs.push([dBy.get(ENC.alias[s.num]), s, s.num]));
+  pairs.forEach(([d, s, num]) => {
+    if(!d || !s || s.steps.length !== d.parsed.length) return;
     const steps = d.parsed.map((t,i) => {
       const st = s.steps[i];
       if(t.rest || st.rest || !st.notes || !t.notes) return {rest:true};
@@ -2509,10 +2711,10 @@ const AMB = [];
       return {notes: st.notes.map(n => ({s:n.s, f:n.f, d:n.d, k: pick ? pick.k : ""}))};
     });
     const econ = / · economy$/.test(d.name);
-    AMB.push({id:"A-" + d.num, code:"A-" + d.num, num:d.num, h:"A", b:"map", cat:d.cat, name:d.name, sub:d.sub, steps, parsed:steps,
+    AMB.push({id:"A-" + num, code:"A-" + num, num, h:"A", b:d.b === "enc" ? "enc" : "map", cat:d.cat, name:d.b === "enc" ? (s.dname || d.name) : d.name, sub:d.sub, steps, parsed:steps,
       info:d.info, nBeats:d.nBeats, beats:d.beats, mixed:d.mixed, subLabel:d.subLabel, shared:true, tags:[...d.tags.filter(x => /notas por cuerda/.test(x))],
       lvl: Math.min(4, Math.max(d.lvl, s.lvl) + 1), bpm:[Math.min(d.bpm[0], s.bpm[0]), Math.min(d.bpm[1], s.bpm[1])],
-      tip: `Las dos manos juntas sobre el mismo mapa: la púa de D-${d.num} y la digitación de S-${d.num}. ` +
+      tip: `Las dos manos juntas sobre el mismo mapa: la púa de D-${d.num} y la digitación de S-${num}. ` +
         (econ ? "Economy en la derecha: en cada barrido, el dedo de la izquierda tiene que estar ya en su traste antes de que llegue la púa. " : "Alternate estricto en la derecha y legato suave en la izquierda: cada dedo cae justo cuando la púa ataca. ") +
         "Empieza más lento que en cada mano por separado; el objetivo es que púa y dedo suenen como un solo gesto."});
   });
@@ -2522,7 +2724,7 @@ const HANDS = {
      legend:"⊓ púa abajo · V púa arriba · m a c dedos (medio, anular, meñique) · p i m a e dedos de mano derecha · trazo discontinuo = movimiento sin sonar · × = nota o rasgueo apagado"},
   S:{name:"Sinistra", short:"Sinistra", sub:"Mano izquierda · pisar", EX:SIN.EX, BRANCHES:SIN.BRANCHES, PLANS:SIN.PLANS, exByName:SIN.exByName, ph:"Buscar: S-1204, trino, vibrato, cejilla…",
      legend:"Número = traste (0 = al aire) · h hammer-on · p pull-off · / \\ slide · ↗ ↘ cambio de posición · b½ b1 b1½ b2 bend · pb pre-bend · r release · ~ ciclo de vibrato · • pisar y cortar · × apagado · = mantener"},
-  A:{name:"Ambas manos", short:"Ambas", sub:"Sincronía · púa y dedo a la vez", EX:AMB, BRANCHES:{map:{n:"Mapas del mástil", c:"var(--acc-d)"}}, PLANS:{}, exByName: n => AMB.find(e => e.name === n), ph:"Buscar: A-1204, mayor, arpegio, terceras…",
+  A:{name:"Ambas manos", short:"Ambas", sub:"Sincronía · púa y dedo a la vez", EX:AMB, BRANCHES:{map:{n:"Mapas del mástil", c:"var(--acc-d)"}, enc:{n:"Enclosures", c:"var(--red)"}}, PLANS:{}, exByName: n => AMB.find(e => e.name === n), ph:"Buscar: A-1204, mayor, arpegio, terceras…",
      legend:"Arriba, en azul: dirección de púa (Dextra). En cada cuerda: el traste que pisa la izquierda (Sinistra). A-1204 combina D-1204 y S-1204."}
 };
 const ALL = new Map(); [DEX.EX, SIN.EX, AMB].forEach(a => a.forEach(e => ALL.set(e.id, e)));
@@ -2536,7 +2738,7 @@ function handTags(ex){
   if(ex.h === "A") t.push("las dos manos a la vez");
   ex.tags.forEach(x => t.push(x));
   if(ex.shared){
-    if(ex.h !== "D" && ALL.has("D-" + ex.num)) t.push({txt:`Solo derecha · D-${ex.num}`, go:"D-" + ex.num});
+    { const dn = ENC.alias[ex.num] || ex.num; if(ex.h !== "D" && ALL.has("D-" + dn)) t.push({txt:`Solo derecha · D-${dn}`, go:"D-" + dn}); }
     if(ex.h !== "S" && ALL.has("S-" + ex.num)) t.push({txt:`Solo izquierda · S-${ex.num}`, go:"S-" + ex.num});
     if(ex.h !== "A" && ALL.has("A-" + ex.num)) t.push({txt:`Las dos manos · A-${ex.num}`, go:"A-" + ex.num});
   }
@@ -3072,7 +3274,7 @@ document.querySelectorAll("#prefLang button").forEach(b => b.onclick = () => goL
 segUI("prefLang", LANG);
 /* ============ Nota raíz en escalas y arpegios (Sinistra y Ambas: alturas reales) ============ */
 const ROOT_TUNE = {6:40,5:45,4:50,3:55,2:59,1:64};
-const ROOT_BY_CAT = {"Escala mayor":0, "Pentatónica":9, "Menor armónica":9, "Menor melódica":9, "3 notas por cuerda":9,
+const ROOT_BY_CAT = {"Enclosures en tríadas":0, "Enclosures en cuatriadas":0, "Enclosures en escala mayor":0, "Escala mayor":0, "Pentatónica":9, "Menor armónica":9, "Menor melódica":9, "3 notas por cuerda":9,
   "Arpegios de tríada":0, "Arpegios de cuatriada":0, "Frases combinadas":9};
 const ROOT_NAME = {0:"Do", 4:"Mi", 9:"La"};
 function rootOf(e){
