@@ -1,5 +1,5 @@
 // Dextra Sinistra · funciona sin conexión. Sube VERSION al publicar cambios.
-const VERSION = "ds-v21";
+const VERSION = "ds-v22";
 const CORE = ["./", "index.html", "en.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png"];
 self.addEventListener("install", e => {
   // cache:"reload" salta la caché HTTP del navegador (GitHub Pages guarda 10 minutos)
