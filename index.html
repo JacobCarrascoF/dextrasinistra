@@ -1215,7 +1215,7 @@ details.more12 > .phases{padding:0 12px 12px}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "21/10/2026 09:01";
+<script>window.DS_BUILD = "21/10/2026 09:13";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3979,7 +3979,7 @@ function plusStatusText(){
 }
 function refreshPlusUI(){
   const st = $("#plusStatus"); if(st) st.textContent = plusStatusText();
-  if(!$("#home").hidden) plusBanner();
+  plusBanner();
   renderList(); lockNote();
 }
 { const _rs = renderSettings; renderSettings = function(){ _rs(); const st = $("#plusStatus"); if(st) st.textContent = plusStatusText(); }; }
