@@ -1,38 +1,26 @@
-DEXTRA SINISTRA · app instalable (PWA)
-=====================================
+DEXTRA SINISTRA · app web instalable (PWA) · versión 1.0
+=========================================================
+
+Publicada en https://dextrasinistra.com (Cloudflare Workers con archivos estáticos).
+Cada push a la rama main de GitHub se publica solo en uno o dos minutos.
 
 Contenido
-  index.html            la app completa (Dextra, Sinistra y Ambas)
+  index.html            la app en español (Dextra, Sinistra y Ambas)
+  en.html               la app en inglés
+  privacidad.html       política de privacidad (ES/EN), necesaria para Google Play
   manifest.webmanifest  nombre, colores e iconos para instalarla
   sw.js                 permite abrirla sin conexión
-  icons/                icono de la pastilla humbucker (192, 512, maskable, Apple 180, favicon)
-
-Importante
-  - Tiene que estar publicada en una web con https. Abrir index.html desde el
-    teléfono como archivo no permite instalarla.
-  - Tu progreso se guarda en el propio teléfono (almacenamiento del navegador),
-    no se sincroniza con la versión de Claude ni entre dispositivos.
-  - Si borras los datos de Safari/Chrome, se borra el progreso.
-
-OPCIÓN A · Netlify Drop (lo más rápido, 2 minutos)
-  1. En el ordenador, descomprime este zip.
-  2. Entra en https://app.netlify.com/drop y arrastra la carpeta "dextra-sinistra-pwa".
-  3. Crea la cuenta gratuita y "reclama" el sitio (si no, caduca y no es público).
-  4. Abre la dirección https://....netlify.app en el teléfono.
-
-OPCIÓN B · GitHub Pages
-  1. github.com > New repository > nombre: dextra-sinistra > Public > Create.
-  2. "uploading an existing file" > arrastra el contenido de la carpeta
-     (index.html, manifest, sw.js y la carpeta icons) > Commit.
-  3. Settings > Pages > Source: Deploy from a branch > main / (root) > Save.
-  4. En 1-2 minutos: https://TU-USUARIO.github.io/dextra-sinistra/
-  Nota: el repositorio es público; el código se puede ver.
-
-Instalar en el teléfono
-  iPhone (Safari): botón Compartir > "Añadir a pantalla de inicio".
-  Android (Chrome): menú ⋮ > "Instalar aplicación" (o "Añadir a pantalla de inicio").
-  Se abre a pantalla completa, sin barras del navegador, y funciona sin conexión.
+  icons/                icono de la pastilla humbucker
+  wrangler.jsonc        configuración de Cloudflare
 
 Actualizar
-  Sube el nuevo index.html y cambia en sw.js la línea VERSION = "ds-v1" a "ds-v2".
-  La app se actualiza al abrirla con conexión.
+  1. Monta index.html y en.html con el código fuente (construir.sh).
+  2. Cópialos aquí y sube VERSION en sw.js (por ejemplo, de "ds-v24" a "ds-v25").
+  3. Commit y push a main.
+
+Instalar en el teléfono
+  Android (Chrome): menú ⋮ > Instalar aplicación.
+  iPhone (Safari): Compartir > Añadir a pantalla de inicio.
+
+El progreso de cada usuario se guarda solo en su dispositivo.
+© 2026 Jacob Carrasco Falcó. Todos los derechos reservados.
