@@ -942,6 +942,52 @@ details.more12 > .phases{padding:0 12px 12px}
 .standmid .queue .qnote{font-size:12px;color:var(--muted);line-height:1.3}
 .standmid .queue .linkbtn{align-self:flex-start;padding:0;font-size:12.5px;height:auto}
 .standmid .queue{align-items:stretch;flex-wrap:nowrap}
+/* ===== v1.1 · móvil en horizontal: hoja de práctica a pantalla completa ===== */
+.tablines{display:flex;flex-direction:column;gap:2px}
+.tablines svg{display:block;max-width:100%;height:auto}
+body.land.practicing:not(.libopen){padding:0!important;overflow:hidden}
+body.land.practicing:not(.libopen) header.top,
+body.land.practicing:not(.libopen) nav.views,
+body.land.practicing:not(.libopen) #miniPlayer,
+body.land.practicing:not(.libopen) .msetwrap,
+body.land.practicing:not(.libopen) #exTags,
+body.land.practicing:not(.libopen) .listenrow,
+body.land.practicing:not(.libopen) #exTip,
+body.land.practicing:not(.libopen) .stats12,
+body.land.practicing:not(.libopen) .legendd,
+body.land.practicing:not(.libopen) .console2 > details{display:none!important}
+body.land.practicing:not(.libopen) #practice{display:block;margin:0;padding:0}
+body.land.practicing:not(.libopen) #practice .stand{position:fixed;inset:0;z-index:4;margin:0;background:var(--bg);display:grid;grid-template-columns:minmax(0,1fr) 272px;grid-template-rows:auto minmax(0,1fr);gap:6px 10px;padding:6px max(10px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+body.land.practicing:not(.libopen) .standbar{grid-column:1/-1;position:static;margin:0;padding:0;min-height:0;height:40px;background:none;border:0;box-shadow:none}
+body.land.practicing:not(.libopen) .standbar .iconbtn{width:38px;height:38px}
+body.land.practicing:not(.libopen) .standlabel{flex-wrap:nowrap!important;align-items:center;gap:8px}
+body.land.practicing:not(.libopen) .standlabel .pos{flex-basis:auto!important}
+body.land.practicing:not(.libopen) .excard{grid-column:1;grid-row:2;margin:0;padding:8px 12px 10px;overflow-y:auto;overscroll-behavior:contain;min-height:0;border-radius:16px}
+body.land.practicing:not(.libopen) #exEyebrow{font-size:11px}
+body.land.practicing:not(.libopen) #exName{font-size:17px;line-height:1.25;margin:2px 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.land.practicing:not(.libopen) .excard .tabbox{margin:0;overflow-x:auto}
+body.land.practicing:not(.libopen) .console2{grid-column:2;grid-row:2;position:static!important;inset:auto;margin:0;border:1px solid var(--line);border-radius:16px;box-shadow:none;background:var(--card);padding:10px 12px;gap:8px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"bpm clock" "bar bar" "durs durs" "act act";align-content:center;overflow-y:auto;min-height:0}
+body.land.practicing:not(.libopen) .console2 .bpmrow{grid-area:bpm;gap:6px;justify-content:flex-start}
+body.land.practicing:not(.libopen) .console2 .bpmc{min-width:60px}
+body.land.practicing:not(.libopen) .console2 .bpmc .n{font-size:32px}
+body.land.practicing:not(.libopen) .console2 .bpmc .u{font-size:10.5px;margin-top:2px;white-space:nowrap}
+body.land.practicing:not(.libopen) .console2 .rbtn{width:38px;height:38px;font-size:20px}
+body.land.practicing:not(.libopen) .console2 #bpmR{display:none}
+body.land.practicing:not(.libopen) .console2 .clockrow{grid-area:clock;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px}
+body.land.practicing:not(.libopen) .console2 .clockrow .t{font-size:24px;line-height:1}
+body.land.practicing:not(.libopen) .console2 .clockrow .nps{display:none}
+body.land.practicing:not(.libopen) .console2 .beats{gap:5px;justify-content:flex-end}
+body.land.practicing:not(.libopen) .console2 .beats i{width:9px;height:9px}
+body.land.practicing:not(.libopen) .console2 .bar{grid-area:bar;height:3px}
+body.land.practicing:not(.libopen) .console2 .durs{grid-area:durs;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:4px}
+body.land.practicing:not(.libopen) .console2 .durs::-webkit-scrollbar{display:none}
+body.land.practicing:not(.libopen) .console2 .actions{grid-area:act;gap:8px}
+body.land.practicing:not(.libopen) .console2 .playbig{width:56px;height:56px;flex:none}
+body.land.practicing:not(.libopen) .console2 .playbig svg{width:21px;height:21px}
+body.land.practicing:not(.libopen) .console2 .pill{height:42px;flex:1;min-width:0;padding:0 8px}
+body.land .toast12{bottom:12px;left:auto;right:12px;max-width:360px}
+body.land .modal .sheet{max-height:100dvh;overflow-y:auto;border-radius:20px 20px 0 0}
+body.land.practicing:not(.libopen) .excard > *{flex-shrink:0}
 </style>
 </head>
 <body>
@@ -1216,7 +1262,7 @@ details.more12 > .phases{padding:0 12px 12px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "21/10/2026 09:13";
+window.DS_BUILD = "22/10/2026 15:50";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3641,7 +3687,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.0 · October 2026";
+const APP_VER = "1.1 · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -4645,6 +4691,108 @@ const T12P = EN12 ? {phases:"Plan phases", day:"Day", today:"Today", tempo:{lent
     const ph = body.querySelector(":scope > .phases");
     if(ph){ const det = document.createElement("details"); det.className = "more12"; const sm = document.createElement("summary"); sm.textContent = T12P.phases; ph.before(det); det.append(sm, ph); }
   };
+}
+
+/* ============ Móvil en horizontal: hoja de práctica a pantalla completa y tablatura en líneas (v1.1) ============ */
+{
+  const mqLand = matchMedia("(orientation: landscape) and (max-height: 560px) and (pointer: coarse)");
+  const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  let lineOf = [], wrapped = false, lastLine = -1;
+
+  /* Parte la tablatura en líneas por tiempos (mejor por compases) para que quepa sin desplazamiento lateral.
+     Cada línea es una copia del mismo SVG con otra ventana (viewBox) y las letras de las cuerdas repetidas. */
+  function wrapTab(){
+    wrapped = false; lineOf = []; lastLine = -1;
+    const box = $("#tab"), svg = box && box.querySelector(":scope > svg");
+    if(!svg || !document.body.classList.contains("land") || !document.body.classList.contains("practicing")) return;
+    const cols = [...svg.querySelectorAll("rect.col")], n = cols.length; if(!n) return;
+    const L = +cols[0].getAttribute("x"), W = +cols[0].getAttribute("width");
+    const fullW = +svg.getAttribute("width"), H = +svg.getAttribute("height");
+        const availW = box.clientWidth - 2;
+    if(fullW <= availW) return;
+    const ex = ALL.get(S0.cur), info = ex && ex.info && ex.info.length >= n ? ex.info : null;
+    const brk = [], meas = new Set();
+    for(let i = 1; i < n; i++) if(!info || !info[i].k){ brk.push(i); if(info && info[i].b % 4 === 0) meas.add(i); }
+    brk.push(n);
+    const lw = (a, b) => L + (b - a) * W + (b === n ? 14 : 2);
+    const plan = s => {
+      const cap = availW / s, lines = []; let a = 0;
+      while(a < n){
+        let best = -1, bestM = -1;
+        for(const b of brk){ if(b <= a) continue; if(lw(a, b) <= cap){ best = b; if(meas.has(b)) bestM = b; } else break; }
+        if(best < 0) best = brk.find(b => b > a);
+        else if(best !== n && bestM > 0 && lw(a, bestM) >= .6 * cap) best = bestM;
+        lines.push([a, best]); a = best;
+      }
+      /* equilibrar: si la última línea queda muy corta, reparte las dos últimas */
+      if(lines.length > 1){
+        const [pa] = lines[lines.length - 2], last = lines[lines.length - 1];
+        if(lw(last[0], last[1]) < .35 * cap){
+          const mid = brk.filter(b => b > pa && b < n).reduce((m, b) => Math.abs((b - pa) - (n - b)) < Math.abs((m - pa) - (n - m)) ? b : m, last[0]);
+          if(lw(pa, mid) <= cap && lw(mid, n) <= cap){ lines[lines.length - 2][1] = mid; last[0] = mid; }
+        }
+      }
+      return lines;
+    };
+    /* tamaño: el menor número de líneas sin bajar del 80 %; a igualdad, la letra más grande */
+    let s = 1, lines = plan(1);
+    for(const t of [.9, .8]){ const l2 = plan(t); if(l2.length < lines.length){ s = t; lines = l2; } }
+    const NS = "http://www.w3.org/2000/svg", wrap = document.createElement("div"); wrap.className = "tablines";
+    lines.forEach(([a, b], k) => {
+      const c = svg.cloneNode(true), x0 = a * W, w = lw(a, b);
+      c.setAttribute("viewBox", `${x0} 0 ${w} ${H}`);
+      c.setAttribute("width", Math.round(w * s)); c.setAttribute("height", Math.round(H * s));
+      if(k){ c.removeAttribute("aria-label"); c.setAttribute("aria-hidden", "true"); }
+      if(a > 0){
+        const m = document.createElementNS(NS, "rect");
+        m.setAttribute("x", x0); m.setAttribute("y", 0); m.setAttribute("width", L - 6); m.setAttribute("height", H); m.setAttribute("fill", "var(--card)");
+        const g = c.querySelector("g").cloneNode(true); g.setAttribute("transform", `translate(${x0} 0)`);
+        c.append(m, g);
+      }
+      c.dataset.a = a; c.dataset.b = b; wrap.append(c);
+    });
+    box.replaceChildren(wrap);
+    tabCols = [];
+    [...wrap.children].forEach((c, k) => { for(let i = +c.dataset.a; i < +c.dataset.b; i++){ tabCols[i] = c.querySelector(`rect.col[data-i="${i}"]`); lineOf[i] = k; } });
+    wrapped = true;
+    if(hlIdx >= 0 && tabCols[hlIdx]) tabCols[hlIdx].setAttribute("fill", "var(--hl)");
+  }
+
+  const _rt = renderTab; renderTab = function(ex){ _rt(ex); wrapTab(); };
+
+  /* al tocar, la línea que suena queda a la vista */
+  const _hl = highlight; highlight = function(i){
+    _hl(i);
+    if(!wrapped || i < 0 || lineOf[i] === undefined || lineOf[i] === lastLine) return;
+    lastLine = lineOf[i];
+    const el = $("#tab .tablines")?.children[lastLine], sc = $("#practice .excard");
+    if(!el || !sc) return;
+    const er = el.getBoundingClientRect(), sr = sc.getBoundingClientRect();
+    if(er.top < sr.top || er.bottom > sr.bottom) sc.scrollTo({top: sc.scrollTop + er.top - sr.top - 6, behavior: "smooth"});
+  };
+
+  const retab = () => requestAnimationFrame(() => { const ex = ALL.get(S0.cur); if(ex) renderTab(ex); });
+  function applyLand(){
+    const on = mqLand.matches, was = document.body.classList.contains("land");
+    document.body.classList.toggle("land", on);
+    if(on || was) retab();
+  }
+
+  /* en la app instalada solo gira la hoja de práctica; el resto de pantallas se queda en vertical */
+  function lockFor(v){
+    if(!standalone() || !screen.orientation || !screen.orientation.lock) return;
+    screen.orientation.lock(v === "practice" ? "any" : "portrait").catch(() => {});
+  }
+
+  const _sh = show; show = function(v){ _sh(v); lockFor(v); if(document.body.classList.contains("land")) retab(); };
+  mqLand.addEventListener("change", applyLand);
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if(document.body.classList.contains("land")) retab(); }, 160); });
+  /* solo cuando cambia algo que afecta al espacio de la hoja (entrar en práctica, abrir o cerrar la lista) */
+  const keyOf = () => ["land","practicing","libopen"].map(c => document.body.classList.contains(c) ? 1 : 0).join("");
+  let lastKey = keyOf();
+  new MutationObserver(() => { const k = keyOf(); if(k === lastKey) return; lastKey = k; if(document.body.classList.contains("land")) retab(); }).observe(document.body, {attributes: true, attributeFilter: ["class"]});
+  applyLand();
+  lockFor(document.body.dataset.view || "home");
 }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
