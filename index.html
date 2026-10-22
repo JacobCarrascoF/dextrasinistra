@@ -988,6 +988,20 @@ body.land.practicing:not(.libopen) .console2 .pill{height:42px;flex:1;min-width:
 body.land .toast12{bottom:12px;left:auto;right:12px;max-width:360px}
 body.land .modal .sheet{max-height:100dvh;overflow-y:auto;border-radius:20px 20px 0 0}
 body.land.practicing:not(.libopen) .excard > *{flex-shrink:0}
+/* ===== v1.2 · favoritos y planes conjuntos ===== */
+#practice .excard{position:relative}
+#practice .excard #exEyebrow{padding-right:44px}
+.favbtn{position:absolute;top:10px;right:10px;width:40px;height:40px;background:transparent;z-index:1}
+.favbtn svg{width:22px;height:22px;fill:none;stroke:var(--faint);stroke-width:1.7;stroke-linejoin:round}
+.favbtn[aria-pressed="true"] svg{fill:var(--yellow);stroke:var(--yellow)}
+.favchip svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;margin-right:2px;vertical-align:-2px}
+.favchip[aria-pressed="true"] svg{fill:currentColor}
+.favchip .mono{font-size:11px;opacity:.75}
+.favmark svg{width:12px;height:12px;fill:var(--yellow);stroke:none;margin-right:5px;vertical-align:-1px}
+.favempty{color:var(--muted);font-size:14px;line-height:1.5;padding:16px 12px;margin:0}
+.planintro14{margin:0 0 4px;color:var(--muted);font-size:14px;line-height:1.5}
+body.land.practicing:not(.libopen) .favbtn{top:4px;right:4px}
+body[data-view="plan"] header.top .handseg{display:none}
 </style>
 </head>
 <body>
@@ -1261,7 +1275,7 @@ body.land.practicing:not(.libopen) .excard > *{flex-shrink:0}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "22/10/2026 15:50";
+<script>window.DS_BUILD = "22/10/2026 17:20";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3686,7 +3700,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.1 · octubre 2026";
+const APP_VER = "1.2 · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -3871,7 +3885,7 @@ const PLUS_URL_YEAR = "https://payhip.com/b/zntXF", PLUS_URL_LIFE = "https://pay
 const TRIAL_DAYS = 14;
 const PLX = (window.DS_LANG === "en") ? {
   plus: "Plus", title: "Dextra Sinistra Plus",
-  b1: n => `${n.toLocaleString("en-US")} exercises from levels II to V`, b2: n => `Both hands: ${n} exercises`, b3: "The 8 guided plans, step by step",
+  b1: n => `${n.toLocaleString("en-US")} exercises from levels II to V`, b2: n => `Both hands: ${n} exercises`, b3: "The 4 guided plans for both hands, step by step",
   b4: "Free forever: tools, progress and the 87 level I exercises",
   year: "€19.99 a year", life: "€49.99 forever", yearSub: "The year starts when you activate your code.",
   soon: "Coming soon: you’ll be able to buy it here.", haveCode: "Have a code?", codePh: "Paste your code here", activate: "Activate",
@@ -3888,7 +3902,7 @@ const PLX = (window.DS_LANG === "en") ? {
   renew: "Renew", plusSec: "Plus", locale: "en-US"
 } : {
   plus: "Plus", title: "Dextra Sinistra Plus",
-  b1: n => `${n.toLocaleString("es-ES")} ejercicios de los niveles II a V`, b2: n => `Ambas manos: ${n} ejercicios`, b3: "Los 8 planes guiados, paso a paso",
+  b1: n => `${n.toLocaleString("es-ES")} ejercicios de los niveles II a V`, b2: n => `Ambas manos: ${n} ejercicios`, b3: "Los 4 planes guiados para las dos manos, paso a paso",
   b4: "Gratis para siempre: herramientas, progreso y los 87 ejercicios de nivel I",
   year: "19,99 € al año", life: "49,99 € para siempre", yearSub: "El año empieza a contar cuando activas tu código.",
   soon: "Muy pronto podrás comprarlo aquí.", haveCode: "¿Tienes un código?", codePh: "Pega aquí tu código", activate: "Activar",
@@ -4132,19 +4146,9 @@ const ICO9 = {
     if(!$("#plan").hidden){ if(HAND !== h){ if(M.playing) stop(false); setHand(h); } return; }
     if(HAND !== h){ if(M.playing) stop(false); setHand(h); } show("practice");
   });
-  renderPlanHands = function(){
-    const el = $("#planHands");
-    if(HAND === "A"){
-      el.innerHTML = `<div class="card ambnote"><p>${T9.ambasPlans}</p><div class="setbtns"><button class="btn" data-goph="D">${T9.seeD}</button><button class="btn" data-goph="S">${T9.seeS}</button></div></div>`;
-      el.querySelectorAll("[data-goph]").forEach(b => b.onclick = () => setHand(b.dataset.goph));
-      document.body.classList.add("planamb");
-    } else {
-      el.innerHTML = ""; document.body.classList.remove("planamb");
-      if(PlanState.hand !== HAND){ PlanState.hand = HAND; savePlan(); }
-    }
-  };
+  /* v1.2: los planes son conjuntos (Dextra + Sinistra + Ambas); ya no dependen de la mano elegida. Ver comb14.js */
+  renderPlanHands = function(){ $("#planHands").innerHTML = ""; document.body.classList.remove("planamb"); };
   const _rp = renderPlan; renderPlan = function(){
-    if(HAND !== "A" && PlanState.hand !== HAND){ PlanState.hand = HAND; savePlan(); }
     _rp();
     if(PS().tpl === "libre") document.querySelectorAll("#tpls .tpl").forEach(c => { if(c.querySelector('[data-tpl="libre"]') || c.classList.contains("on")) c.remove(); });
   };
@@ -4168,11 +4172,11 @@ const ICO9 = {
 /* ============ Inicio compacto: seguir donde lo dejaste + manos grandes (v0.11) ============ */
 const T10 = window.DS_LANG === "en" ? {
   resume:"Pick up where you left off", start:"Start here", plan:"plan", week:"Week", day:"day", exs:"exercises",
-  noPlan:"No guided plan", seePlans:"See plans", planOf:(h,n) => `${h} · ${n} plan`, done:"Plan completed", next:"Choose the next level",
+  noPlan:"No guided plan", seePlans:"See plans", planOf:(h,n) => `${h} · ${n} plan`, planBoth:n => `${n} plan · both hands`, done:"Plan completed", next:"Choose the next level",
   deload:"deload", lv:"Beginner · Intermediate · Advanced · Expert", go:"Play", ex:"exercises", ph:"phrases"
 } : {
   resume:"Seguir donde lo dejaste", start:"Empieza por aquí", plan:"plan", week:"Semana", day:"día", exs:"ejercicios",
-  noPlan:"Sin plan guiado", seePlans:"Ver planes", planOf:(h,n) => `${h} · Plan ${n}`, done:"Plan completado", next:"Elige el siguiente nivel",
+  noPlan:"Sin plan guiado", seePlans:"Ver planes", planOf:(h,n) => `${h} · Plan ${n}`, planBoth:n => `Plan ${n} · las dos manos`, done:"Plan completado", next:"Elige el siguiente nivel",
   deload:"descarga", lv:"Inicial · Intermedio · Avanzado · Experto", go:"Tocar", ex:"ejercicios", ph:"frases"
 };
 {
@@ -4191,9 +4195,9 @@ const T10 = window.DS_LANG === "en" ? {
     const h = PlanState.hand, ps = PlanState[h], p = HANDS[h].PLANS[ps.tpl];
     if(p){
       const pos = planPos(p, ps.days[ps.tpl] || 0);
-      if(pos.finished) html += `<button class="planrow" id="hPlan2"><span><b>${T10.planOf(HANDS[h].name, p.n)}</b><small>${T10.done} · ${T10.next}</small></span><span class="go">›</span></button>`;
+      if(pos.finished) html += `<button class="planrow" id="hPlan2"><span><b>${(h === "A" ? T10.planBoth(p.n) : T10.planOf(HANDS[h].name, p.n))}</b><small>${T10.done} · ${T10.next}</small></span><span class="go">›</span></button>`;
       else { const bl = sessionBlocks(pos), tot = bl.reduce((a,b) => a + b.min, 0);
-        html += `<button class="planrow" id="hCont2" style="--accent:var(--acc-${h === "S" ? "s" : "d"})"><span><b>${T10.planOf(HANDS[h].name, p.n)}</b><small>${T10.week} ${pos.week} · ${T10.day} ${pos.dw} · ${bl.length} ${T10.exs} · ${tot} min${pos.deload ? " · " + T10.deload : ""}</small></span><span class="rplay sm" aria-hidden="true">${ICO.play}</span></button>`; }
+        html += `<button class="planrow" id="hCont2" style="--accent:var(--acc-${h === "S" ? "s" : "d"})"><span><b>${(h === "A" ? T10.planBoth(p.n) : T10.planOf(HANDS[h].name, p.n))}</b><small>${T10.week} ${pos.week} · ${T10.day} ${pos.dw} · ${bl.length} ${T10.exs} · ${tot} min${pos.deload ? " · " + T10.deload : ""}</small></span><span class="rplay sm" aria-hidden="true">${ICO.play}</span></button>`; }
     } else html += `<button class="planrow" id="hPlan2"><span><b>${T10.noPlan}</b><small>${T10.lv}</small></span><span class="go">${T10.seePlans} ›</span></button>`;
     c.innerHTML = html;
     $("#hResume").onclick = () => { select(last.id); show("practice"); };
@@ -4792,6 +4796,160 @@ const T12P = EN12 ? {phases:"Plan phases", day:"Day", today:"Today", tempo:{lent
   new MutationObserver(() => { const k = keyOf(); if(k === lastKey) return; lastKey = k; if(document.body.classList.contains("land")) retab(); }).observe(document.body, {attributes: true, attributeFilter: ["class"]});
   applyLand();
   lockFor(document.body.dataset.view || "home");
+}
+
+/* ============ v1.2 · planes conjuntos, Practicar en el centro y favoritos ============ */
+const EN14 = window.DS_LANG === "en";
+const T14 = EN14 ? {
+  intro: "Every plan works both hands: first the Dextra exercise, then its Sinistra version when there is one, and a Both hands block to finish.",
+  rh: "Picking hand:", lh: "Fretting hand:", free: "Free mode",
+  who: {ini: "You play, but have never worked on each hand's technique on its own.",
+        int: "You play comfortably and want clean speed and coordination between both hands.",
+        adv: "You already have speed and want extreme precision and complex technical vocabulary in both hands.",
+        exp: "You master level IV technique and want jazz vocabulary in both hands: enclosures and voicings."},
+  fav: "Favorites", favAdd: "Add to favorites", favDel: "Remove from favorites",
+  favCount: n => `${n} ${n === 1 ? "favorite" : "favorites"}`,
+  favEmpty: "No favorites yet. Tap the star on any exercise to keep it here."
+} : {
+  intro: "Cada plan trabaja las dos manos: primero el ejercicio de Dextra, después su versión de Sinistra si la tiene, y al final un bloque de Ambas.",
+  rh: "Mano derecha:", lh: "Mano izquierda:", free: "Modo libre",
+  who: {ini: "Tocas, pero nunca has trabajado la técnica de cada mano por separado.",
+        int: "Ya tocas con soltura y quieres velocidad limpia y coordinación entre las dos manos.",
+        adv: "Ya tienes velocidad y buscas precisión extrema y vocabulario técnico complejo en las dos manos.",
+        exp: "Dominas la técnica de nivel IV y quieres vocabulario de jazz con las dos manos: enclosures y voicings."},
+  fav: "Favoritos", favAdd: "Añadir a favoritos", favDel: "Quitar de favoritos",
+  favCount: n => `${n} ${n === 1 ? "favorito" : "favoritos"}`,
+  favEmpty: "Aún no tienes favoritos. Pulsa la estrella de cualquier ejercicio para guardarlo aquí."
+};
+const ICO_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></svg>';
+
+/* ---------- 1 · Planes conjuntos ---------- */
+{
+  /* se construyen al arrancar la app (primer setHand), después de la capa de traducción de la versión inglesa */
+  let built = false;
+  const lvA = {ini: 3, int: 4, adv: 4, exp: 5};
+  const idOf = (h, n) => { const e = HANDS[h].exByName(n); return e ? e.id : null; };
+  /* una sesión: cada ejercicio de Dextra seguido de su versión de Sinistra (mismo número: mismo material) o, si no tiene,
+     del siguiente ejercicio de Sinistra; después los de Sinistra sueltos y al final uno de Ambas.
+     Los minutos se reparten para que la sesión dure lo mismo que el plan de una mano. */
+  function merge(k, phi, tk, dl, sl){
+    const target = dl.reduce((a, b) => a + b[1], 0);
+    const out = [], rest = sl.map(b => [idOf("S", b[0]), b[1], b[2]]).filter(b => b[0]);
+    const dIds = dl.map(b => idOf("D", b[0])).filter(Boolean);
+    const reserved = new Set(dIds.map(id => "S-" + ALL.get(id).num).filter(c => ALL.has(c)));
+    dl.forEach(([n, m, t]) => {
+      const id = idOf("D", n); if(!id) return; out.push([id, m, t]);
+      const cid = "S-" + ALL.get(id).num;
+      if(ALL.has(cid)){ const j = rest.findIndex(b => b[0] === cid); out.push(j >= 0 ? rest.splice(j, 1)[0] : [cid, m, t]); }
+      else { const j = rest.findIndex(b => !reserved.has(b[0])); if(j >= 0) out.push(rest.splice(j, 1)[0]); }
+    });
+    out.push(...rest);
+    let aid = null;
+    for(const b of out){ const e = ALL.get(b[0]); if(e.h === "D" && ALL.has("A-" + e.num)){ aid = "A-" + e.num; break; } }
+    if(!aid){ const pool = HANDS.A.EX.filter(e => e.lvl === lvA[k]); if(pool.length) aid = pool[((phi * 3 + "ABC".indexOf(tk)) * 37) % pool.length].id; }
+    const amin = aid ? Math.max(3, Math.round(target * .1)) : 0;
+    const raw = out.reduce((a, b) => a + b[1], 0), sc = (target - amin) / raw;
+    const res = out.map(([id, m, t]) => [id, Math.max(2, Math.round(m * sc)), t]);
+    if(aid) res.push([aid, amin, k === "ini" ? "lento" : "trabajo"]);
+    return res;
+  }
+  function buildPlans(){
+  built = true;
+  const D = HANDS.D.PLANS, S = HANDS.S.PLANS, A = HANDS.A;
+  const _ab = A.exByName; A.exByName = n => /^[DSA]-\d{4}$/.test(n) ? ALL.get(n) : _ab(n);
+  A.PLANS = {};
+  Object.keys(D).forEach(k => {
+    const d = D[k], s = S[k]; if(!s) return;
+    A.PLANS[k] = {n: d.n, weeks: d.weeks, days: d.days, min: d.min, deload: d.deload, who: T14.who[k] || d.who,
+      goal: `${T14.rh} ${d.goal} ${T14.lh} ${s.goal}`,
+      phases: d.phases.map((ph, i) => {
+        const sp = s.phases[i] || s.phases[s.phases.length - 1], ses = {};
+        ["A", "B", "C"].forEach(tk => ses[tk] = merge(k, i, tk, ph.s[tk], sp.s[tk]));
+        return {n: ph.n === sp.n ? ph.n : `${ph.n} · ${sp.n}`, w: ph.w, focus: `${T14.rh} ${ph.focus} ${T14.lh} ${sp.focus}`, s: ses};
+      })};
+  });
+  /* estado: un único plan conjunto; si venías de un plan de una mano, se conserva el nivel y el día */
+  if(!PlanState.A){
+    const pick = [PlanState.D, PlanState.S].find(x => x && x.tpl && x.tpl !== "libre" && A.PLANS[x.tpl]);
+    PlanState.A = {tpl: pick ? pick.tpl : "libre", days: {}};
+    Object.keys(A.PLANS).forEach(k => { const v = Math.max(PlanState.D?.days?.[k] || 0, PlanState.S?.days?.[k] || 0); if(v) PlanState.A.days[k] = v; });
+  }
+  PlanState.hand = "A"; savePlan();
+  }
+  const _shz = setHand; setHand = function(h, f){ if(!built) buildPlans(); return _shz(h, f); };
+
+  renderPlanHands = function(){ $("#planHands").innerHTML = `<p class="planintro14">${T14.intro}</p>`; document.body.classList.remove("planamb"); };
+  const _rp = renderPlan; renderPlan = function(){
+    PlanState.hand = "A";
+    _rp();
+    const body = $("#planBody"); if(!body) return;
+    if(PS().tpl === "libre"){ const h = body.querySelector("h3"); if(h) h.textContent = T14.free; return; }
+    body.querySelectorAll(".phases li").forEach(li => { const m = li.textContent.match(/^([DSA]-\d{4}) · (.*)$/); const e = m && ALL.get(m[1]); if(e) li.textContent = `${e.code} · ${e.name} · ${m[2]}`; });
+  };
+  const _sps = startPlanSession; startPlanSession = function(){
+    PlanState.hand = "A"; const r = _sps();
+    if(Session.plan && Session.label.startsWith(HANDS.A.name + " · ")){ Session.label = Session.label.slice(HANDS.A.name.length + 3); renderQueue(); }
+    return r;
+  };
+  const _pa = planAdvance; planAdvance = function(){ PlanState.hand = "A"; return _pa(); };
+}
+
+/* ---------- 2 · Menú: Practicar en el centro ---------- */
+$("#v-plan").after($("#v-practice"));
+
+/* ---------- 3 · Favoritos ---------- */
+if(!Array.isArray(PREF.fav)) PREF.fav = [];
+const isFav = id => PREF.fav.includes(id);
+S0.fav = false;
+{
+  const btn = document.createElement("button"); btn.type = "button"; btn.id = "favBtn"; btn.className = "iconbtn favbtn"; btn.innerHTML = ICO_STAR;
+  $("#practice .excard").prepend(btn);
+  const sync = () => { const on = isFav(S0.cur); btn.setAttribute("aria-pressed", on); btn.setAttribute("aria-label", on ? T14.favDel : T14.favAdd); btn.title = btn.getAttribute("aria-label"); };
+  btn.onclick = () => {
+    const i = PREF.fav.indexOf(S0.cur); if(i >= 0) PREF.fav.splice(i, 1); else PREF.fav.unshift(S0.cur);
+    savePrefs(); sync(); renderBranches(); renderList();
+  };
+  const _sel = select; select = function(id, item){ _sel(id, item); sync(); };
+  sync();
+
+  /* lista: chip «Favoritos» (de las tres manos) y estrella junto al nombre */
+  const allBr = Object.assign({}, HANDS.A.BRANCHES, HANDS.S.BRANCHES, HANDS.D.BRANCHES);
+  const _rb = renderBranches; renderBranches = function(){
+    _rb();
+    const el = $("#branches"), first = el.firstElementChild;
+    if(S0.fav) el.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", "false"));
+    el.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => { S0.fav = false; }, {capture: true}));
+    const f = document.createElement("button"); f.className = "chip favchip"; f.setAttribute("aria-pressed", S0.fav);
+    f.innerHTML = ICO_STAR + T14.fav + (PREF.fav.length ? ` <span class="mono">${PREF.fav.length}</span>` : "");
+    f.onclick = () => { S0.fav = !S0.fav; if(S0.fav){ S0.branch = ""; S0.cat = ""; } renderBranches(); renderList(); };
+    first ? first.after(f) : el.append(f);
+  };
+  const _f = filtered; filtered = function(){
+    if(!S0.fav) return _f();
+    const q = norm11(S0.q).trim().split(/\s+/).filter(Boolean);
+    return PREF.fav.map(id => ALL.get(id)).filter(e => e && (!S0.lvl || e.lvl == S0.lvl) && q.every(w => norm11(e.code + " " + e.name + " " + e.cat).includes(w)));
+  };
+  const _rl = renderList; renderList = function(){
+    if(S0.fav){ const B = BRANCHES; BRANCHES = allBr; try{ _rl(); } finally { BRANCHES = B; }
+      const n = filtered().length; $("#count").textContent = T14.favCount(n);
+      if(!n) $("#list").innerHTML = `<p class="favempty">${T14.favEmpty}</p>`;
+    } else _rl();
+    document.querySelectorAll("#list .item").forEach(b => { const c = b.querySelector(".meta .mono"); if(c && isFav(c.textContent.trim())) b.querySelector(".nm")?.insertAdjacentHTML("afterbegin", `<span class="favmark">${ICO_STAR}</span>`); });
+  };
+  renderBranches(); renderList();
+
+  /* copias: los favoritos viajan en «prefs»; al importar se suman a los que ya hay */
+  const _imp = $("#dataImport").onchange;
+  $("#dataImport").onchange = async e => {
+    const f = e.target.files[0]; await _imp(e);
+    PlanState.hand = "A"; savePlan();
+    if(!f) return;
+    try{ const d = JSON.parse(await f.text()); const fav = d && d.prefs && d.prefs.fav;
+      if(d.app === "dextra-sinistra" && Array.isArray(fav)){ fav.forEach(id => { if(ALL.has(id) && !isFav(id)) PREF.fav.push(id); }); savePrefs(); sync(); renderBranches(); renderList(); }
+    }catch(err){}
+  };
+  const _wipe = $("#dataWipe").onclick;
+  $("#dataWipe").onclick = async e => { await _wipe(e); if(PlanState.hand !== "A"){ PlanState.A = {tpl: "libre", days: {}}; PlanState.hand = "A"; savePlan(); } };
 }
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
