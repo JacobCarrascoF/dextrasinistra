@@ -1029,6 +1029,29 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
 .len15 p{margin:2px 0 0;font-size:12.5px;color:var(--faint);line-height:1.4}
 .sess .row.out15{opacity:.35}
 .len15{margin:12px 0 10px}
+/* ===== v1.5 · Inicio: plan con Completa / Snack y niveles ===== */
+.planbox16{padding:16px 16px 16px 18px;display:flex;flex-direction:column;gap:3px}
+.planbox16 .ph16{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:24px}
+.planbox16 .ph16 .eyebrow{color:var(--accent)}
+.planbox16 .ph16 .linkbtn{font-size:13px;width:auto;padding:0}
+.planbox16 .t16{font-size:19px;font-weight:600;line-height:1.25}
+.planbox16 .rmeta{font-size:13px;color:var(--muted)}
+.planbox16 .ask16{font-size:13px;font-weight:600;color:var(--fg);margin-top:12px}
+.opts16{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;margin-top:6px}
+.contcard2 .opts16 button,.contcard2 .lv16 button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border:1px solid var(--line2);border-radius:14px;background:var(--surface);min-height:64px;justify-content:center;position:relative}
+.contcard2 .opts16 button b,.contcard2 .lv16 button b{font-size:15px;font-weight:600}
+.contcard2 .opts16 button span:not(.rplay),.contcard2 .lv16 button span{font-size:12px;color:var(--muted);line-height:1.3}
+.contcard2 .opts16 button:first-child{background:var(--accFill);border-color:var(--accFill);color:var(--onAcc);padding-left:46px}
+.contcard2 .opts16 button:first-child span:not(.rplay){color:var(--onAcc);opacity:.85}
+.contcard2 .opts16 .rplay.sm{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--onAcc);color:var(--accFill)}
+.contcard2 .opts16 .rplay.sm svg{width:12px;height:12px}
+.contcard2 .opts16 button.on:not(:first-child){border:2px solid var(--accent);padding:9px 11px}
+.lv16{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.contcard2 .lv16 button.on{border:2px solid var(--accent);padding:9px 11px}
+.today15 .freemain{border-top:1px solid var(--line);padding:14px 16px 14px 18px}
+.today15 .freemain b{font-size:16px}
+#continue.today15{align-items:stretch}
+.opts16{grid-template-columns:none}
 </style>
 </head>
 <body>
@@ -1302,7 +1325,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "23/10/2026 16:25";
+<script>window.DS_BUILD = "23/10/2026 16:39";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3727,7 +3750,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.4 · octubre 2026";
+const APP_VER = "1.5 · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -4991,6 +5014,9 @@ const T15 = window.DS_LANG === "en" ? {
   planHint: "Tap and the app takes you through each exercise, with its time and tempo.", planDone: n => `${n} plan completed`, planNext: "Choose the next level.",
   seePlans: "See plans", freeEye: "Free practice", freeGo: "Continue", freeHint: "The last exercise you played. Pick any other from Practice.", freeNew: "Start with this one or pick any exercise from Practice.",
   noPlan: "No guided plan", noPlanTxt: "A plan tells you what to play each day, for both hands.",
+  ask: "How much time do you have today?", optMeta: (m, n) => `${m} min · ${n} exercises`, change: "Change plan", choose: "Choose your plan",
+  chooseTxt: "A plan tells you what to play each day with both hands. Tap a level to start.", lvlMeta: (w, m) => `${w} weeks · ${m} min`,
+  doneHint: d => `${d} done: you pick up where you left off.`,
   startSnack: n => `Start today's snack (${n}′)`, len: "Session", full: "Full", mins: n => `Snack · ${n}′`, of: (a, b) => `Snack · ${a} of ${b} min`, out: "Not in the snack",
   shortNote: "Snack: a short version of today's session with the warm-up, the first Dextra → Sinistra pairs and the Both hands block. It counts as done when you finish it.",
   rule: "The plan doesn't follow the calendar: «day 3» is your third session. If you don't finish one, it stays saved and you pick it up next time, on whatever day. If you're short on time, «End session here» moves you on to the next one."
@@ -5001,6 +5027,9 @@ const T15 = window.DS_LANG === "en" ? {
   planHint: "Pulsa y la app te lleva por cada ejercicio, con su tiempo y su tempo.", planDone: n => `Plan ${n} completado`, planNext: "Elige el siguiente nivel.",
   seePlans: "Ver planes", freeEye: "Práctica libre", freeGo: "Seguir", freeHint: "El último ejercicio que tocaste. En Practicar puedes elegir cualquier otro.", freeNew: "Empieza por este o elige cualquier ejercicio en Practicar.",
   noPlan: "Sin plan guiado", noPlanTxt: "Un plan te dice qué tocar cada día, con las dos manos.",
+  ask: "¿Cuánto tiempo tienes hoy?", optMeta: (m, n) => `${m} min · ${n} ejercicios`, change: "Cambiar de plan", choose: "Elige tu plan",
+  chooseTxt: "Un plan te dice qué tocar cada día con las dos manos. Pulsa un nivel para empezar.", lvlMeta: (w, m) => `${w} semanas · ${m} min`,
+  doneHint: d => `Llevas ${d} hechos: sigues donde lo dejaste.`,
   startSnack: n => `Empezar el snack de hoy (${n}′)`, len: "Sesión", full: "Completa", mins: n => `Snack · ${n}′`, of: (a, b) => `Snack · ${a} de ${b} min`, out: "Fuera del snack",
   shortNote: "Snack: la sesión de hoy en corto, con el calentamiento, las primeras parejas Dextra → Sinistra y el bloque de Ambas. Cuenta como hecha al terminarla.",
   rule: "El plan no va por fechas: «día 3» es tu tercera sesión. Si no la terminas, queda guardada y la retomas la próxima vez, el día que sea. Si un día vas justo de tiempo, «Terminar la sesión aquí» te pasa a la siguiente."
@@ -5056,26 +5085,36 @@ const T15 = window.DS_LANG === "en" ? {
     _rh();
     const c = $("#continue"); c.className = "contcard2 today15";
     const last = ALL.get(S0.cur) || EX[0], logged = Store.items.length > 0, bpm = S0.bpm[last.id] || last.bpm[0];
-    const free = (main) => `<button class="${main ? "resume" : "freerow"}" id="hResume" style="--accent:var(--acc-${last.h === "S" ? "s" : "d"})">
+    const free = main => `<button class="${main ? "resume freemain" : "freerow"}" id="hResume" style="--accent:var(--acc-${last.h === "S" ? "s" : "d"})">
       <span class="rtxt"><span class="eyebrow">${T15.freeEye}</span><b>${last.name}</b><span class="rmeta"><span class="mono">${last.code}</span> · ${HANDS[last.h].short} · <span class="mono">${bpm} BPM</span></span>${main ? `<span class="hint15">${logged ? T15.freeHint : T15.freeNew}</span>` : ""}</span>
       ${main ? `<span class="rplay" aria-hidden="true">${ICO.play}</span>` : `<span class="go">${T15.freeGo} ›</span>`}</button>`;
+    const levels = cur => `<div class="lv16">${Object.entries(HANDS.A.PLANS).map(([k, q]) => `<button type="button" data-tpl16="${k}" class="${k === cur ? "on" : ""}"><b>${q.n}</b><span>${T15.lvlMeta(q.weeks, q.min)}</span></button>`).join("")}</div>`;
     const ps = PS(), p = ps.tpl !== "libre" ? HANDS.A.PLANS[ps.tpl] : null;
     let html;
-    if(p){
+    if(!p){
+      html = `<div class="planbox16"><div class="ph16"><span class="eyebrow">${T15.choose}</span></div><p class="hint15">${T15.chooseTxt}</p>${levels("")}</div>` + free(true);
+    } else {
       const pos = planPos(p, planDay());
-      if(pos.finished) html = `<button class="resume planmain" id="hPlan2"><span class="rtxt"><span class="eyebrow">${T15.planEye}</span><b>${T15.planDone(p.n)}</b><span class="hint15">${T15.planNext}</span></span><span class="go">${T15.seePlans} ›</span></button>` + free(false);
-      else {
-        const bl = applyLen(sessionBlocks(pos)), tot = bl.reduce((a, b) => a + b.min, 0), pd = pending();
-        html = `<button class="resume planmain" id="hCont2" style="--accent:var(--acc-d)"><span class="rtxt"><span class="eyebrow">${T15.planEye}</span><b>${T15.planName(p.n)}</b>
-          <span class="rmeta">${T15.where(pos.week, p.weeks, pos.dw)} · ${lenPref() ? "Snack · " : ""}${bl.length} ${T10.exs} · ${tot} min${pos.deload ? " · " + T10.deload : ""}</span>
-          ${pd ? `<span class="prog15"><i style="width:${Math.round(100 * pd.d / pd.n)}%"></i></span><span class="hint15">${T15.done(pd.d, pd.n)} · ${T15.cont}</span>` : `<span class="hint15">${T15.planHint}</span>`}</span>
-          <span class="rplay" aria-hidden="true">${ICO.play}</span></button>` + free(false);
+      if(pos.finished){
+        const ks = Object.keys(HANDS.A.PLANS), nx = ks[Math.min(ks.length - 1, ks.indexOf(ps.tpl) + 1)];
+        html = `<div class="planbox16"><div class="ph16"><span class="eyebrow">${T15.planEye}</span></div><b class="t16">${T15.planDone(p.n)}</b><p class="hint15">${T15.planNext}</p>${levels(nx)}</div>` + free(false);
+      } else {
+        const full = sessionBlocks(pos), tot = sum(full), s = saved(), d = s ? s.done.filter(id => full.some(b => b.id === id)).length : 0;
+        const opts = [0, 20, 10].filter(v => !v || v < tot - 3), curL = opts.includes(lenPref()) ? lenPref() : 0;
+        html = `<div class="planbox16"><div class="ph16"><span class="eyebrow">${T15.planEye}</span><button type="button" class="linkbtn" id="hPlan2">${T15.change} ›</button></div>
+          <b class="t16">${T15.planName(p.n)}</b><span class="rmeta">${T15.where(pos.week, p.weeks, pos.dw)}${pos.deload ? " · " + T10.deload : ""}</span>
+          ${d ? `<span class="prog15"><i style="width:${Math.round(100 * d / full.length)}%"></i></span><span class="hint15">${T15.doneHint(d)}</span>` : ""}
+          <span class="ask16">${T15.ask}</span>
+          <div class="opts16" style="grid-template-columns:1.35fr repeat(${opts.length - 1},minmax(0,1fr))">${opts.map(v => { const l = applyLen(full, v), m = sum(l); return `<button type="button" data-len16="${v}" class="${v === curL ? "on" : ""}">${v ? "" : `<span class="rplay sm" aria-hidden="true">${ICO.play}</span>`}<b>${v ? "Snack" : T15.full}</b><span>${T15.optMeta(m, l.length)}</span></button>`; }).join("")}</div></div>` + free(false);
       }
-    } else html = free(true) + `<button class="planrow" id="hPlan2"><span><b>${T15.noPlan}</b><small>${T15.noPlanTxt}</small></span><span class="go">${T15.seePlans} ›</span></button>`;
+    }
     c.innerHTML = html;
     $("#hResume").onclick = () => { select(last.id); show("practice"); };
-    if($("#hCont2")) $("#hCont2").onclick = startPlanSession;
     if($("#hPlan2")) $("#hPlan2").onclick = () => show("plan");
+    c.querySelectorAll("[data-len16]").forEach(b => b.onclick = () => { PREF.sessLen = +b.dataset.len16; savePrefs(); startPlanSession(); });
+    c.querySelectorAll("[data-tpl16]").forEach(b => b.onclick = () => {
+      if(typeof isPlus === "function" && !isPlus()){ openPlus(); return; }
+      PS().tpl = b.dataset.tpl16; savePlan(); if(Session.plan){ Session.list = []; Session.plan = false; renderQueue(); } renderHome(); });
     const meta = $("#hResume .rmeta"); if(meta){ const bst = bestOf(last.id); meta.innerHTML = `<span class="mono">${last.code}</span> · ${HANDS[last.h].short} · ` + (bst ? T12.recGoal(bst, last.bpm[1]) : T12.noRec(last.bpm[1])); }
   };
   const _rp = renderPlan; renderPlan = function(){
