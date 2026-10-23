@@ -1021,6 +1021,14 @@ body.land.practicing:not(.libopen) #practice .stand{grid-template-columns:minmax
 body.land.practicing:not(.libopen) .console2 .pill{font-size:14px}
 body.land.practicing:not(.libopen) .console2 .durs button{padding:0 5px;min-width:0;font-size:12.5px}
 body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
+.len15{display:flex;flex-direction:column;gap:6px;margin:14px 0 4px}
+.len15 > span{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.seg15{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:2px;background:var(--surface);border-radius:10px;padding:3px;max-width:380px}
+.seg15 button{height:32px;border:0;border-radius:7px;background:transparent;color:var(--muted);font:inherit;font-size:13.5px;font-weight:500;cursor:pointer}
+.seg15 button[aria-pressed="true"]{background:var(--card);color:var(--fg);box-shadow:0 0 0 1px var(--line)}
+.len15 p{margin:2px 0 0;font-size:12.5px;color:var(--faint);line-height:1.4}
+.sess .row.out15{opacity:.35}
+.len15{margin:12px 0 10px}
 </style>
 </head>
 <body>
@@ -1294,7 +1302,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "23/10/2026 16:17";
+<script>window.DS_BUILD = "23/10/2026 16:25";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3719,7 +3727,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.3 · octubre 2026";
+const APP_VER = "1.4 · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -4983,6 +4991,8 @@ const T15 = window.DS_LANG === "en" ? {
   planHint: "Tap and the app takes you through each exercise, with its time and tempo.", planDone: n => `${n} plan completed`, planNext: "Choose the next level.",
   seePlans: "See plans", freeEye: "Free practice", freeGo: "Continue", freeHint: "The last exercise you played. Pick any other from Practice.", freeNew: "Start with this one or pick any exercise from Practice.",
   noPlan: "No guided plan", noPlanTxt: "A plan tells you what to play each day, for both hands.",
+  startSnack: n => `Start today's snack (${n}′)`, len: "Session", full: "Full", mins: n => `Snack · ${n}′`, of: (a, b) => `Snack · ${a} of ${b} min`, out: "Not in the snack",
+  shortNote: "Snack: a short version of today's session with the warm-up, the first Dextra → Sinistra pairs and the Both hands block. It counts as done when you finish it.",
   rule: "The plan doesn't follow the calendar: «day 3» is your third session. If you don't finish one, it stays saved and you pick it up next time, on whatever day. If you're short on time, «End session here» moves you on to the next one."
 } : {
   done: (d, n) => `${d} de ${n} hechos`, resume: n => `Continuar la sesión de hoy (${n})`,
@@ -4991,6 +5001,8 @@ const T15 = window.DS_LANG === "en" ? {
   planHint: "Pulsa y la app te lleva por cada ejercicio, con su tiempo y su tempo.", planDone: n => `Plan ${n} completado`, planNext: "Elige el siguiente nivel.",
   seePlans: "Ver planes", freeEye: "Práctica libre", freeGo: "Seguir", freeHint: "El último ejercicio que tocaste. En Practicar puedes elegir cualquier otro.", freeNew: "Empieza por este o elige cualquier ejercicio en Practicar.",
   noPlan: "Sin plan guiado", noPlanTxt: "Un plan te dice qué tocar cada día, con las dos manos.",
+  startSnack: n => `Empezar el snack de hoy (${n}′)`, len: "Sesión", full: "Completa", mins: n => `Snack · ${n}′`, of: (a, b) => `Snack · ${a} de ${b} min`, out: "Fuera del snack",
+  shortNote: "Snack: la sesión de hoy en corto, con el calentamiento, las primeras parejas Dextra → Sinistra y el bloque de Ambas. Cuenta como hecha al terminarla.",
   rule: "El plan no va por fechas: «día 3» es tu tercera sesión. Si no la terminas, queda guardada y la retomas la próxima vez, el día que sea. Si un día vas justo de tiempo, «Terminar la sesión aquí» te pasa a la siguiente."
 };
 {
@@ -4998,13 +5010,27 @@ const T15 = window.DS_LANG === "en" ? {
   const cur = () => ({tpl: PS().tpl, day: planDay()});
   const saved = () => { const s = LS.get(KEY, null); const c = cur(); return s && s.tpl === c.tpl && s.day === c.day && Array.isArray(s.done) ? s : null; };
   const save = () => { if(Session.plan && Session.list.length) LS.set(KEY, Object.assign(cur(), {done: [...Session.done], at: Date.now()})); };
+  /* snack (sesión corta): se quitan parejas enteras (Dextra + su Sinistra) del final hasta que cabe; el primer bloque y el de Ambas se quedan */
+  const sum = l => l.reduce((a, b) => a + b.min, 0);
+  const lenPref = () => PREF.sessLen === 10 || PREF.sessLen === 20 ? PREF.sessLen : 0;
+  function applyLen(list, T = lenPref()){
+    if(!T || sum(list) <= T) return list;
+    const amb = list.filter(b => ALL.get(b.id).h === "A"), rest = list.filter(b => ALL.get(b.id).h !== "A"), groups = [];
+    for(let i = 0; i < rest.length; i++){ const a = ALL.get(rest[i].id), nx = rest[i + 1] && ALL.get(rest[i + 1].id);
+      if(a.h === "D" && nx && nx.h === "S"){ groups.push([rest[i], rest[i + 1]]); i++; } else groups.push([rest[i]]); }
+    let used = amb.length ? amb[0].min : 0; const out = [];
+    groups.forEach(g => { const m = sum(g); if(!out.length || used + m <= T){ out.push(...g); used += m; } });
+    return amb.length ? out.concat(amb[0]) : out;
+  }
   const pending = () => { const s = saved(); if(!s || !s.done.length || PS().tpl === "libre") return null;
     const p = HANDS.A.PLANS[PS().tpl]; if(!p) return null; const pos = planPos(p, planDay()); if(pos.finished) return null;
-    const ids = sessionBlocks(pos).map(b => b.id); const d = s.done.filter(id => ids.includes(id)).length; return d ? {d, n: ids.length} : null; };
+    const ids = applyLen(sessionBlocks(pos)).map(b => b.id); const d = s.done.filter(id => ids.includes(id)).length; return d ? {d, n: ids.length} : null; };
 
   /* empezar = retomar si ya había bloques hechos de esta misma sesión */
   const _sps = startPlanSession; startPlanSession = function(){
     const s = saved(); const r = _sps();
+    if(Session.plan && lenPref()){ const full = sum(Session.list); Session.list = applyLen(Session.list); Session.label += " · " + T15.of(sum(Session.list), full);
+      if(!s || !s.done.length){ select(Session.list[0].id, Session.list[0]); } renderQueue(); }
     if(Session.plan && s && s.done.length){
       Session.done = new Set(s.done.filter(id => Session.list.some(it => it.id === id)));
       const nx = Session.list.find(it => !Session.done.has(it.id));
@@ -5039,9 +5065,9 @@ const T15 = window.DS_LANG === "en" ? {
       const pos = planPos(p, planDay());
       if(pos.finished) html = `<button class="resume planmain" id="hPlan2"><span class="rtxt"><span class="eyebrow">${T15.planEye}</span><b>${T15.planDone(p.n)}</b><span class="hint15">${T15.planNext}</span></span><span class="go">${T15.seePlans} ›</span></button>` + free(false);
       else {
-        const bl = sessionBlocks(pos), tot = bl.reduce((a, b) => a + b.min, 0), pd = pending();
+        const bl = applyLen(sessionBlocks(pos)), tot = bl.reduce((a, b) => a + b.min, 0), pd = pending();
         html = `<button class="resume planmain" id="hCont2" style="--accent:var(--acc-d)"><span class="rtxt"><span class="eyebrow">${T15.planEye}</span><b>${T15.planName(p.n)}</b>
-          <span class="rmeta">${T15.where(pos.week, p.weeks, pos.dw)} · ${bl.length} ${T10.exs} · ${tot} min${pos.deload ? " · " + T10.deload : ""}</span>
+          <span class="rmeta">${T15.where(pos.week, p.weeks, pos.dw)} · ${lenPref() ? "Snack · " : ""}${bl.length} ${T10.exs} · ${tot} min${pos.deload ? " · " + T10.deload : ""}</span>
           ${pd ? `<span class="prog15"><i style="width:${Math.round(100 * pd.d / pd.n)}%"></i></span><span class="hint15">${T15.done(pd.d, pd.n)} · ${T15.cont}</span>` : `<span class="hint15">${T15.planHint}</span>`}</span>
           <span class="rplay" aria-hidden="true">${ICO.play}</span></button>` + free(false);
       }
@@ -5055,6 +5081,22 @@ const T15 = window.DS_LANG === "en" ? {
   const _rp = renderPlan; renderPlan = function(){
     _rp(); const body = $("#planBody"); if(!body || PS().tpl === "libre") return;
     const pd = pending(), st = $("#pStart"); if(pd && st) st.textContent = T15.resume(`${pd.d}/${pd.n}`);
+    /* elegir duración */
+    const p = HANDS.A.PLANS[PS().tpl], pos = p && planPos(p, planDay());
+    if(pos && !pos.finished && st){
+      const full = sessionBlocks(pos), tot = sum(full), opts = [0, 20, 10].filter(v => !v || v < tot - 3), cur15 = opts.includes(lenPref()) ? lenPref() : 0;
+      const box = document.createElement("div"); box.className = "len15";
+      box.innerHTML = `<span>${T15.len}</span><div class="seg15" role="group" aria-label="${T15.len}">${opts.map(v => `<button type="button" data-len="${v}" aria-pressed="${v === cur15}">${v ? T15.mins(v) : T15.full + " · " + tot + "′"}</button>`).join("")}</div>` + (cur15 ? `<p>${T15.shortNote}</p>` : "");
+      (body.querySelector(".sess") || st.closest(".acts2")).before(box);
+      if(cur15 && !pd) st.textContent = T15.startSnack(cur15);
+      box.querySelectorAll("[data-len]").forEach(b => b.onclick = () => {
+        PREF.sessLen = +b.dataset.len; savePrefs();
+        if(Session.plan){ const keep = Session.done; Session.list = applyLen(sessionBlocks(pos)); Session.done = new Set([...keep].filter(id => Session.list.some(it => it.id === id))); renderQueue(); }
+        renderPlan(); });
+      if(cur15){ const ids = new Set(applyLen(full).map(b => b.id));
+        body.querySelectorAll(".sess .row").forEach(r => { const m = r.textContent.match(/[DSA]-\d{4}/); if(m && !ids.has(m[0])){ r.classList.add("out15"); r.title = T15.out; } });
+        const badge = [...body.querySelectorAll(".badge")].pop(); if(badge) badge.textContent = badge.textContent.replace(/\d+ min/, T15.of(sum(applyLen(full)), tot)); }
+    }
     const s = saved(); if(s) body.querySelectorAll(".sess .row").forEach(r => { const m = r.textContent.match(/[DSA]-\d{4}/); if(m && s.done.includes(m[0])) r.classList.add("done15"); });
     const li = body.querySelector("ol.rules")?.children[3]; if(li) li.textContent = T15.rule;
   };
