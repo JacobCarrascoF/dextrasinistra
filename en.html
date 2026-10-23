@@ -1002,6 +1002,25 @@ body.land.practicing:not(.libopen) .excard > *{flex-shrink:0}
 .planintro14{margin:0 0 4px;color:var(--muted);font-size:14px;line-height:1.5}
 body.land.practicing:not(.libopen) .favbtn{top:4px;right:4px}
 body[data-view="plan"] header.top .handseg{display:none}
+/* ===== v1.3 · sesión guardada ===== */
+.sess .row.done15{opacity:.5}
+.sess .row.done15 .tm.mono::after{content:" ✓";color:var(--ok12)}
+.queue .finish15{color:var(--muted)}
+.today15 .hint15{font-size:12.5px;color:var(--faint);line-height:1.35;margin-top:3px;white-space:normal}
+.today15 .planmain .eyebrow{color:var(--accent)}
+.today15 .prog15{display:block;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden;margin-top:8px;max-width:260px}
+.today15 .prog15 i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.today15 .freerow{border-top:1px solid var(--line);padding:12px 16px 12px 18px;justify-content:space-between}
+.today15 .freerow .rtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.today15 .freerow b{font-size:14.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.today15 .freerow .rmeta{font-size:12.5px}
+.today15 .go{color:var(--accent);font-size:13.5px;font-weight:500;white-space:nowrap;flex:none}
+body.land.practicing:not(.libopen) #exEyebrow{display:none}
+body.land.practicing:not(.libopen) #exName{padding-right:40px}
+body.land.practicing:not(.libopen) #practice .stand{grid-template-columns:minmax(0,1fr) 250px}
+body.land.practicing:not(.libopen) .console2 .pill{font-size:14px}
+body.land.practicing:not(.libopen) .console2 .durs button{padding:0 5px;min-width:0;font-size:12.5px}
+body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
 </style>
 </head>
 <body>
@@ -1276,7 +1295,7 @@ body[data-view="plan"] header.top .handseg{display:none}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "22/10/2026 17:20";
+window.DS_BUILD = "23/10/2026 16:17";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3701,7 +3720,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.2 · October 2026";
+const APP_VER = "1.3 · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -4712,8 +4731,8 @@ const T12P = EN12 ? {phases:"Plan phases", day:"Day", today:"Today", tempo:{lent
     const cols = [...svg.querySelectorAll("rect.col")], n = cols.length; if(!n) return;
     const L = +cols[0].getAttribute("x"), W = +cols[0].getAttribute("width");
     const fullW = +svg.getAttribute("width"), H = +svg.getAttribute("height");
-        const availW = box.clientWidth - 2;
-    if(fullW <= availW) return;
+    const availW = box.clientWidth - 2;
+    const card = box.closest(".excard"), availH = card.getBoundingClientRect().bottom - box.getBoundingClientRect().top - 14;
     const ex = ALL.get(S0.cur), info = ex && ex.info && ex.info.length >= n ? ex.info : null;
     const brk = [], meas = new Set();
     for(let i = 1; i < n; i++) if(!info || !info[i].k){ brk.push(i); if(info && info[i].b % 4 === 0) meas.add(i); }
@@ -4739,8 +4758,12 @@ const T12P = EN12 ? {phases:"Plan phases", day:"Day", today:"Today", tempo:{lent
       return lines;
     };
     /* tamaño: el menor número de líneas sin bajar del 80 %; a igualdad, la letra más grande */
-    let s = 1, lines = plan(1);
-    for(const t of [.9, .8]){ const l2 = plan(t); if(l2.length < lines.length){ s = t; lines = l2; } }
+    /* v1.3 · tamaño: la tablatura se amplía hasta llenar el espacio (máx. ×1,8). Si no cabe entera ni al 80 %,
+       se queda a tamaño normal y se baja la hoja */
+    const tall = (ls, sc) => ls.length * H * sc + (ls.length - 1) * 2;
+    let s = 1, lines = plan(1), ok = false;
+    for(let t = 1.8; t >= .8 - 1e-9; t -= .05){ const l2 = plan(t); if(tall(l2, t) <= availH){ s = t; lines = l2; ok = true; break; } }
+    if(!ok){ s = 1; lines = plan(1); }
     const NS = "http://www.w3.org/2000/svg", wrap = document.createElement("div"); wrap.className = "tablines";
     lines.forEach(([a, b], k) => {
       const c = svg.cloneNode(true), x0 = a * W, w = lw(a, b);
@@ -4951,6 +4974,91 @@ S0.fav = false;
   };
   const _wipe = $("#dataWipe").onclick;
   $("#dataWipe").onclick = async e => { await _wipe(e); if(PlanState.hand !== "A"){ PlanState.A = {tpl: "libre", days: {}}; PlanState.hand = "A"; savePlan(); } };
+}
+
+/* ============ v1.3 · la sesión del plan se guarda: se retoma otro día donde la dejaste ============ */
+const T15 = window.DS_LANG === "en" ? {
+  done: (d, n) => `${d} of ${n} done`, resume: n => `Continue today's session (${n})`,
+  finish: "End session here", finishSure: "End it? Tap again", finished: "Session marked as done. The next one is ready in Plan.",
+  planEye: "Your plan · today", planName: n => `${n} plan`, where: (w, W, d) => `Week ${w} of ${W} · day ${d}`, cont: "tap to continue",
+  planHint: "Tap and the app takes you through each exercise, with its time and tempo.", planDone: n => `${n} plan completed`, planNext: "Choose the next level.",
+  seePlans: "See plans", freeEye: "Free practice", freeGo: "Continue", freeHint: "The last exercise you played. Pick any other from Practice.", freeNew: "Start with this one or pick any exercise from Practice.",
+  noPlan: "No guided plan", noPlanTxt: "A plan tells you what to play each day, for both hands.",
+  rule: "The plan doesn't follow the calendar: «day 3» is your third session. If you don't finish one, it stays saved and you pick it up next time, on whatever day. If you're short on time, «End session here» moves you on to the next one."
+} : {
+  done: (d, n) => `${d} of ${n} hechos`, resume: n => `Continuar la sesión de hoy (${n})`,
+  finish: "Terminar la sesión aquí", finishSure: "¿Terminar? Pulsa otra vez", finished: "Sesión dada por hecha. La siguiente ya está lista en Plan.",
+  planEye: "Tu plan · hoy", planName: n => `Plan ${n}`, where: (w, W, d) => `Semana ${w} of ${W} · day ${d}`, cont: "pulsa para seguir",
+  planHint: "Pulsa y la app te lleva por cada ejercicio, con su tiempo y su tempo.", planDone: n => `Plan ${n} completado`, planNext: "Elige el siguiente nivel.",
+  seePlans: "Ver planes", freeEye: "Práctica libre", freeGo: "Resume", freeHint: "El último ejercicio que tocaste. En Practicar puedes elegir cualquier otro.", freeNew: "Empieza por este o elige cualquier ejercicio en Practicar.",
+  noPlan: "Sin plan guiado", noPlanTxt: "Un plan te dice qué tocar cada día, con las dos manos.",
+  rule: "El plan no va por fechas: «día 3» es tu tercera sesión. Si no la terminas, queda guardada y la retomas la próxima vez, el día que sea. Si un día vas justo de tiempo, «Terminar la sesión aquí» te pasa a la siguiente."
+};
+{
+  const KEY = "dys-sess";
+  const cur = () => ({tpl: PS().tpl, day: planDay()});
+  const saved = () => { const s = LS.get(KEY, null); const c = cur(); return s && s.tpl === c.tpl && s.day === c.day && Array.isArray(s.done) ? s : null; };
+  const save = () => { if(Session.plan && Session.list.length) LS.set(KEY, Object.assign(cur(), {done: [...Session.done], at: Date.now()})); };
+  const pending = () => { const s = saved(); if(!s || !s.done.length || PS().tpl === "libre") return null;
+    const p = HANDS.A.PLANS[PS().tpl]; if(!p) return null; const pos = planPos(p, planDay()); if(pos.finished) return null;
+    const ids = sessionBlocks(pos).map(b => b.id); const d = s.done.filter(id => ids.includes(id)).length; return d ? {d, n: ids.length} : null; };
+
+  /* empezar = retomar si ya había bloques hechos de esta misma sesión */
+  const _sps = startPlanSession; startPlanSession = function(){
+    const s = saved(); const r = _sps();
+    if(Session.plan && s && s.done.length){
+      Session.done = new Set(s.done.filter(id => Session.list.some(it => it.id === id)));
+      const nx = Session.list.find(it => !Session.done.has(it.id));
+      if(nx) select(nx.id, nx);
+      renderQueue();
+    }
+    save(); return r;
+  };
+  const _rq = renderQueue; renderQueue = function(){
+    _rq(); save();
+    const el = $("#queue");
+    if(el && !el.hidden && Session.plan && Session.list.length && !el.querySelector(".finish15")){
+      const b = document.createElement("button"); b.className = "linkbtn finish15"; b.textContent = T15.finish;
+      b.onclick = () => { if(b.dataset.arm){ planAdvance(); Session.note = T15.finished; renderQueue(); } else { b.dataset.arm = 1; b.textContent = T15.finishSure; setTimeout(() => { if(b.isConnected){ delete b.dataset.arm; b.textContent = T15.finish; } }, 3000); } };
+      const close = [...el.querySelectorAll(".linkbtn")].pop(); close ? close.before(b) : el.append(b);
+    }
+  };
+  const _pa = planAdvance; planAdvance = function(){ const r = _pa(); try{ localStorage.removeItem(KEY); }catch(e){} return r; };
+
+  /* Inicio: un bloque «Hoy» con dos opciones bien separadas: el plan (si tienes uno) y la práctica libre */
+  const wkEl = $("#weekCard"); if(wkEl) wkEl.before($("#continue"));
+  const _rh = renderHome; renderHome = function(){
+    _rh();
+    const c = $("#continue"); c.className = "contcard2 today15";
+    const last = ALL.get(S0.cur) || EX[0], logged = Store.items.length > 0, bpm = S0.bpm[last.id] || last.bpm[0];
+    const free = (main) => `<button class="${main ? "resume" : "freerow"}" id="hResume" style="--accent:var(--acc-${last.h === "S" ? "s" : "d"})">
+      <span class="rtxt"><span class="eyebrow">${T15.freeEye}</span><b>${last.name}</b><span class="rmeta"><span class="mono">${last.code}</span> · ${HANDS[last.h].short} · <span class="mono">${bpm} BPM</span></span>${main ? `<span class="hint15">${logged ? T15.freeHint : T15.freeNew}</span>` : ""}</span>
+      ${main ? `<span class="rplay" aria-hidden="true">${ICO.play}</span>` : `<span class="go">${T15.freeGo} ›</span>`}</button>`;
+    const ps = PS(), p = ps.tpl !== "libre" ? HANDS.A.PLANS[ps.tpl] : null;
+    let html;
+    if(p){
+      const pos = planPos(p, planDay());
+      if(pos.finished) html = `<button class="resume planmain" id="hPlan2"><span class="rtxt"><span class="eyebrow">${T15.planEye}</span><b>${T15.planDone(p.n)}</b><span class="hint15">${T15.planNext}</span></span><span class="go">${T15.seePlans} ›</span></button>` + free(false);
+      else {
+        const bl = sessionBlocks(pos), tot = bl.reduce((a, b) => a + b.min, 0), pd = pending();
+        html = `<button class="resume planmain" id="hCont2" style="--accent:var(--acc-d)"><span class="rtxt"><span class="eyebrow">${T15.planEye}</span><b>${T15.planName(p.n)}</b>
+          <span class="rmeta">${T15.where(pos.week, p.weeks, pos.dw)} · ${bl.length} ${T10.exs} · ${tot} min${pos.deload ? " · " + T10.deload : ""}</span>
+          ${pd ? `<span class="prog15"><i style="width:${Math.round(100 * pd.d / pd.n)}%"></i></span><span class="hint15">${T15.done(pd.d, pd.n)} · ${T15.cont}</span>` : `<span class="hint15">${T15.planHint}</span>`}</span>
+          <span class="rplay" aria-hidden="true">${ICO.play}</span></button>` + free(false);
+      }
+    } else html = free(true) + `<button class="planrow" id="hPlan2"><span><b>${T15.noPlan}</b><small>${T15.noPlanTxt}</small></span><span class="go">${T15.seePlans} ›</span></button>`;
+    c.innerHTML = html;
+    $("#hResume").onclick = () => { select(last.id); show("practice"); };
+    if($("#hCont2")) $("#hCont2").onclick = startPlanSession;
+    if($("#hPlan2")) $("#hPlan2").onclick = () => show("plan");
+    const meta = $("#hResume .rmeta"); if(meta){ const bst = bestOf(last.id); meta.innerHTML = `<span class="mono">${last.code}</span> · ${HANDS[last.h].short} · ` + (bst ? T12.recGoal(bst, last.bpm[1]) : T12.noRec(last.bpm[1])); }
+  };
+  const _rp = renderPlan; renderPlan = function(){
+    _rp(); const body = $("#planBody"); if(!body || PS().tpl === "libre") return;
+    const pd = pending(), st = $("#pStart"); if(pd && st) st.textContent = T15.resume(`${pd.d}/${pd.n}`);
+    const s = saved(); if(s) body.querySelectorAll(".sess .row").forEach(r => { const m = r.textContent.match(/[DSA]-\d{4}/); if(m && s.done.includes(m[0])) r.classList.add("done15"); });
+    const li = body.querySelector("ol.rules")?.children[3]; if(li) li.textContent = T15.rule;
+  };
 }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
