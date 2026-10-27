@@ -1330,7 +1330,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "23/10/2026 16:39";
+<script>window.DS_BUILD = "27/10/2026 12:50";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3755,7 +3755,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.5 · octubre 2026";
+const APP_VER = "1.6 · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -5003,8 +5003,17 @@ S0.fav = false;
     const f = e.target.files[0]; await _imp(e);
     PlanState.hand = "A"; savePlan();
     if(!f) return;
-    try{ const d = JSON.parse(await f.text()); const fav = d && d.prefs && d.prefs.fav;
-      if(d.app === "dextra-sinistra" && Array.isArray(fav)){ fav.forEach(id => { if(ALL.has(id) && !isFav(id)) PREF.fav.push(id); }); savePrefs(); sync(); renderBranches(); renderList(); }
+    try{ const d = JSON.parse(await f.text()); if(d.app !== "dextra-sinistra") return;
+      const pr = d.prefs || {};
+      if(Array.isArray(pr.fav)) pr.fav.forEach(id => { if(ALL.has(id) && !isFav(id)) PREF.fav.push(id); });
+      /* v1.6: también tu nombre, el objetivo semanal y la duración de sesión elegida */
+      if(typeof pr.name === "string" && pr.name.trim() && !(PREF.name || "").trim()) PREF.name = pr.name;
+      if(+pr.goal) PREF.goal = +pr.goal;
+      if(pr.sessLen !== undefined) PREF.sessLen = pr.sessLen;
+      savePrefs(); sync(); renderBranches(); renderList();
+      /* el plan importado manda: se cierra la sesión que hubiera abierta aquí y se vuelve a pintar Inicio */
+      if(Session.plan){ Session.list = []; Session.plan = false; Session.note = ""; renderQueue(); }
+      if(!$("#home").hidden) renderHome();
     }catch(err){}
   };
   const _wipe = $("#dataWipe").onclick;
@@ -5042,8 +5051,9 @@ const T15 = window.DS_LANG === "en" ? {
 {
   const KEY = "dys-sess";
   const cur = () => ({tpl: PS().tpl, day: planDay()});
-  const saved = () => { const s = LS.get(KEY, null); const c = cur(); return s && s.tpl === c.tpl && s.day === c.day && Array.isArray(s.done) ? s : null; };
-  const save = () => { if(Session.plan && Session.list.length) LS.set(KEY, Object.assign(cur(), {done: [...Session.done], at: Date.now()})); };
+  /* v1.6: la sesión a medias va dentro del estado del plan (PlanState.A.sess), así viaja en «Exportar copia» */
+  const saved = () => { const s = (PlanState.A && PlanState.A.sess) || LS.get(KEY, null); const c = cur(); return s && s.tpl === c.tpl && s.day === c.day && Array.isArray(s.done) ? s : null; };
+  const save = () => { if(Session.plan && Session.list.length && PlanState.A){ PlanState.A.sess = Object.assign(cur(), {done: [...Session.done], at: Date.now()}); savePlan(); } };
   /* snack (sesión corta): se quitan parejas enteras (Dextra + su Sinistra) del final hasta que cabe; el primer bloque y el de Ambas se quedan */
   const sum = l => l.reduce((a, b) => a + b.min, 0);
   const lenPref = () => PREF.sessLen === 10 || PREF.sessLen === 20 ? PREF.sessLen : 0;
@@ -5082,7 +5092,10 @@ const T15 = window.DS_LANG === "en" ? {
       const close = [...el.querySelectorAll(".linkbtn")].pop(); close ? close.before(b) : el.append(b);
     }
   };
-  const _pa = planAdvance; planAdvance = function(){ const r = _pa(); try{ localStorage.removeItem(KEY); }catch(e){} return r; };
+  /* sesiones guardadas con la versión anterior (fuera del plan): se pasan al plan antes de exportar */
+  const migrate = () => { const o = LS.get(KEY, null); if(o && PlanState.A && !PlanState.A.sess){ PlanState.A.sess = o; savePlan(); } };
+  const _ex = $("#dataExport").onclick; $("#dataExport").onclick = e => { migrate(); return _ex(e); };
+  const _pa = planAdvance; planAdvance = function(){ const r = _pa(); if(PlanState.A) delete PlanState.A.sess; savePlan(); try{ localStorage.removeItem(KEY); }catch(e){} return r; };
 
   /* Inicio: un bloque «Hoy» con dos opciones bien separadas: el plan (si tienes uno) y la práctica libre */
   const wkEl = $("#weekCard"); if(wkEl) wkEl.before($("#continue"));
