@@ -1057,6 +1057,26 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
 .today15 .freemain b{font-size:16px}
 #continue.today15{align-items:stretch}
 .opts16{grid-template-columns:none}
+/* ===== v1.7 · tempo y «Ver entero» ===== */
+.bpmc.tap16{cursor:pointer;border-radius:12px;-webkit-tap-highlight-color:transparent}
+.bpmc.tap16:active{background:var(--surface)}
+.bpmc.tap16 .n{text-decoration:underline dotted 1.5px;text-decoration-color:var(--line2);text-underline-offset:6px}
+.steps [data-d]{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tempo16 .t16big{display:flex;align-items:center;justify-content:center;gap:22px;margin:4px 0}
+.tempo16 .t16big .mono{font-size:56px;font-weight:500;min-width:120px;text-align:center}
+.tempo16 .t16big .rbtn{width:52px;height:52px;font-size:24px}
+.t16jumps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.t16jumps button,.t16marks button{height:44px;border:1px solid var(--line2);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;font-size:15px;cursor:pointer}
+#t16r{width:100%}
+.t16marks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.t16marks button{height:auto;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:13.5px;color:var(--muted)}
+.t16marks button b{font-size:16px;color:var(--fg);font-weight:500}
+.t16marks button[aria-pressed="true"]{border:2px solid var(--accent);padding:7px 11px}
+.t16hint{margin:0;font-size:12.5px;color:var(--faint)}
+.listenrow .whole16{margin-left:auto}
+.listenrow .whole16[aria-pressed="true"]{background:var(--hl);color:var(--fg)}
+.sheet.tempo16 .t16big .rbtn{flex:0 0 52px;width:52px!important;min-width:0!important;height:52px;padding:0;border-radius:50%}
+.t16marks{grid-template-columns:repeat(3,minmax(0,1fr))} .t16marks button{flex-direction:column;align-items:flex-start;gap:2px}
 </style>
 </head>
 <body>
@@ -1331,7 +1351,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "27/10/2026 12:50";
+window.DS_BUILD = "28/10/2026 10:03";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3756,7 +3776,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.6 · October 2026";
+const APP_VER = "1.7 · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -4763,11 +4783,13 @@ const T12P = EN12 ? {phases:"Plan phases", day:"Day", today:"Today", tempo:{lent
   function wrapTab(){
     wrapped = false; lineOf = []; lastLine = -1;
     const box = $("#tab"), svg = box && box.querySelector(":scope > svg");
-    if(!svg || !document.body.classList.contains("land") || !document.body.classList.contains("practicing")) return;
+    const land = document.body.classList.contains("land"), port = !land && window.__tabWrapPortrait && window.__tabWrapPortrait();
+    if(!svg || !(land || port) || !document.body.classList.contains("practicing")) return;
     const cols = [...svg.querySelectorAll("rect.col")], n = cols.length; if(!n) return;
     const L = +cols[0].getAttribute("x"), W = +cols[0].getAttribute("width");
     const fullW = +svg.getAttribute("width"), H = +svg.getAttribute("height");
     const availW = box.clientWidth - 2;
+    if(port && +svg.getAttribute("width") <= availW) return;
     const card = box.closest(".excard"), availH = card.getBoundingClientRect().bottom - box.getBoundingClientRect().top - 14;
     const ex = ALL.get(S0.cur), info = ex && ex.info && ex.info.length >= n ? ex.info : null;
     const brk = [], meas = new Set();
@@ -4798,8 +4820,10 @@ const T12P = EN12 ? {phases:"Plan phases", day:"Day", today:"Today", tempo:{lent
        se queda a tamaño normal y se baja la hoja */
     const tall = (ls, sc) => ls.length * H * sc + (ls.length - 1) * 2;
     let s = 1, lines = plan(1), ok = false;
-    for(let t = 1.8; t >= .8 - 1e-9; t -= .05){ const l2 = plan(t); if(tall(l2, t) <= availH){ s = t; lines = l2; ok = true; break; } }
-    if(!ok){ s = 1; lines = plan(1); }
+    if(land){
+      for(let t = 1.8; t >= .8 - 1e-9; t -= .05){ const l2 = plan(t); if(tall(l2, t) <= availH){ s = t; lines = l2; ok = true; break; } }
+      if(!ok){ s = 1; lines = plan(1); }
+    }   /* vertical («Ver entero»): tamaño normal, más líneas */
     const NS = "http://www.w3.org/2000/svg", wrap = document.createElement("div"); wrap.className = "tablines";
     lines.forEach(([a, b], k) => {
       const c = svg.cloneNode(true), x0 = a * W, w = lw(a, b);
@@ -5158,6 +5182,75 @@ const T15 = window.DS_LANG === "en" ? {
     const s = saved(); if(s) body.querySelectorAll(".sess .row").forEach(r => { const m = r.textContent.match(/[DSA]-\d{4}/); if(m && s.done.includes(m[0])) r.classList.add("done15"); });
     const li = body.querySelector("ol.rules")?.children[3]; if(li) li.textContent = T15.rule;
   };
+}
+
+/* ============ v1.7 · tempo rápido (mantener pulsado y selector) y «Ver entero» en vertical ============ */
+const T16 = window.DS_LANG === "en" ? {
+  title: "Tempo", done: "Done", start: "Range start", rec: "Your record", next: "Next time", goal: "Goal",
+  hint: "Hold − or + to change the tempo fast.", tap: "Tap to choose the tempo",
+  whole: "See it all", line: "One line", wholeT: "Split the tab into lines so you see the whole exercise", lineT: "Back to a single line"
+} : {
+  title: "Tempo", done: "Listo", start: "Inicio del rango", rec: "Tu récord", next: "Próxima vez", goal: "Objetivo",
+  hint: "Mantén pulsado − o + para cambiar el tempo deprisa.", tap: "Toca para elegir el tempo",
+  whole: "Ver entero", line: "En una línea", wholeT: "Parte la tablatura en líneas para ver el ejercicio entero", lineT: "Volver a una sola línea"
+};
+{
+  /* 1 · mantener pulsado − / +: repite y acelera (1 BPM, luego de 5 en 5) */
+  document.querySelectorAll(".steps [data-d]").forEach(b => {
+    let t = 0, n = 0, held = false;
+    const d = +b.dataset.d;
+    const stop = () => { clearTimeout(t); t = 0; };
+    const tick = () => { n++; held = true; setBpm(M.bpm + d * (n > 12 ? 5 : 1)); t = setTimeout(tick, n > 12 ? 140 : n > 4 ? 70 : 120); };
+    b.addEventListener("pointerdown", e => { n = 0; held = false; stop(); t = setTimeout(tick, 380); });
+    ["pointerup", "pointerleave", "pointercancel", "blur"].forEach(ev => b.addEventListener(ev, stop));
+    b.addEventListener("click", e => { if(held){ e.stopImmediatePropagation(); e.preventDefault(); held = false; } }, true);
+    b.addEventListener("contextmenu", e => e.preventDefault());
+  });
+
+  /* 2 · tocar el número abre el selector de tempo */
+  const m = document.createElement("div"); m.className = "modal"; m.id = "tempoModal"; m.hidden = true;
+  m.innerHTML = `<div class="sheet tempo16" role="dialog" aria-modal="true" aria-labelledby="t16h"><div class="grab" aria-hidden="true"></div>
+    <div class="sheethead"><h3 id="t16h">${T16.title}</h3><button type="button" class="iconbtn sheetx" id="t16x" aria-label="${T16.done}">${ICO9.x}</button></div>
+    <div class="t16big"><button type="button" class="rbtn mono" data-j="-1" aria-label="−1">−</button><span class="mono" id="t16n"></span><button type="button" class="rbtn mono" data-j="1" aria-label="+1">+</button></div>
+    <div class="t16jumps">${[-10, -5, 5, 10].map(v => `<button type="button" class="mono" data-j="${v}">${v > 0 ? "+" : "−"}${Math.abs(v)}</button>`).join("")}</div>
+    <input type="range" id="t16r" min="30" max="300" aria-label="${T16.title}">
+    <div class="t16marks" id="t16marks"></div>
+    <p class="t16hint">${T16.hint}</p>
+    <button type="button" class="btn primary big" id="t16ok">${T16.done}</button></div>`;
+  document.body.appendChild(m);
+  const sync = () => {
+    $("#t16n").textContent = M.bpm; $("#t16r").value = M.bpm;
+    const ex = exById(S0.cur), best = bestOf(ex.id);
+    const marks = [[T16.start, ex.bpm[0]], [T16.rec, best], [T16.goal, ex.bpm[1]]].filter(([, v]) => v);
+    $("#t16marks").innerHTML = marks.map(([k, v]) => `<button type="button" data-v="${v}" aria-pressed="${v === M.bpm}"><span>${k}</span><b class="mono">${v}</b></button>`).join("");
+    $("#t16marks").querySelectorAll("[data-v]").forEach(b => b.onclick = () => { setBpm(+b.dataset.v); sync(); });
+  };
+  m.querySelectorAll("[data-j]").forEach(b => b.onclick = () => { setBpm(M.bpm + +b.dataset.j); sync(); });
+  $("#t16r").oninput = e => { setBpm(+e.target.value); $("#t16n").textContent = M.bpm; };
+  $("#t16r").onchange = sync;
+  const close = () => { m.hidden = true; };
+  $("#t16ok").onclick = close; $("#t16x").onclick = close;
+  m.addEventListener("click", e => { if(e.target === m) close(); });
+  const bc = $(".bpmc"); bc.classList.add("tap16"); bc.setAttribute("role", "button"); bc.tabIndex = 0; bc.title = T16.tap; bc.setAttribute("aria-label", T16.tap);
+  const open = () => { sync(); m.hidden = false; };
+  bc.addEventListener("click", open); bc.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); open(); } });
+
+  /* 3 · «Ver entero» en vertical */
+  if(typeof PREF.tabWrap !== "boolean") PREF.tabWrap = false;
+  const tb = document.createElement("button"); tb.type = "button"; tb.className = "listen whole16"; tb.id = "wholeBtn";
+  $("#listenBtn").after(tb);
+  const syncWhole = () => {
+    const land = document.body.classList.contains("land"), box = $("#tab"), svg = box && box.querySelector(":scope > svg");
+    const overflow = !!(svg && +svg.getAttribute("width") > box.clientWidth - 2);
+    const wrappedNow = !!(box && box.querySelector(".tablines"));
+    tb.hidden = land || !(overflow || wrappedNow);
+    tb.setAttribute("aria-pressed", PREF.tabWrap);
+    tb.textContent = PREF.tabWrap ? "↔ " + T16.line : "⤢ " + T16.whole; tb.title = PREF.tabWrap ? T16.lineT : T16.wholeT;
+  };
+  tb.onclick = () => { PREF.tabWrap = !PREF.tabWrap; savePrefs(); renderTab(exById(S0.cur)); };
+  const _rt = renderTab; renderTab = function(ex){ _rt(ex); syncWhole(); };
+  window.__tabWrapPortrait = () => PREF.tabWrap === true;
+  syncWhole();
 }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
