@@ -1077,6 +1077,20 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
 .listenrow .whole16[aria-pressed="true"]{background:var(--hl);color:var(--fg)}
 .sheet.tempo16 .t16big .rbtn{flex:0 0 52px;width:52px!important;min-width:0!important;height:52px;padding:0;border-radius:50%}
 .t16marks{grid-template-columns:repeat(3,minmax(0,1fr))} .t16marks button{flex-direction:column;align-items:flex-start;gap:2px}
+/* ===== v1.8 · calentamiento y planes en marcha ===== */
+.live17{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:6px 0 8px}
+.contcard2 .live17 button{width:auto;flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:0;padding:6px 12px;border:1px solid var(--line2);border-radius:12px;background:transparent}
+.contcard2 .live17 button b{font-size:13.5px;font-weight:600}
+.contcard2 .live17 button span{font-size:11.5px;color:var(--muted)}
+.contcard2 .live17 button[aria-pressed="true"]{background:var(--hl);border-color:var(--accent)}
+.warmchk17{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--muted);cursor:pointer}
+.warmchk17 input{width:18px;height:18px;accent-color:var(--accFill);margin:0}
+.warm17{border-top:1px solid var(--line);padding:14px 16px 14px 18px;display:flex;flex-direction:column;gap:6px}
+.warm17 .eyebrow{color:var(--faint)}
+.wopts17{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.contcard2 .wopts17 button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border:1px solid var(--line2);border-radius:14px;background:var(--surface)}
+.contcard2 .wopts17 button b{font-size:14.5px;font-weight:600}
+.contcard2 .wopts17 button span{font-size:12px;color:var(--muted);line-height:1.3}
 </style>
 </head>
 <body>
@@ -1351,7 +1365,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "28/10/2026 10:03";
+window.DS_BUILD = "29/10/2026 10:08";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3776,7 +3790,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.7 · October 2026";
+const APP_VER = "1.8 · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -5077,8 +5091,10 @@ const T15 = window.DS_LANG === "en" ? {
   const KEY = "dys-sess";
   const cur = () => ({tpl: PS().tpl, day: planDay()});
   /* v1.6: la sesión a medias va dentro del estado del plan (PlanState.A.sess), así viaja en «Exportar copia» */
-  const saved = () => { const s = (PlanState.A && PlanState.A.sess) || LS.get(KEY, null); const c = cur(); return s && s.tpl === c.tpl && s.day === c.day && Array.isArray(s.done) ? s : null; };
-  const save = () => { if(Session.plan && Session.list.length && PlanState.A){ PlanState.A.sess = Object.assign(cur(), {done: [...Session.done], at: Date.now()}); savePlan(); } };
+  /* v1.8: una sesión guardada por plan (sessBy), para poder tener varios planes en marcha */
+  const bucket = () => { const A = PlanState.A; if(!A) return null; if(!A.sessBy) A.sessBy = {}; if(A.sess){ if(!A.sessBy[A.sess.tpl]) A.sessBy[A.sess.tpl] = A.sess; delete A.sess; } return A.sessBy; };
+  const saved = () => { const B = bucket(), c0 = PS().tpl; const s = (B && B[c0]) || LS.get(KEY, null); const c = cur(); return s && s.tpl === c.tpl && s.day === c.day && Array.isArray(s.done) ? s : null; };
+  const save = () => { if(Session.plan && Session.list.length && PlanState.A){ bucket()[PS().tpl] = Object.assign(cur(), {done: [...Session.done], at: Date.now()}); savePlan(); } };
   /* snack (sesión corta): se quitan parejas enteras (Dextra + su Sinistra) del final hasta que cabe; el primer bloque y el de Ambas se quedan */
   const sum = l => l.reduce((a, b) => a + b.min, 0);
   const lenPref = () => PREF.sessLen === 10 || PREF.sessLen === 20 ? PREF.sessLen : 0;
@@ -5118,9 +5134,9 @@ const T15 = window.DS_LANG === "en" ? {
     }
   };
   /* sesiones guardadas con la versión anterior (fuera del plan): se pasan al plan antes de exportar */
-  const migrate = () => { const o = LS.get(KEY, null); if(o && PlanState.A && !PlanState.A.sess){ PlanState.A.sess = o; savePlan(); } };
+  const migrate = () => { const o = LS.get(KEY, null), B = bucket(); if(o && B && !B[o.tpl]){ B[o.tpl] = o; savePlan(); } };
   const _ex = $("#dataExport").onclick; $("#dataExport").onclick = e => { migrate(); return _ex(e); };
-  const _pa = planAdvance; planAdvance = function(){ const r = _pa(); if(PlanState.A) delete PlanState.A.sess; savePlan(); try{ localStorage.removeItem(KEY); }catch(e){} return r; };
+  const _pa = planAdvance; planAdvance = function(){ const r = _pa(); const B = bucket(); if(B) delete B[PS().tpl]; savePlan(); try{ localStorage.removeItem(KEY); }catch(e){} return r; };
 
   /* Inicio: un bloque «Hoy» con dos opciones bien separadas: el plan (si tienes uno) y la práctica libre */
   const wkEl = $("#weekCard"); if(wkEl) wkEl.before($("#continue"));
@@ -5251,6 +5267,82 @@ const T16 = window.DS_LANG === "en" ? {
   const _rt = renderTab; renderTab = function(ex){ _rt(ex); syncWhole(); };
   window.__tabWrapPortrait = () => PREF.tabWrap === true;
   syncWhole();
+}
+
+/* ============ v1.8 · calentamiento y varios planes en marcha ============ */
+const T17 = window.DS_LANG === "en" ? {
+  eye: "Warm-up", gig: "Gig", full: "Full", gigM: "5 min · before playing live", fullM: "10 min · before a long session",
+  label: n => `Warm-up · ${n} min`, tempo: "Warm-up · up to 75 % of your record",
+  mob: s => `First, ${s} without the guitar: open and close your hands, wrist and shoulder circles. Nothing forced.`,
+  done: "Warm-up done. You're ready.", pre: "Start with the 5-minute warm-up", inprog: "Plans in progress",
+  day: n => `day ${n}`, hint: "Free for everyone. It doesn't move your plan forward, but it counts as practice minutes."
+} : {
+  eye: "Calentamiento", gig: "Concierto", full: "Completo", gigM: "5 min · antes de tocar en directo", fullM: "10 min · antes de una sesión larga",
+  label: n => `Calentamiento · ${n} min`, tempo: "Calentamiento · hasta el 75 % de tu récord",
+  mob: s => `Antes, ${s} sin guitarra: abre y cierra las manos, círculos de muñeca y de hombros. Nada forzado.`,
+  done: "Calentamiento hecho. Ya estás listo.", pre: "Empezar con los 5 minutos de calentamiento", inprog: "Planes en marcha",
+  day: n => `día ${n}`, hint: "Gratis para todos. No avanza el plan, pero cuenta como minutos de práctica."
+};
+/* de lo simple a lo específico: mano derecha suelta, cromático de ida y vuelta, cruces, ligados y acordes. Todo de nivel I */
+const WARM = {
+  5:  {mob: "30″", list: [["D-2006", 1, "lento"], ["S-3000", 1, "lento"], ["S-3047", 1, "calor"], ["D-2096", 1, "calor"], ["S-3212", 1, "calor"]]},
+  10: {mob: "1′", list: [["D-2000", 1, "lento"], ["D-2007", 1, "lento"], ["S-3000", 1.5, "lento"], ["S-3047", 1.5, "calor"], ["D-2093", 1, "calor"], ["S-3072", 1, "calor"], ["S-3212", 1, "calor"], ["D-2109", 1, "calor"]]}
+};
+{
+  TEMPO_N.calor = T17.tempo;
+  const _tf = tempoFor; tempoFor = function(ex, mode){
+    if(mode !== "calor") return _tf(ex, mode);
+    const best = bestOf(ex.id); return best ? Math.max(ex.bpm[0], Math.min(ex.bpm[1], Math.round(best * .75))) : ex.bpm[0];
+  };
+  const blocks = n => WARM[n].list.filter(([id]) => ALL.has(id)).map(([id, min, tempo]) => ({id, min, tempo, warm: true}));
+  window.startWarmup = function(n){
+    if(M.playing) stop(false);
+    Session.list = blocks(n); Session.done = new Set(); Session.plan = false; Session.warm = n;
+    Session.label = T17.label(n); Session.note = T17.mob(WARM[n].mob);
+    show("practice"); select(Session.list[0].id, Session.list[0]); renderQueue(); window.scrollTo(0, 0);
+  };
+  /* al terminar el último bloque del calentamiento */
+  const _rq = renderQueue; renderQueue = function(){
+    if(Session.warm && Session.list.length && Session.list.every(it => Session.done.has(it.id))){ Session.note = T17.done; Session.warm = false; }
+    _rq();
+  };
+  /* calentar antes de la sesión del plan */
+  const _sps = startPlanSession; startPlanSession = function(){
+    const r = _sps();
+    if(PREF.warmPlan && Session.plan && Session.list.length){
+      const ids = new Set(Session.list.map(it => it.id)), w = blocks(5).filter(b => !ids.has(b.id));
+      Session.list = w.concat(Session.list);
+      const nx = Session.list.find(it => !Session.done.has(it.id)); if(nx) select(nx.id, nx);
+      Session.note = Session.done.size ? Session.note : T17.mob(WARM[5].mob); renderQueue();
+    }
+    return r;
+  };
+
+  /* Inicio: planes en marcha (cambiar con un toque) y bloque de calentamiento */
+  const _rh = renderHome; renderHome = function(){
+    _rh();
+    const c = $("#continue"), A = PlanState.A || {}, P = HANDS.A.PLANS, cur = PS().tpl;
+    const live = Object.keys(P).filter(k => k === cur || (A.days && A.days[k] > 0) || (A.sessBy && A.sessBy[k] && A.sessBy[k].done && A.sessBy[k].done.length));
+    const box = c.querySelector(".planbox16");
+    if(box && live.length > 1 && cur !== "libre"){
+      const row = document.createElement("div"); row.className = "live17"; row.setAttribute("role", "group"); row.setAttribute("aria-label", T17.inprog);
+      row.innerHTML = live.map(k => { const pos = planPos(P[k], A.days[k] || 0); return `<button type="button" data-live="${k}" aria-pressed="${k === cur}"><b>${P[k].n}</b><span>${pos.finished ? "✓" : T17.day(Math.min(pos.total, (A.days[k] || 0) + 1))}</span></button>`; }).join("");
+      box.querySelector(".ph16").after(row);
+      row.querySelectorAll("[data-live]").forEach(b => b.onclick = () => { if(b.dataset.live === cur) return; PS().tpl = b.dataset.live; savePlan(); if(Session.plan){ Session.list = []; Session.plan = false; Session.note = ""; renderQueue(); } renderHome(); });
+    }
+    if(box && cur !== "libre" && box.querySelector(".opts16")){
+      const lab = document.createElement("label"); lab.className = "warmchk17";
+      lab.innerHTML = `<input type="checkbox" ${PREF.warmPlan ? "checked" : ""}><span>${T17.pre}</span>`;
+      lab.querySelector("input").onchange = e => { PREF.warmPlan = e.target.checked; savePrefs(); };
+      box.querySelector(".opts16").after(lab);
+    }
+    const w = document.createElement("div"); w.className = "warm17";
+    w.innerHTML = `<span class="eyebrow">${T17.eye}</span><div class="wopts17">
+      <button type="button" data-warm="5"><b>${T17.gig} · 5′</b><span>${T17.gigM}</span></button>
+      <button type="button" data-warm="10"><b>${T17.full} · 10′</b><span>${T17.fullM}</span></button></div><span class="hint15">${T17.hint}</span>`;
+    const free = c.querySelector("#hResume"); free ? free.before(w) : c.append(w);
+    w.querySelectorAll("[data-warm]").forEach(b => b.onclick = () => startWarmup(+b.dataset.warm));
+  };
 }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
