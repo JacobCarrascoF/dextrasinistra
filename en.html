@@ -1091,6 +1091,20 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
 .contcard2 .wopts17 button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border:1px solid var(--line2);border-radius:14px;background:var(--surface)}
 .contcard2 .wopts17 button b{font-size:14.5px;font-weight:600}
 .contcard2 .wopts17 button span{font-size:12px;color:var(--muted);line-height:1.3}
+/* ===== v1.8.1 · Inicio más compacto ===== */
+.planbox16 .tl16{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px;row-gap:0}
+.planbox16 .tl16 .t16{font-size:18px}
+.planbox16{padding:12px 14px 14px 16px}
+.planbox16 .ask16{margin-top:8px}
+.planbox16 .prog15{margin-top:6px}
+.contcard2 .opts16 button{min-height:54px;padding-top:7px;padding-bottom:7px}
+.warmchk17{margin-top:8px}
+.warm17{flex-direction:row;align-items:center;gap:10px;padding:10px 14px 10px 16px}
+.warm17 .eyebrow{flex:none;font-size:11px}
+.wopts17{flex:1}
+.contcard2 .wopts17 button{min-height:38px;padding:6px 10px;align-items:center;justify-content:center}
+.contcard2 .wopts17 button b{font-size:13.5px;white-space:nowrap}
+.today15 .freerow{padding:10px 14px 10px 16px}
 </style>
 </head>
 <body>
@@ -1365,7 +1379,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "29/10/2026 10:08";
+window.DS_BUILD = "29/10/2026 10:24";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -5161,7 +5175,7 @@ const T15 = window.DS_LANG === "en" ? {
         const full = sessionBlocks(pos), tot = sum(full), s = saved(), d = s ? s.done.filter(id => full.some(b => b.id === id)).length : 0;
         const opts = [0, 20, 10].filter(v => !v || v < tot - 3), curL = opts.includes(lenPref()) ? lenPref() : 0;
         html = `<div class="planbox16"><div class="ph16"><span class="eyebrow">${T15.planEye}</span><button type="button" class="linkbtn" id="hPlan2">${T15.change} ›</button></div>
-          <b class="t16">${T15.planName(p.n)}</b><span class="rmeta">${T15.where(pos.week, p.weeks, pos.dw)}${pos.deload ? " · " + T10.deload : ""}</span>
+          <div class="tl16"><b class="t16">${T15.planName(p.n)}</b><span class="rmeta">${T15.where(pos.week, p.weeks, pos.dw)}${pos.deload ? " · " + T10.deload : ""}</span></div>
           ${d ? `<span class="prog15"><i style="width:${Math.round(100 * d / full.length)}%"></i></span><span class="hint15">${T15.doneHint(d)}</span>` : ""}
           <span class="ask16">${T15.ask}</span>
           <div class="opts16" style="grid-template-columns:1.35fr repeat(${opts.length - 1},minmax(0,1fr))">${opts.map(v => { const l = applyLen(full, v), m = sum(l); return `<button type="button" data-len16="${v}" class="${v === curL ? "on" : ""}">${v ? "" : `<span class="rplay sm" aria-hidden="true">${ICO.play}</span>`}<b>${v ? "Snack" : T15.full}</b><span>${T15.optMeta(m, l.length)}</span></button>`; }).join("")}</div></div>` + free(false);
@@ -5338,8 +5352,8 @@ const WARM = {
     }
     const w = document.createElement("div"); w.className = "warm17";
     w.innerHTML = `<span class="eyebrow">${T17.eye}</span><div class="wopts17">
-      <button type="button" data-warm="5"><b>${T17.gig} · 5′</b><span>${T17.gigM}</span></button>
-      <button type="button" data-warm="10"><b>${T17.full} · 10′</b><span>${T17.fullM}</span></button></div><span class="hint15">${T17.hint}</span>`;
+      <button type="button" data-warm="5" title="${T17.gigM}"><b>${T17.gig} · 5′</b></button>
+      <button type="button" data-warm="10" title="${T17.fullM}"><b>${T17.full} · 10′</b></button></div>`;
     const free = c.querySelector("#hResume"); free ? free.before(w) : c.append(w);
     w.querySelectorAll("[data-warm]").forEach(b => b.onclick = () => startWarmup(+b.dataset.warm));
   };
