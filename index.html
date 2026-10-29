@@ -1409,7 +1409,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "29/10/2026 10:31";
+<script>window.DS_BUILD = "29/10/2026 11:58";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -1472,11 +1472,15 @@ const ENC = (function(){
     const ok = targets.filter(t => [...need].every(r => place(pitch(r, t.m, ctx.sc), t.s, null, x)));
     if(ok.length < 3) return null;
     const tg = dir === "asc" ? ok : ok.slice().reverse();
-    const cells = []; let prev = null;
+    const cells = []; let prev = null, last = null;
     for(let i=0;i<tg.length;i++){
       const t = tg[i], tc = TBY[codes[i % codes.length]], cell = [];
-      for(const r of tc.seq){ const p = pitch(r, t.m, ctx.sc), b = place(p, t.s, prev, x); if(!b) return null; cell.push({s:b.s, f:b.f, m:p, r}); prev = b.s; }
-      cell.push({s:t.s, f:t.f, m:t.m, r:"T"}); prev = t.s;
+      for(const r of tc.seq){
+        const p = pitch(r, t.m, ctx.sc);
+        /* si la aproximación es la misma nota que la anterior (p. ej. el objetivo previo), se toca en la misma cuerda y traste */
+        const b = last && last.m === p ? {s:last.s, f:last.f} : place(p, t.s, prev, x); if(!b) return null;
+        cell.push({s:b.s, f:b.f, m:p, r}); prev = b.s; last = {s:b.s, f:b.f, m:p}; }
+      cell.push({s:t.s, f:t.f, m:t.m, r:"T"}); prev = t.s; last = {s:t.s, f:t.f, m:t.m};
       cells.push(cell);
     }
     return {cells, skipped: targets.length - ok.length};
@@ -2653,13 +2657,28 @@ function uniqueMapsN(pcs, w, ok = () => true){
 /* Frases y escala 3 nps: La menor natural en 5.ª posición (con extensiones) */
 const RUN = {6:[5,7,8,10],5:[5,7,8,10],4:[5,7,9,10],3:[5,7,9,10],2:[5,6,8,10],1:[5,7,8,10]};
 const CT = {6:[5,1],5:[7,3],4:[7,3],3:[5,1],2:[5,1],1:[5,1]};
+/* Escala de La menor natural. Cuando un grupo de 3 o más notas en una cuerda sigue a otro grupo en la cuerda grave
+   de al lado, continúa la escala desde la última nota (antes usaba la caja fija y, al pasar de la cuerda 3 a la 2,
+   afinada a distancia de tercera mayor, repetía nota). */
+const OPEN_P = {6:40,5:45,4:50,3:55,2:59,1:64}, AMIN = [9,11,0,2,4,5,7];
+const nextInScale = p => { let q = p + 1; while(!AMIN.includes(((q % 12) + 12) % 12)) q++; return q; };
 function phraseNotes(strs){
-  const out = []; let i = 0;
+  const out = []; let i = 0, prevRun = null;
   while(i < strs.length){
     let j = i; while(j < strs.length && strs[j] === strs[i]) j++;
     const s = strs[i], k = j - i;
-    if(k === 1) out.push({s, f:CT[s][0], d:CT[s][1]});
+    const cont = prevRun && prevRun.s === s + 1 && (k >= 3 || prevRun.k >= 3);
+    if(k === 1){ out.push({s, f:CT[s][0], d:CT[s][1]}); prevRun = null; }
+    else if(cont){
+      let p = OPEN_P[prevRun.s] + out[out.length-1].f; const fr = [];
+      for(let q = 0; q < k; q++){ p = nextInScale(p); fr.push(p - OPEN_P[s]); }
+      const span = fr[fr.length-1] - fr[0];
+      const ds = span <= 3 ? fr.map(f => f - fr[0] + 1) : ({2:[1,4],3:[1,2,4],4:[1,2,3,4]})[k];
+      fr.forEach((f,q) => out.push({s, f, d:ds[q]}));
+      prevRun = {s, k};
+    }
     else {
+      prevRun = {s, k};
       const fr = RUN[s].slice(0, k), span = fr[fr.length-1] - fr[0];
       const ds = span <= 3 ? fr.map(f => f - fr[0] + 1) : ({2:[1,4],3:[1,2,4],4:[1,2,3,4]})[k];
       fr.forEach((f,q) => out.push({s, f, d:ds[q]}));
@@ -3834,7 +3853,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.9 · octubre 2026";
+const APP_VER = "1.9.1 · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
