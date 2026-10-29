@@ -1105,6 +1105,37 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
 .contcard2 .wopts17 button{min-height:38px;padding:6px 10px;align-items:center;justify-content:center}
 .contcard2 .wopts17 button b{font-size:13.5px;white-space:nowrap}
 .today15 .freerow{padding:10px 14px 10px 16px}
+/* ===== v1.9 · guía ===== */
+.guide18{z-index:40}
+.sheet.g18{max-width:440px;min-height:min(560px,92dvh);display:flex;flex-direction:column;gap:12px}
+.g18top{display:flex;justify-content:space-between;align-items:center;padding-top:6px}
+.g18dots{display:flex;gap:6px}
+.g18dots i{width:7px;height:7px;border-radius:50%;background:var(--line2)}
+.g18dots i.on{background:var(--accent);width:20px;border-radius:4px}
+.g18top .linkbtn{width:auto;color:var(--muted)}
+.g18body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;min-height:300px}
+.g18body h3{font-size:24px;line-height:1.2;letter-spacing:-.01em;margin:0}
+.g18body p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted)}
+.g18body p b{color:var(--fg);font-weight:600}
+.g18vis{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin-bottom:8px}
+.g18hands,.g18opts,.g18q{display:flex;gap:6px;flex-wrap:wrap}
+.g18hands span,.g18opts span,.g18q span{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--line2);border-radius:12px;background:var(--surface);font-size:14px;font-weight:500}
+.g18hands i,.g18q i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.g18opts span.m{background:var(--accFill);border-color:var(--accFill);color:var(--onAcc)}
+.g18q span{flex-direction:column;align-items:flex-start;gap:2px}
+.g18q small{font-size:11.5px;color:var(--muted);font-family:var(--f-mono)}
+.g18bpm{display:flex;align-items:center;gap:16px}
+.g18bpm span{width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--surface)}
+.g18bpm b{font-size:44px;font-weight:500}
+.g18name{display:flex;flex-direction:column;gap:6px;margin-top:6px;font-size:13px;color:var(--muted)}
+.g18name input{height:44px;border-radius:12px;border:1px solid var(--line2);background:var(--surface);color:var(--fg);font:inherit;font-size:15px;padding:0 12px}
+.g18acts{display:flex;justify-content:space-between;gap:10px}
+.g18acts .btn.primary{flex:1;max-width:220px;margin-left:auto}
+.setrow18{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;border:0;background:transparent;color:var(--fg);font:inherit;text-align:left;padding:2px 0;cursor:pointer}
+.setrow18 span:first-child{display:flex;flex-direction:column;gap:2px}
+.setrow18 b{font-size:15px;font-weight:500}
+.setrow18 small{font-size:12.5px;color:var(--faint)}
+.setrow18 .go{color:var(--accent);font-size:20px}
 </style>
 </head>
 <body>
@@ -1379,7 +1410,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "29/10/2026 10:24";
+window.DS_BUILD = "29/10/2026 10:31";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3804,7 +3835,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.8 · October 2026";
+const APP_VER = "1.9 · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -5357,6 +5388,84 @@ const WARM = {
     const free = c.querySelector("#hResume"); free ? free.before(w) : c.append(w);
     w.querySelectorAll("[data-warm]").forEach(b => b.onclick = () => startWarmup(+b.dataset.warm));
   };
+}
+
+/* ============ v1.9 · guía de uso: la primera vez y en Ajustes ============ */
+const T18 = window.DS_LANG === "en" ? {
+  skip: "Skip", next: "Next", back: "Back", go: "Let's play", sect: "Help", open: "How the app works", openSub: "A 1-minute guide",
+  namePh: "Your name (optional)", nameL: "What should we call you?",
+  s: [
+    {t: "Three sections, one guitar", p: "<b>Dextra</b> trains the picking hand, <b>Sinistra</b> the fretting hand and <b>Both</b> the two together. You switch at the top of the screen, whenever you like.",
+     v: `<div class="g18hands"><span><i style="background:var(--acc-d)"></i>Dextra</span><span><i style="background:var(--acc-s)"></i>Sinistra</span><span><i style="background:linear-gradient(90deg,var(--acc-s) 0 50%,var(--acc-d) 50%)"></i>Both</span></div>`},
+    {t: "Home: decide in one tap", p: "Your plan for today with <b>Full</b> or a short <b>Snack</b> if you're in a hurry, a 5 or 10-minute <b>warm-up</b>, or <b>free practice</b> with your last exercise.",
+     v: `<div class="g18opts"><span class="m">▶ Full</span><span>Snack 20′</span><span>Snack 10′</span></div><div class="g18opts"><span>Gig · 5′</span><span>Full · 10′</span></div>`},
+    {t: "Practice", p: "Tab, metronome and timer on one screen. <b>Hold − or +</b> to change the tempo fast, or tap the number. Turn your phone sideways to see the tab big, or use <b>See it all</b>.",
+     v: `<div class="g18bpm"><span>−</span><b class="mono">96</b><span>+</span></div>`},
+    {t: "Log every run", p: "When you finish, say how it went. The app gives you next time's tempo, and your record only counts clean runs.",
+     v: `<div class="g18q"><span><i style="background:var(--green)"></i>Clean<small>+4 BPM</small></span><span><i style="background:var(--yellow)"></i>Controlled<small>same</small></span><span><i style="background:var(--red)"></i>Tense<small>−10 %</small></span></div>`},
+    {t: "Your progress, on your phone", p: "Streak, minutes and records in Progress, and you can share your week. Everything stays on this device: use <b>Export backup</b> in Settings to move it to another one.",
+     v: "", name: true}
+  ]
+} : {
+  skip: "Saltar", next: "Siguiente", back: "Atrás", go: "A tocar", sect: "Ayuda", open: "Cómo funciona la app", openSub: "Una guía de 1 minuto",
+  namePh: "Tu nombre (opcional)", nameL: "¿Cómo te llamamos?",
+  s: [
+    {t: "Tres secciones, una guitarra", p: "<b>Dextra</b> trabaja la mano derecha, <b>Sinistra</b> la izquierda y <b>Ambas</b> las dos a la vez. Cambias arriba de la pantalla, cuando quieras.",
+     v: `<div class="g18hands"><span><i style="background:var(--acc-d)"></i>Dextra</span><span><i style="background:var(--acc-s)"></i>Sinistra</span><span><i style="background:linear-gradient(90deg,var(--acc-s) 0 50%,var(--acc-d) 50%)"></i>Ambas</span></div>`},
+    {t: "Inicio: decides con un toque", p: "Tu plan de hoy en <b>Completa</b> o en un <b>Snack</b> corto si vas con prisa, un <b>calentamiento</b> de 5 o 10 minutos, o la <b>práctica libre</b> con tu último ejercicio.",
+     v: `<div class="g18opts"><span class="m">▶ Completa</span><span>Snack 20′</span><span>Snack 10′</span></div><div class="g18opts"><span>Concierto · 5′</span><span>Completo · 10′</span></div>`},
+    {t: "Practicar", p: "Tablatura, metrónomo y reloj en una pantalla. <b>Mantén pulsado − o +</b> para cambiar el tempo deprisa, o toca el número. Gira el móvil para ver la tablatura en grande, o usa <b>Ver entero</b>.",
+     v: `<div class="g18bpm"><span>−</span><b class="mono">96</b><span>+</span></div>`},
+    {t: "Registra cada pasada", p: "Al terminar, di cómo ha salido. La app te dice el tempo de la próxima vez, y el récord solo cuenta las pasadas limpias.",
+     v: `<div class="g18q"><span><i style="background:var(--green)"></i>Limpio<small>+4 BPM</small></span><span><i style="background:var(--yellow)"></i>Controlado<small>igual</small></span><span><i style="background:var(--red)"></i>Con tensión<small>−10 %</small></span></div>`},
+    {t: "Tu progreso, en tu móvil", p: "Racha, minutos y récords en Progreso, y puedes compartir tu semana. Todo se guarda en este dispositivo: con <b>Exportar copia</b> en Ajustes lo pasas a otro.",
+     v: "", name: true}
+  ]
+};
+{
+  const m = document.createElement("div"); m.className = "modal guide18"; m.id = "guideModal"; m.hidden = true;
+  m.innerHTML = `<div class="sheet g18" role="dialog" aria-modal="true" aria-labelledby="g18t">
+    <div class="g18top"><span class="g18dots" id="g18dots"></span><button type="button" class="linkbtn" id="g18skip">${T18.skip}</button></div>
+    <div class="g18body" id="g18body" aria-live="polite"></div>
+    <div class="g18acts"><button type="button" class="btn ghost" id="g18back">${T18.back}</button><button type="button" class="btn primary big" id="g18next"></button></div></div>`;
+  document.body.appendChild(m);
+  let i = 0;
+  const n = T18.s.length;
+  const draw = () => {
+    const s = T18.s[i];
+    $("#g18body").innerHTML = `${s.v ? `<div class="g18vis">${s.v}</div>` : ""}<h3 id="g18t">${s.t}</h3><p>${s.p}</p>` +
+      (s.name ? `<label class="g18name"><span>${T18.nameL}</span><input type="text" id="g18n" maxlength="24" autocomplete="given-name" placeholder="${T18.namePh}" value="${(PREF.name || "").replace(/"/g, "&quot;")}"></label>` : "");
+    $("#g18dots").innerHTML = T18.s.map((_, k) => `<i class="${k === i ? "on" : ""}"></i>`).join("");
+    $("#g18back").style.visibility = i ? "visible" : "hidden";
+    $("#g18next").textContent = i === n - 1 ? T18.go : T18.next;
+  };
+  const finish = () => {
+    const inp = $("#g18n"); if(inp && inp.value.trim()){ PREF.name = inp.value.trim().slice(0, 24); }
+    PREF.guideSeen = true; savePrefs(); m.hidden = true;
+    if(!$("#home").hidden) renderHome();
+    const pn = $("#prefName"); if(pn && PREF.name) pn.value = PREF.name;
+  };
+  $("#g18next").onclick = () => { if(i < n - 1){ i++; draw(); } else finish(); };
+  $("#g18back").onclick = () => { if(i){ i--; draw(); } };
+  $("#g18skip").onclick = finish;
+  /* deslizar entre pantallas */
+  let x0 = null;
+  $("#g18body").addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, {passive: true});
+  $("#g18body").addEventListener("touchend", e => { if(x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(dx < -50 && i < n - 1){ i++; draw(); } else if(dx > 50 && i){ i--; draw(); } });
+  window.openGuide = () => { i = 0; draw(); m.hidden = false; };
+
+  /* Ajustes: sección «Ayuda» antes de «Legal» */
+  const legal = [...document.querySelectorAll("#settings .sect")].find(s => /^(Legal)$/i.test(s.textContent.trim()));
+  if(legal){
+    const sec = document.createElement("div"); sec.className = "sect"; sec.textContent = T18.sect;
+    const card = document.createElement("div"); card.className = "card setcard";
+    card.innerHTML = `<button type="button" class="setrow18" id="guideOpen"><span><b>${T18.open}</b><small>${T18.openSub}</small></span><span class="go">›</span></button>`;
+    legal.before(sec, card);
+    $("#guideOpen").onclick = openGuide;
+  }
+  /* la primera vez: solo a quien no ha registrado nada todavía */
+  if(!PREF.guideSeen) setTimeout(() => { if(PREF.guideSeen) return; if(!Store.items.length) openGuide(); else { PREF.guideSeen = true; savePrefs(); } }, 400);
 }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
