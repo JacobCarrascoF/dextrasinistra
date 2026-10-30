@@ -1181,6 +1181,22 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
 .dd20 p{margin:0;color:var(--muted);font-size:14.5px}
 .dd20 .dd20n{color:var(--fg);font-size:15px;margin-top:6px}
 .dd20 .dd20a{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:12px}
+/* ===== v2.2 · plan personalizado ===== */
+.c21body{justify-content:flex-start;gap:12px;overflow-y:auto;max-height:62dvh}
+.c21opts{display:flex;flex-wrap:wrap;gap:8px}
+.c21opts button{height:44px;padding:0 16px;border:1px solid var(--line2);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;font-size:15px;font-weight:500;cursor:pointer}
+.c21opts button[aria-pressed="true"],.c21lv button[aria-pressed="true"]{background:var(--accFill);border-color:var(--accFill);color:var(--onAcc)}
+.c21lv{display:flex;flex-direction:column;gap:8px}
+.c21lv button{display:flex;gap:12px;align-items:center;text-align:left;padding:10px 14px;border:1px solid var(--line2);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;cursor:pointer}
+.c21lv b{font-family:var(--f-mono);font-size:16px;min-width:28px}
+.c21lv span{font-size:13.5px;line-height:1.35}
+.c21lv button[aria-pressed="true"] span{color:var(--onAcc)}
+.c21g{display:flex;flex-direction:column;gap:6px}
+.c21g > span{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.c21g .c21opts button{height:38px;padding:0 12px;font-size:14px}
+.c21any{margin:0;font-size:12.5px;color:var(--faint)}
+.contcard2 .lv16 button.cus21{grid-column:1/-1;border-style:dashed;min-height:52px}
+.cus21p{margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -1454,7 +1470,7 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "30/10/2026 18:03";
+<script>window.DS_BUILD = "30/10/2026 18:11";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3958,7 +3974,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.1 · octubre 2026";
+const APP_VER = "2.2 · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -5762,6 +5778,155 @@ const T20 = window.DS_LANG === "en" ? {
     $("#dd20home").onclick = () => { close(); show("home"); window.scrollTo(0, 0); };
     return r;
   };
+}
+
+/* ============ v2.2 · plan personalizado ============ */
+const T21 = window.DS_LANG === "en" ? {
+  name: "Custom", btn: "Custom · you choose", create: "Create your custom plan", edit: "Edit your custom plan", next: "Next", back: "Back", make: "Create plan", skip: "Close",
+  q: ["How many days a week?", "How long is each session?", "For how many weeks?", "Your level?", "What do you want to work on?"],
+  daysO: n => `${n} days`, minO: n => `${n} min`, weeksO: n => `${n} weeks`,
+  lv: ["Starting out or coming back: slow tempos and basic mechanics.", "You play comfortably in one position.", "String crossing and medium speed.", "Speed and precision all over the neck.", "Jazz vocabulary: enclosures and voicings."],
+  any: "If you don't pick anything, everything gets shared out.", gD: "Picking hand · Dextra", gS: "Fretting hand · Sinistra", gB: "Both hands",
+  f: {alt: "Alternate", swp: "Sweep and economy", hyb: "Hybrid", rit: "Strumming and rhythm", leg: "Legato", ind: "Independence", pos: "Stretches and shifts", bnd: "Bends and vibrato", aco: "Chords and muting", map: "Scales and arpeggios", enc: "Enclosures", voi: "Voicings"},
+  who: (d, m, w, l) => `${d} days a week · ${m} min · ${w} weeks · level ${l}.`, goal: f => `Works on: ${f}.`, all: "everything",
+  ph: ["Base", "Development", "Integration"], phF: ls => `Levels ${ls}.`, sum: "Your plan", done: "Plan created. You'll find it in Home."
+} : {
+  name: "Personalizado", btn: "Personalizado · tú eliges", create: "Crear tu plan personalizado", edit: "Editar tu plan personalizado", next: "Siguiente", back: "Atrás", make: "Crear plan", skip: "Cerrar",
+  q: ["¿Cuántos días a la semana?", "¿Cuánto tiempo por sesión?", "¿Durante cuántas semanas?", "¿Tu nivel?", "¿Qué quieres trabajar?"],
+  daysO: n => `${n} días`, minO: n => `${n} min`, weeksO: n => `${n} semanas`,
+  lv: ["Empiezas o vuelves: tempos lentos y mecanismos básicos.", "Tocas con soltura en una posición.", "Cruces de cuerda y velocidad media.", "Velocidad y precisión en todo el mástil.", "Vocabulario de jazz: enclosures y voicings."],
+  any: "Si no eliges nada, se reparte todo.", gD: "Mano derecha · Dextra", gS: "Mano izquierda · Sinistra", gB: "Las dos manos",
+  f: {alt: "Alternate", swp: "Sweep y economy", hyb: "Híbrido", rit: "Rasgado y rítmica", leg: "Legato", ind: "Independencia", pos: "Extensiones y cambios", bnd: "Bends y vibrato", aco: "Acordes y apagado", map: "Escalas y arpegios", enc: "Enclosures", voi: "Voicings"},
+  who: (d, m, w, l) => `${d} días a la semana · ${m} min · ${w} semanas · nivel ${l}.`, goal: f => `Trabaja: ${f}.`, all: "todo",
+  ph: ["Base", "Desarrollo", "Integración"], phF: ls => `Niveles ${ls}.`, sum: "Tu plan", done: "Plan creado. Lo tienes en Inicio."
+};
+{
+  const FOCUS = {D: {alt: ["D:alt"], swp: ["D:swp"], hyb: ["D:hyb"], rit: ["D:ras", "D:rit"]},
+                 S: {leg: ["S:leg"], ind: ["S:ind"], pos: ["S:pos"], bnd: ["S:bnd"], aco: ["S:aco", "S:apa"]},
+                 B: {map: ["D:map"], enc: ["D:enc"], voi: ["D:voi"]}};
+  const ROMANS = ["I", "II", "III", "IV", "V"];
+  const rng = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const hash = s => { let h = 2166136261; for(const c of s){ h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+  let BY = null;
+  const byBranch = () => { if(BY) return BY; BY = {}; for(const e of ALL.values()){ const k = e.h + ":" + e.b; (BY[k] = BY[k] || []).push(e); } return BY; };
+  /* ejercicios de una lista de ramas en los niveles pedidos; si no hay, los del nivel más cercano */
+  function pool(keys, lvls){
+    const all = keys.flatMap(k => byBranch()[k] || []);
+    let p = all.filter(e => lvls.includes(e.lvl));
+    if(!p.length && all.length){ const near = all.map(e => e.lvl).sort((a, b) => Math.min(...lvls.map(l => Math.abs(a - l))) - Math.min(...lvls.map(l => Math.abs(b - l))))[0]; p = all.filter(e => e.lvl === near); }
+    return p;
+  }
+  function build(spec){
+    const {days, min, weeks, lvl} = spec;
+    let focus = spec.focus && spec.focus.length ? spec.focus : ["alt", "rit", "leg", "ind", "map"];
+    const side = k => FOCUS.D[k] ? "D" : FOCUS.S[k] ? "S" : "B";
+    const Dk = focus.filter(k => side(k) === "D"), Sk = focus.filter(k => side(k) === "S"), Bk = focus.filter(k => side(k) === "B");
+    const bm = min <= 20 ? 2 : min <= 30 ? 3 : min <= 45 ? 4 : 5;
+    const nB = Math.max(3, Math.floor(min / bm));
+    const cut = [Math.max(1, Math.round(weeks / 3)), Math.max(2, Math.round(weeks * 2 / 3))];
+    const phW = [[1, cut[0]], [cut[0] + 1, cut[1]], [cut[1] + 1, weeks]].filter(w => w[0] <= w[1]);
+    const lvSets = [[Math.max(1, lvl - 1), lvl], [lvl], [lvl, Math.min(5, lvl + 1)]];
+    const phases = phW.map((w, pi) => {
+      const lv = lvSets[pi] || [lvl], s = {};
+      ["A", "B", "C"].forEach((tk, ti) => {
+        const R = rng(hash(JSON.stringify(spec) + pi + tk));
+        const pick = (keys, l = lv) => { const p = pool(keys, l); return p.length ? p[Math.floor(R() * p.length)] : null; };
+        const out = [], used = new Set();
+        const push = (e, t) => { if(e && !used.has(e.id) && out.length < nB){ used.add(e.id); out.push([e.id, bm, t]); return true; } return false; };
+        /* entrada lenta */
+        const wk = (Dk[0] && FOCUS.D[Dk[(ti) % Dk.length]]) || (Sk[0] && FOCUS.S[Sk[ti % Sk.length]]) || FOCUS.B[Bk[0]];
+        push(pick(wk, [Math.max(1, lvl - 1)]), "lento");
+        let i = ti, guard = 0;
+        while(out.length < nB - (Bk.length ? 1 : 0) && guard++ < 60){
+          const dk = Dk.length ? Dk[i % Dk.length] : null, sk = Sk.length ? Sk[i % Sk.length] : null, bk = Bk.length ? Bk[i % Bk.length] : null;
+          if(dk) push(pick(FOCUS.D[dk]), "trabajo");
+          if(sk) push(pick(FOCUS.S[sk]), "trabajo");
+          if(bk && (i % 2 === ti % 2 || (!dk && !sk))){
+            const d = pick(FOCUS.B[bk]); if(d && push(d, "trabajo")){ const sc = ALL.get("S-" + d.num); if(sc) push(sc, "trabajo"); }
+          }
+          i++;
+        }
+        /* final con las dos manos si se trabaja algo de «las dos manos» */
+        if(Bk.length){ const a = pick(Bk.map(k => "A:" + k), lv) || pick(["A:map"], [3, 4]); if(a){ used.delete(a.id); if(out.length >= nB) out.pop(); push(a, "trabajo"); } }
+        /* ajustar minutos al total pedido */
+        let tot = out.reduce((a, b) => a + b[1], 0), k = 1;
+        while(tot < min && out.length){ out[k % out.length][1]++; tot++; k++; }
+        while(tot > min && out.some(b => b[1] > 2)){ const j = out.findIndex(b => b[1] === Math.max(...out.map(x => x[1]))); out[j][1]--; tot--; }
+        if(pi === 2 && ti === 2 && out.length > 2) out[out.length - 2][2] = "rafaga";
+        s[tk] = out;
+      });
+      const ls = [...new Set(lv)].map(l => ROMANS[l - 1]).join(" · ");
+      return {n: T21.ph[pi], w, focus: T21.phF(ls), s};
+    });
+    const names = (spec.focus && spec.focus.length ? spec.focus : []).map(k => T21.f[k]).join(", ") || T21.all;
+    return {n: T21.name, weeks, days, min, deload: weeks >= 8 ? [4, 8].filter(x => x < weeks) : [], who: T21.who(days, min, weeks, ROMANS[lvl - 1]), goal: T21.goal(names), phases, custom: true, sig: JSON.stringify(spec)};
+  }
+  function ensureCustom(){
+    const A = PlanState.A; if(!A || !HANDS.A.PLANS) return;
+    const spec = A.custom;
+    if(!spec){ if(HANDS.A.PLANS.cus){ delete HANDS.A.PLANS.cus; if(PS().tpl === "cus"){ PS().tpl = "libre"; savePlan(); } } return; }
+    if(HANDS.A.PLANS.cus && HANDS.A.PLANS.cus.sig === JSON.stringify(spec)) return;
+    HANDS.A.PLANS.cus = build(spec);
+  }
+  window.ensureCustomPlan = ensureCustom;
+  const _sh = setHand; setHand = function(h, f){ const r = _sh(h, f); ensureCustom(); return r; };
+
+  /* asistente */
+  const m = document.createElement("div"); m.className = "modal guide18"; m.id = "cusModal"; m.hidden = true; document.body.appendChild(m);
+  const OPT = [[2, 3, 4, 5, 6], [10, 15, 20, 30, 45, 60], [4, 6, 8, 12], [1, 2, 3, 4, 5]];
+  let st = 0, ans = {};
+  const fmt = [T21.daysO, T21.minO, T21.weeksO];
+  function draw(){
+    const N = 5, key = ["days", "min", "weeks", "lvl", "focus"][st];
+    let body = `<h3 id="c21t">${T21.q[st]}</h3>`;
+    if(st < 3) body += `<div class="c21opts">${OPT[st].map(v => `<button type="button" data-v="${v}" aria-pressed="${ans[key] === v}">${fmt[st](v)}</button>`).join("")}</div>`;
+    else if(st === 3) body += `<div class="c21lv">${OPT[3].map(v => `<button type="button" data-v="${v}" aria-pressed="${ans.lvl === v}"><b>${ROMANS[v - 1]}</b><span>${T21.lv[v - 1]}</span></button>`).join("")}</div>`;
+    else {
+      const grp = (t, ks) => `<div class="c21g"><span>${t}</span><div class="c21opts">${ks.map(k => `<button type="button" data-f="${k}" aria-pressed="${(ans.focus || []).includes(k)}">${T21.f[k]}</button>`).join("")}</div></div>`;
+      body += grp(T21.gD, Object.keys(FOCUS.D)) + grp(T21.gS, Object.keys(FOCUS.S)) + grp(T21.gB, Object.keys(FOCUS.B)) + `<p class="c21any">${T21.any}</p>`;
+    }
+    m.innerHTML = `<div class="sheet g18 c21" role="dialog" aria-modal="true" aria-labelledby="c21t">
+      <div class="g18top"><span class="g18dots">${Array.from({length: N}, (_, k) => `<i class="${k === st ? "on" : ""}"></i>`).join("")}</span><button type="button" class="linkbtn" id="c21x">${T21.skip}</button></div>
+      <div class="g18body c21body">${body}</div>
+      <div class="g18acts"><button type="button" class="btn ghost" id="c21b" style="visibility:${st ? "visible" : "hidden"}">${T21.back}</button><button type="button" class="btn primary big" id="c21n">${st === N - 1 ? T21.make : T21.next}</button></div></div>`;
+    m.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { ans[key] = +b.dataset.v; draw(); });
+    m.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { const f = new Set(ans.focus || []); f.has(b.dataset.f) ? f.delete(b.dataset.f) : f.add(b.dataset.f); ans.focus = [...f]; draw(); });
+    $("#c21n").disabled = st < 4 && ans[key] === undefined;
+    $("#c21x").onclick = () => m.hidden = true;
+    $("#c21b").onclick = () => { if(st){ st--; draw(); } };
+    $("#c21n").onclick = () => {
+      if(st < N - 1){ st++; draw(); return; }
+      if(typeof isPlus === "function" && !isPlus()){ m.hidden = true; openPlus(); return; }
+      const A = PlanState.A; A.custom = {days: ans.days, min: ans.min, weeks: ans.weeks, lvl: ans.lvl, focus: ans.focus || []};
+      A.days = A.days || {}; A.days.cus = 0; if(A.sessBy) delete A.sessBy.cus;
+      ensureCustom(); PS().tpl = "cus"; savePlan();
+      if(Session.plan){ Session.list = []; Session.plan = false; Session.note = ""; renderQueue(); }
+      m.hidden = true; show("home"); renderHome(); window.scrollTo(0, 0);
+    };
+  }
+  window.openCustomPlan = () => { const c = PlanState.A && PlanState.A.custom; ans = c ? JSON.parse(JSON.stringify(c)) : {}; st = 0; draw(); m.hidden = false; };
+
+  /* entradas: Inicio (niveles) y pantalla Plan */
+  const _rh = renderHome; renderHome = function(){
+    ensureCustom(); _rh();
+    const lv = $("#continue .lv16"); if(lv && !lv.querySelector(".cus21")){
+      if(lv.querySelector('[data-tpl16="cus"]')) lv.querySelector('[data-tpl16="cus"]').remove();
+      const b = document.createElement("button"); b.type = "button"; b.className = "cus21";
+      b.innerHTML = `<b>✎ ${T21.btn}</b><span>${PlanState.A && PlanState.A.custom ? HANDS.A.PLANS.cus.who : T21.create}</span>`;
+      b.onclick = () => { const c = PlanState.A && PlanState.A.custom; if(c && HANDS.A.PLANS.cus){ if(typeof isPlus === "function" && !isPlus()){ openPlus(); return; } PS().tpl = "cus"; savePlan(); renderHome(); } else openCustomPlan(); };
+      lv.append(b);
+    }
+  };
+  const _rp = renderPlan; renderPlan = function(){
+    ensureCustom(); _rp();
+    const t = $("#tpls"); if(!t || t.querySelector(".cus21p")) return;
+    const c = PlanState.A && PlanState.A.custom;
+    const d = document.createElement("div"); d.className = "cus21p";
+    d.innerHTML = `<button type="button" class="btn${c ? "" : " primary"}">✎ ${c ? T21.edit : T21.create}</button>`;
+    d.querySelector("button").onclick = openCustomPlan;
+    t.prepend(d);
+  };
+  const _sps = startPlanSession; startPlanSession = function(){ ensureCustom(); return _sps(); };
 }
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
