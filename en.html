@@ -1174,6 +1174,13 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
 .contcard2 .wopts17 .chalbtn19.on{border:2px solid var(--accent);padding:5px 9px}
 .c19big{margin:0;font-size:20px;font-weight:600;line-height:1.3}
 #chalModal .c19row{display:flex;gap:8px;flex-wrap:wrap} #chalModal .c19row .btn{flex:1 1 0;min-width:90px;min-height:44px}
+/* ===== v2.1 · día hecho ===== */
+.sheet.dd20{align-items:center;text-align:center;gap:8px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.dd20 .dd20i{width:64px;height:64px;border-radius:50%;background:var(--hl);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;margin-top:6px}
+.dd20 h3{font-size:24px;margin:4px 0 0}
+.dd20 p{margin:0;color:var(--muted);font-size:14.5px}
+.dd20 .dd20n{color:var(--fg);font-size:15px;margin-top:6px}
+.dd20 .dd20a{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:12px}
 </style>
 </head>
 <body>
@@ -1448,7 +1455,7 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "30/10/2026 10:53";
+window.DS_BUILD = "30/10/2026 18:03";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3952,7 +3959,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.0 · October 2026";
+const APP_VER = "2.1 · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -5715,6 +5722,47 @@ const T19 = window.DS_LANG === "en" ? {
   };
   /* el registro del reto vuelve a pintar el panel (el nuevo récord cuenta) */
   const _rq = renderQueue; renderQueue = function(){ _rq(); if(L.on && L.phase === 3) draw(); };
+}
+
+/* ============ v2.1 · al terminar el día del plan: pantalla de «día hecho» y paso al siguiente ============ */
+const T20 = window.DS_LANG === "en" ? {
+  done: d => `Day ${d} done`, stats: (n, m) => `${n} exercises · ${m} min`, next: (w, d, n, m) => `Next: week ${w} · day ${d} · ${n} exercises · ${m} min`,
+  nextS: (w, d, m) => `Next: week ${w} · day ${d} · Snack · ${m} min`, cont: "Continue with the next day", stop: "That's it for today", planDone: n => `${n} plan completed!`, planDoneP: "You've finished every week. Choose the next level from Home.",
+  home: "Go to Home"
+} : {
+  done: d => `Día ${d} hecho`, stats: (n, m) => `${n} exercises · ${m} min`, next: (w, d, n, m) => `Siguiente: semana ${w} · day ${d} · ${n} exercises · ${m} min`,
+  nextS: (w, d, m) => `Siguiente: semana ${w} · day ${d} · Snack · ${m} min`, cont: "Seguir con el día siguiente", stop: "Terminar por hoy", planDone: n => `¡Plan ${n} completado!`, planDoneP: "Has terminado todas las semanas. Elige el siguiente nivel en Inicio.",
+  home: "Ir a Inicio"
+};
+{
+  const m = document.createElement("div"); m.className = "modal"; m.id = "dayDone"; m.hidden = true; document.body.appendChild(m);
+  const close = () => { m.hidden = true; };
+  m.addEventListener("click", e => { if(e.target === m) close(); });
+  const _pa = planAdvance; planAdvance = function(){
+    const wasPlan = Session.plan, list = Session.list.slice(), doneN = Session.done.size;
+    const ps = PS(), p = HANDS.A.PLANS[ps.tpl], before = p ? planPos(p, planDay()) : null;
+    const r = _pa();
+    if(!wasPlan || !p || !before) return r;
+    /* la sesión acabada se cierra para que la pantalla no se quede en «20 de 20» */
+    if(M.playing) stop(false);
+    Session.list = []; Session.plan = false; Session.note = ""; renderQueue();
+    const mins = Math.round(list.reduce((a, b) => a + b.min, 0));
+    const pos = planPos(p, planDay());
+    let html;
+    if(pos.finished){
+      html = `<div class="dd20i">🎉</div><h3 id="dd20t">${T20.planDone(p.n)}</h3><p>${T20.planDoneP}</p><div class="dd20a"><button type="button" class="btn primary big" id="dd20home">${T20.home}</button></div>`;
+    } else {
+      const bl = sessionBlocks(pos), tot = bl.reduce((a, b) => a + b.min, 0);
+      html = `<div class="dd20i">✓</div><h3 id="dd20t">${T20.done(before.dw)}</h3><p class="mono">${T20.stats(doneN || list.length, mins)}</p>
+        <p class="dd20n">${(PREF.sessLen === 10 || PREF.sessLen === 20) ? T20.nextS(pos.week, pos.dw, PREF.sessLen) : T20.next(pos.week, pos.dw, bl.length, tot)}</p>
+        <div class="dd20a"><button type="button" class="btn primary big" id="dd20go">${T20.cont}</button><button type="button" class="btn ghost" id="dd20home">${T20.stop}</button></div>`;
+    }
+    m.innerHTML = `<div class="sheet dd20" role="dialog" aria-modal="true" aria-labelledby="dd20t"><div class="grab" aria-hidden="true"></div>${html}</div>`;
+    m.hidden = false;
+    if($("#dd20go")) $("#dd20go").onclick = () => { close(); startPlanSession(); };
+    $("#dd20home").onclick = () => { close(); show("home"); window.scrollTo(0, 0); };
+    return r;
+  };
 }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
