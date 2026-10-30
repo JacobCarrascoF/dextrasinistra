@@ -1136,6 +1136,44 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
 .setrow18 b{font-size:15px;font-weight:500}
 .setrow18 small{font-size:12.5px;color:var(--faint)}
 .setrow18 .go{color:var(--accent);font-size:20px}
+/* ===== v2.0 · reto de velocidad ===== */
+.chalrow19{border-top:1px solid var(--line);padding:10px 14px 10px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"eye btn" "txt btn";column-gap:10px;row-gap:2px;align-items:center}
+.chalrow19 .eyebrow{grid-area:eye;color:var(--faint);font-size:11px}
+.chalrow19 .c19s{grid-area:txt;display:flex;flex-direction:column;gap:2px;min-width:0}
+.chalrow19 .c19s b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chalrow19 .c19s .mono{font-size:11.5px;color:var(--muted)}
+.chalrow19 .c19mini{font-size:12.5px;color:var(--muted)}
+.chalrow19 .prog15{margin-top:4px;max-width:none;height:4px}
+.chalrow19 > .btn,.chalrow19 .c19btns{grid-area:btn}
+.c19btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.contcard2 .btn.small19{width:auto;min-height:36px;padding:0 12px;font-size:13.5px;border-radius:10px;justify-content:center}
+.chal19{border:1px solid var(--line2);border-radius:14px;padding:12px;margin:6px 0 8px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.chal19 .c19h{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.chal19 .c19h .mono{font-size:12.5px;color:var(--muted)}
+.chal19 p{margin:0;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.chal19 .c19n{font-size:15px;color:var(--fg)}
+.chal19 .c19bar{height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.chal19 .c19bar i{display:block;height:100%;background:var(--accent)}
+.chal19 .c19tension{background:var(--red);border-color:var(--red);color:#fff;min-height:52px;font-size:17px;font-weight:600}
+.chal19 .c19row{display:flex;gap:8px}
+.chal19 .c19row .btn{flex:1}
+.cp19{display:flex;align-items:center;gap:10px;border:1px solid var(--line2);border-radius:14px;padding:10px 12px}
+.cp19 > span{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.cp19 small{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.cp19 b{font-size:15px}
+.cp19 .mono{font-size:12px;color:var(--muted)}
+.cp19 em{font-style:normal;font-size:12px;color:var(--faint)}
+.c19p{margin:0;font-size:14px;color:var(--muted);line-height:1.45}
+.c19p.small{font-size:12.5px;color:var(--faint)}
+body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
+.warm17.x19 > .eyebrow{display:none}
+.warm17.x19 .wopts17{grid-template-columns:repeat(3,minmax(0,1fr))}
+.contcard2 .warm17.x19 .wopts17 button{flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;min-height:46px;padding:6px 10px}
+.contcard2 .warm17.x19 .wopts17 button b{font-size:13.5px}
+.contcard2 .warm17.x19 .wopts17 button span{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.contcard2 .wopts17 .chalbtn19.on{border:2px solid var(--accent);padding:5px 9px}
+.c19big{margin:0;font-size:20px;font-weight:600;line-height:1.3}
+#chalModal .c19row{display:flex;gap:8px;flex-wrap:wrap} #chalModal .c19row .btn{flex:1 1 0;min-width:90px;min-height:44px}
 </style>
 </head>
 <body>
@@ -1410,7 +1448,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "30/10/2026 10:13";
+window.DS_BUILD = "30/10/2026 10:53";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3914,7 +3952,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.9.2 · October 2026";
+const APP_VER = "2.0 · October 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -5173,6 +5211,7 @@ S0.fav = false;
       if(typeof pr.name === "string" && pr.name.trim() && !(PREF.name || "").trim()) PREF.name = pr.name;
       if(+pr.goal) PREF.goal = +pr.goal;
       if(pr.sessLen !== undefined) PREF.sessLen = pr.sessLen;
+      if(pr.chal && pr.chal.id && (!PREF.chal || (pr.chal.t0 || 0) > (PREF.chal.t0 || 0))) PREF.chal = pr.chal;
       savePrefs(); sync(); renderBranches(); renderList();
       /* el plan importado manda: se cierra la sesión que hubiera abierta aquí y se vuelve a pintar Inicio */
       if(Session.plan){ Session.list = []; Session.plan = false; Session.note = ""; renderQueue(); }
@@ -5545,6 +5584,137 @@ const T18 = window.DS_LANG === "en" ? {
   }
   /* la primera vez: solo a quien no ha registrado nada todavía */
   if(!PREF.guideSeen) setTimeout(() => { if(PREF.guideSeen) return; if(!Store.items.length) openGuide(); else { PREF.guideSeen = true; savePrefs(); } }, 400);
+}
+
+/* ============ v2.0 · reto de velocidad de la semana (escalera) ============ */
+const T19 = window.DS_LANG === "en" ? {
+  eye: "Speed challenge", rowNone: "+10 % in 7 days", short: "Challenge", over: "Finished!", dshort: d => `day ${d}/7`,
+  w5: "Warm-up", w5s: "gig · 5′", w10: "Warm-up", w10s: "full · 10′", none: "Pick one exercise and raise its clean tempo 10 % in a week.", pick: "Start", day: (d) => `day ${d} of 7`,
+  meta: (a, g, b, n) => `${a} → ${g} BPM · best ${b} · ${n} ${n === 1 ? "day" : "days"}`, go: "Ladder",
+  doneT: (a, b, p) => `Challenge over: ${a} → ${b} BPM (${p >= 0 ? "+" : ""}${p} %)`, again: "Repeat", other: "Choose another", share: "Share",
+  sheetT: "Speed challenge of the week", sug: "Suggested", sugWhy: "From your plan, with the most room between your record and the goal.",
+  cur: "The exercise you're on", use: "Use", lib: "Or open any exercise and tap «Use as challenge».", useBtn: "🏁 Use as challenge", set: "This is now your challenge of the week.",
+  ph1: (b) => `1 · Warm in: 1 minute at ${b} BPM (85 % of your record).`, ph2: "2 · Climb: +3 % every 4 bars. Tap «Tension» as soon as you feel it.",
+  ph3: (b, r) => `3 · Your tempo today: ${b} BPM. Two 15-second bursts at ${r} BPM, then log your best clean tempo.`,
+  start: "Start the ladder", tension: "Tension", burst: "15″ burst", log: "Log", stopL: "Stop", next: (s) => `next step in ${s}″`, label: "Speed challenge"
+} : {
+  eye: "Reto de velocidad", rowNone: "+10 % en 7 días", short: "Reto", over: "¡Terminado!", dshort: d => `día ${d}/7`,
+  w5: "Calentar", w5s: "concierto · 5′", w10: "Calentar", w10s: "completo · 10′", none: "Elige un ejercicio y sube su tempo limpio un 10 % en una semana.", pick: "Start", day: (d) => `día ${d} de 7`,
+  meta: (a, g, b, n) => `${a} → ${g} BPM · mejor ${b} · ${n} ${n === 1 ? "day" : "days"}`, go: "Escalera",
+  doneT: (a, b, p) => `Reto terminado: ${a} → ${b} BPM (${p >= 0 ? "+" : ""}${p} %)`, again: "Repetir", other: "Elegir otro", share: "Compartir",
+  sheetT: "Reto de velocidad de la semana", sug: "Propuesto", sugWhy: "De tu plan, el que tiene más margen entre tu récord y el objetivo.",
+  cur: "El ejercicio en el que estás", use: "Usar", lib: "O abre cualquier ejercicio y pulsa «Usar como reto».", useBtn: "🏁 Usar como reto", set: "Ya es tu reto de la semana.",
+  ph1: (b) => `1 · Entrar: 1 minuto a ${b} BPM (85 % de tu récord).`, ph2: "2 · Subir: +3 % cada 4 compases. Pulsa «Tensión» en cuanto la notes.",
+  ph3: (b, r) => `3 · Tu tempo de hoy: ${b} BPM. Dos ráfagas de 15″ a ${r} BPM y registra tu mejor tempo limpio.`,
+  start: "Empezar la escalera", tension: "Tensión", burst: "Ráfaga 15″", log: "Registrar", stopL: "Stop", next: (s) => `siguiente escalón en ${s}″`, label: "Reto de velocidad"
+};
+{
+  const DAY = 864e5;
+  const C = () => PREF.chal && ALL.has(PREF.chal.id) ? PREF.chal : null;
+  const rec = id => bestOf(id) || 0;
+  const since = (id, t0) => Store.items.filter(i => i.ex === id && i.t >= t0);
+  const stats = ch => { const it = since(ch.id, ch.t0), clean = it.filter(i => i.q === 3).reduce((m, i) => Math.max(m, i.bpm), 0);
+    return {best: Math.max(clean, 0), days: new Set(it.map(i => dayKey(i.t))).size, day: Math.min(7, Math.floor((Date.now() - ch.t0) / DAY) + 1), over: Date.now() - ch.t0 >= 7 * DAY}; };
+  const setChal = id => { const e = exById(id), r = rec(id), base = r || e.bpm[0]; PREF.chal = {id, t0: Date.now(), base, goal: Math.round(base * 1.1), noRec: !r}; savePrefs(); };
+  /* sin récord previo: la base es la primera pasada limpia del reto (y el objetivo, su +10 %) */
+  const settle = ch => { if(!ch || !ch.noRec) return ch; const first = since(ch.id, ch.t0).filter(i => i.q === 3).sort((a, b) => a.t - b.t)[0];
+    if(first){ ch.base = first.bpm; ch.goal = Math.round(first.bpm * 1.1); ch.noRec = false; savePrefs(); } return ch; };
+  /* propuesta: del plan de hoy, el de más margen entre récord y objetivo (y que puedas tocar) */
+  function suggest(){
+    let pool = [];
+    const ps = PS(), p = ps.tpl !== "libre" && HANDS.A.PLANS[ps.tpl];
+    if(p){ const pos = planPos(p, planDay()); if(!pos.finished) pool = sessionBlocks(pos).filter(b => b.tempo !== "lento").map(b => exById(b.id)); }
+    if(!pool.length) pool = (PREF.fav || []).map(id => ALL.get(id)).filter(Boolean);
+    if(!pool.length) pool = ["D-2003", "S-1228", "D-2001", "S-3000"].map(id => ALL.get(id)).filter(Boolean);
+    pool = pool.filter(canPractice);
+    const room = e => { const r = rec(e.id) || e.bpm[0]; return (e.bpm[1] - r) / e.bpm[1]; };
+    return pool.sort((a, b) => room(b) - room(a))[0] || EX[0];
+  }
+
+  /* hoja para elegir */
+  const sh = document.createElement("div"); sh.className = "modal"; sh.id = "chalModal"; sh.hidden = true;
+  document.body.appendChild(sh);
+  const openPick = () => {
+    const sg = suggest(), cu = exById(S0.cur);
+    const row = (e, k, why) => `<div class="cp19"><span><small>${k}</small><b>${e.name}</b><span class="mono">${e.code} · ${HANDS[e.h].short} · ${rec(e.id) || e.bpm[0]} → ${Math.round((rec(e.id) || e.bpm[0]) * 1.1)} BPM</span>${why ? `<em>${why}</em>` : ""}</span><button type="button" class="btn primary" data-pick="${e.id}">${T19.use}</button></div>`;
+    sh.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="c19t"><div class="grab" aria-hidden="true"></div>
+      <div class="sheethead"><h3 id="c19t">${T19.sheetT}</h3><button type="button" class="iconbtn sheetx" id="c19x" aria-label="×">${ICO9.x}</button></div>
+      <p class="c19p">${T19.none}</p>${row(sg, T19.sug, T19.sugWhy)}${cu.id !== sg.id ? row(cu, T19.cur) : ""}<p class="c19p small">${T19.lib}</p></div>`;
+    sh.hidden = false;
+    $("#c19x").onclick = () => sh.hidden = true;
+    sh.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => { const e = exById(b.dataset.pick); if(!canPractice(e)){ sh.hidden = true; openPlus(); return; } setChal(e.id); sh.hidden = true; renderHome(); });
+  };
+  sh.addEventListener("click", e => { if(e.target === sh) sh.hidden = true; });
+
+  /* botón en la ficha del ejercicio */
+  const ub = document.createElement("button"); ub.type = "button"; ub.className = "listen chal19btn"; ub.textContent = T19.useBtn;
+  ($("#wholeBtn") || $("#listenBtn")).after(ub);
+  ub.onclick = () => { const e = exById(S0.cur); if(!canPractice(e)){ openPlus(); return; } setChal(e.id); ub.textContent = "✓ " + T19.set; setTimeout(() => ub.textContent = T19.useBtn, 2500); };
+
+  /* escalera: panel dentro de la ficha */
+  const L = {on: false, phase: 0, work: 0, t: 0, until: 0, ti: 0};
+  const panel = document.createElement("div"); panel.className = "chal19"; panel.hidden = true;
+  $("#exName").after(panel);
+  const clear = () => { clearTimeout(L.t); clearInterval(L.ti); L.t = 0; L.ti = 0; };
+  const barMs = () => 16 * 60000 / M.bpm;
+  function draw(){
+    const ch = C(); if(!L.on || !ch || S0.cur !== ch.id){ panel.hidden = true; return; }
+    panel.hidden = false;
+    const r = rec(ch.id) || ch.base, enter = Math.round(r * .85), burst = Math.round(r * 1.1);
+    const left = L.until ? Math.max(0, Math.ceil((L.until - Date.now()) / 1000)) : 0;
+    panel.innerHTML = `<div class="c19h"><b>🏁 ${T19.label}</b><span class="mono">${ch.base} → ${ch.goal}</span></div>` +
+      (L.phase === 0 ? `<p>${T19.ph1(enter)}</p><p>${T19.ph2}</p><button type="button" class="btn primary" id="c19go">${T19.start}</button>` :
+       L.phase === 1 ? `<p>${T19.ph1(enter)}</p><div class="c19bar"><i style="width:${100 - Math.round(100 * left / 60)}%"></i></div><button type="button" class="btn" id="c19stop">${T19.stopL}</button>` :
+       L.phase === 2 ? `<p>${T19.ph2}</p><p class="mono c19n">${M.bpm} BPM · ${T19.next(left)}</p><button type="button" class="btn c19tension" id="c19ten">${T19.tension}</button>` :
+       `<p>${T19.ph3(L.work, Math.round(L.work * 1.1))}</p><div class="c19row"><button type="button" class="btn" id="c19burst">${T19.burst}</button><button type="button" class="btn primary" id="c19log">${T19.log}</button></div>`);
+    const b = id => panel.querySelector(id);
+    if(b("#c19go")) b("#c19go").onclick = async () => { setBpm(enter); if(!M.playing) await start(); L.phase = 1; L.until = Date.now() + 60000; clear();
+      L.ti = setInterval(draw, 1000); L.t = setTimeout(climb, 60000); draw(); };
+    if(b("#c19stop")) b("#c19stop").onclick = () => { clear(); L.phase = 0; if(M.playing) stop(false); draw(); };
+    if(b("#c19ten")) b("#c19ten").onclick = () => { clear(); L.work = Math.max(30, Math.round(M.bpm / 1.03 / 1.03)); setBpm(L.work); L.phase = 3; L.until = 0; draw(); };
+    if(b("#c19burst")) b("#c19burst").onclick = async () => { clear(); setBpm(Math.round(L.work * 1.1)); if(!M.playing) await start(); L.t = setTimeout(() => { setBpm(L.work); draw(); }, 15000); };
+    if(b("#c19log")) b("#c19log").onclick = () => { clear(); $("#logBtn").click(); };
+  }
+  function climb(){
+    L.phase = 2; clearInterval(L.ti); L.ti = setInterval(draw, 1000);
+    const step = () => { if(!M.playing){ clear(); return; } setBpm(Math.round(M.bpm * 1.03)); L.until = Date.now() + barMs(); L.t = setTimeout(step, barMs()); draw(); };
+    L.until = Date.now() + barMs(); L.t = setTimeout(step, barMs()); draw();
+  }
+  window.startChallenge = () => { const ch = C(); if(!ch) return openPick(); if(!canPractice(exById(ch.id))){ openPlus(); return; }
+    if(M.playing) stop(false); clear(); Session.list = []; Session.plan = false; Session.note = ""; renderQueue();
+    L.on = true; L.phase = 0; show("practice"); select(ch.id); window.scrollTo(0, 0); draw(); };
+  const _sel = select; select = function(id, item){ _sel(id, item); const ch = C(); if(!ch || id !== ch.id){ if(L.on){ clear(); L.on = false; } } draw(); };
+  const _sh = show; show = function(v){ _sh(v); if(v !== "practice" && L.on){ clear(); L.on = false; draw(); } };
+
+  /* Inicio: tercer botón en la fila del calentamiento (sin añadir filas) */
+  const openResult = ch => {
+    const s = stats(ch), fin = Math.max(s.best, 0) || ch.base, pc = Math.round(100 * (fin - ch.base) / ch.base);
+    sh.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="c19r"><div class="grab" aria-hidden="true"></div>
+      <div class="sheethead"><h3 id="c19r">${T19.sheetT}</h3><button type="button" class="iconbtn sheetx" id="c19x" aria-label="×">${ICO9.x}</button></div>
+      <p class="c19big">${T19.doneT(ch.base, fin, pc)}</p><p class="c19p">${exById(ch.id).code} · ${exById(ch.id).name}</p>
+      <div class="c19row">${s.best > ch.base ? `<button type="button" class="btn" id="r19share">${T19.share}</button>` : ""}<button type="button" class="btn" id="r19other">${T19.other}</button><button type="button" class="btn primary" id="r19again">${T19.again}</button></div></div>`;
+    sh.hidden = false;
+    $("#c19x").onclick = () => sh.hidden = true;
+    $("#r19again").onclick = () => { setChal(ch.id); sh.hidden = true; renderHome(); };
+    $("#r19other").onclick = openPick;
+    if($("#r19share")) $("#r19share").onclick = () => { sh.hidden = true; openShare("record", ch.id); };
+  };
+  const _rh = renderHome; renderHome = function(){
+    _rh();
+    const c = $("#continue"), ch = settle(C()), row = c.querySelector(".warm17 .wopts17"); if(!row) return;
+    c.querySelector(".warm17").classList.add("x19");
+    const [b5, b10] = row.querySelectorAll("[data-warm]");
+    if(b5) b5.innerHTML = `<b>${T19.w5}</b><span>${T19.w5s}</span>`;
+    if(b10) b10.innerHTML = `<b>${T19.w10}</b><span>${T19.w10s}</span>`;
+    const b = document.createElement("button"); b.type = "button"; b.className = "chalbtn19";
+    let sub = T19.rowNone;
+    if(ch){ const s = stats(ch); sub = s.over ? T19.over : `${s.best || "—"}→${ch.goal} · ${s.day}/7`; if(!s.over) b.classList.add("on"); }
+    b.innerHTML = `<b>🏁 ${T19.short}</b><span>${sub}</span>`;
+    row.append(b);
+    b.onclick = () => { if(!ch) return openPick(); stats(ch).over ? openResult(ch) : startChallenge(); };
+  };
+  /* el registro del reto vuelve a pintar el panel (el nuevo récord cuenta) */
+  const _rq = renderQueue; renderQueue = function(){ _rq(); if(L.on && L.phase === 3) draw(); };
 }
 
 /* ===== English data layer: exercise names, tips, categories, plans ===== */
