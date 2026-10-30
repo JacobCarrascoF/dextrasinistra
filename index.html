@@ -1409,7 +1409,7 @@ body.land.practicing:not(.libopen) .console2 .durs .dsep{margin:0 2px}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "29/10/2026 11:58";
+<script>window.DS_BUILD = "30/10/2026 10:13";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -1448,6 +1448,22 @@ const ENC = (function(){
     return n.sort((a,b) => a.m - b.m);
   }
   const distOf = map => [6,5,4,3,2,1].map(s => map.filter(x => x.s === s).length).join("·");
+  /* Rellena los huecos de una posición: si entre dos notas seguidas del mapa falta una nota de la escala (o del acorde),
+     se añade en la cuerda de la nota grave estirando un traste por encima de la ventana, o en la de la aguda un traste por debajo.
+     La selección de posiciones (y por tanto la numeración) no cambia: solo se completa el contenido. */
+  function fillGaps(notes, pcs, f0, w){
+    const out = notes.slice(), pc = m => ((m % 12) + 12) % 12;
+    const off = c => c.f < f0 ? f0 - c.f : c.f > f0 + w - 1 ? c.f - (f0 + w - 1) : 0;
+    for(let i = 0; i < out.length - 1; i++){
+      const a = out[i], b = out[i+1];
+      let q = a.m + 1; while(q < b.m && !pcs.includes(pc(q))) q++;
+      if(q >= b.m) continue;
+      const c = [a.s, b.s].map(s => ({s, f: q - TUNE[s], m: q})).filter(x => x.f >= Math.max(0, f0 - 1) && x.f <= f0 + w).sort((x, y) => off(x) - off(y))[0];
+      if(c) out.splice(i + 1, 0, c);
+    }
+    return out;
+  }
+  
   function uniqueMaps(pcs, w, ok = () => true){
     const seen = new Set(), out = [];
     for(let f0=1; f0<=12; f0++){ const map = posMap(pcs, f0, w), d = distOf(map); if(seen.has(d) || !ok(map)) continue; seen.add(d); out.push({f0, map}); }
@@ -1503,10 +1519,14 @@ const ENC = (function(){
     notes.forEach(n => { n.d = n.f === 0 ? 0 : Math.max(1, Math.min(4, n.f - b + 1)); });
     return hi - lo >= 4 ? (b === lo ? 4 : 1) : 0;
   }
+  /* Las especificaciones se generan dos veces: con las posiciones originales (deciden qué ejercicios existen,
+     su número y los alias de Dextra, para que la numeración no cambie) y con las posiciones completas
+     (sin huecos de escala: dan las notas que se tocan). */
+  function genSpecs(full){
   const specs = [];
-  let num = 4000;
   CTX_DEF.forEach(c => {
-    const forms = c.scale ? uniqueMaps(c.pcs, c.w, m => m.length >= 14) : uniqueMaps(c.pcs, c.w);
+    const forms0 = c.scale ? uniqueMaps(c.pcs, c.w, m => m.length >= 14) : uniqueMaps(c.pcs, c.w);
+    const forms = full ? forms0.map(f => ({f0: f.f0, map: fillGaps(f.map, c.pcs, f.f0, c.w)})) : forms0;
     forms.forEach((fm, i) => {
       const ctxName = c.scale ? `${c.n} · posición ${i+1}` : `${c.n} · forma ${i+1}`;
       TYPES.forEach(t => ["asc","desc"].forEach(dir => {
@@ -1528,6 +1548,11 @@ const ENC = (function(){
       }));
     });
   });
+  return specs;
+  }
+  const specs = genSpecs(false), keyOf = sp => sp.ctxName + "|" + sp.t.k + "|" + sp.dir;
+  const fullBy = new Map(genSpecs(true).map(sp => [keyOf(sp), sp]));
+  let num = 4000;
   const DIRN = {asc:"ascendente", desc:"descendente"};
   /* púa: mismo cálculo que los mapas de la app */
   function pickDirs(strs, mode){
@@ -1542,18 +1567,17 @@ const ENC = (function(){
   }
   /* cada especificación da alternate y, si cambia algún golpe, economy; un número por variante */
   const items = [];
-  specs.forEach(sp => ["alt","econ"].forEach(mode => {
-    const strs = sp.notes.map(n => n.s);
-    const dirs = pickDirs(strs, mode);
-    if(mode === "econ" && dirs.join() === pickDirs(strs, "alt").join()) return;
-    const it = dirs[Symbol.iterator]();
-    const toks = sp.grid.map(g => g == null ? "-" : it.next().value);
-    items.push(Object.assign({}, sp, {mode, toks, num: num++, base:`${sp.ctxName} · enclosure ${sp.t.n} · ${DIRN[sp.dir]}`}));
+  const toksOf = (sp, mode) => { const it = pickDirs(sp.notes.map(n => n.s), mode)[Symbol.iterator](); return sp.grid.map(g => g == null ? "-" : it.next().value); };
+  specs.forEach(sp0 => ["alt","econ"].forEach(mode => {
+    const strs = sp0.notes.map(n => n.s);
+    if(mode === "econ" && pickDirs(strs, "econ").join() === pickDirs(strs, "alt").join()) return;
+    const sp = fullBy.get(keyOf(sp0)) || sp0;
+    items.push(Object.assign({}, sp, {mode, toks: toksOf(sp, mode), toks0: toksOf(sp0, mode), num: num++, base:`${sp.ctxName} · enclosure ${sp.t.n} · ${DIRN[sp.dir]}`}));
   }));
   /* Dextra: mismo patrón de púa = mismo ejercicio; se muestra el primero y se indica para qué más sirve */
   const firstBy = new Map(), alias = {}, also = {};
   items.forEach(it => {
-    const key = it.toks.join(" ");
+    const key = it.toks0.join(" ");
     if(firstBy.has(key)){ const r = firstBy.get(key); alias[it.num] = r.num; (also[r.num] = also[r.num] || []).push(it); }
     else firstBy.set(key, it);
   });
@@ -2207,15 +2231,32 @@ F("Bossa","Bossa · batida invertida", 2, ["5p","-",C3,"-","6p",C3,"-","-","5p+"
 
 /* ======================= ESCALAS Y ARPEGIOS (mapas reales del mástil) ======================= */
 const TUNE = {6:40,5:45,4:50,3:55,2:59,1:64}; // MIDI, afinación estándar
-function posMap(pcs, f0, w){
+/* Rellena los huecos de una posición: si entre dos notas seguidas del mapa falta una nota de la escala (o del acorde),
+   se añade en la cuerda de la nota grave estirando un traste por encima de la ventana, o en la de la aguda un traste por debajo.
+   La selección de posiciones (y por tanto la numeración) no cambia: solo se completa el contenido. */
+function fillGaps(notes, pcs, f0, w){
+  const out = notes.slice(), pc = m => ((m % 12) + 12) % 12;
+  const off = c => c.f < f0 ? f0 - c.f : c.f > f0 + w - 1 ? c.f - (f0 + w - 1) : 0;
+  for(let i = 0; i < out.length - 1; i++){
+    const a = out[i], b = out[i+1];
+    let q = a.m + 1; while(q < b.m && !pcs.includes(pc(q))) q++;
+    if(q >= b.m) continue;
+    const c = [a.s, b.s].map(s => ({s, f: q - TUNE[s], m: q})).filter(x => x.f >= Math.max(0, f0 - 1) && x.f <= f0 + w).sort((x, y) => off(x) - off(y))[0];
+    if(c) out.splice(i + 1, 0, c);
+  }
+  return out;
+}
+function posNotes(pcs, f0, w){
   const n = [];
   for(const s of [6,5,4,3,2,1]) for(let f=f0; f<f0+w; f++){ const m = TUNE[s]+f; if(pcs.includes(m%12) && !n.some(x => x.m === m)) n.push({s,f,m}); }
-  return n.sort((a,b) => a.m - b.m).map(x => x.s);
+  return n.sort((a,b) => a.m - b.m);
 }
+function posMap(pcs, f0, w){ return posNotes(pcs, f0, w).map(x => x.s); }
 const distOf = map => [6,5,4,3,2,1].map(s => map.filter(x => x === s).length).join("·");
 function uniqueMaps(pcs, w, ok = () => true){
   const seen = new Set(), out = [];
-  for(let f0=1; f0<=12; f0++){ const map = posMap(pcs, f0, w), d = distOf(map); if(seen.has(d) || !ok(map)) continue; seen.add(d); out.push({map, d}); }
+  for(let f0=1; f0<=12; f0++){ const map = posMap(pcs, f0, w), d = distOf(map); if(seen.has(d) || !ok(map)) continue; seen.add(d);
+    const full = fillGaps(posNotes(pcs, f0, w), pcs, f0, w).map(x => x.s); full.orig = map; out.push({map: full, d: distOf(full)}); }
   return out;
 }
 function pickDirs(strs, mode){
@@ -2255,7 +2296,9 @@ const PICK = {alt:"alternate", econ:"economy"};
 function addMap(cat, name, map, seq, mode, lvl, d, extraTip){
   const strs = SEQS[seq].f(map);
   let toks = pickDirs(strs, mode);
-  if(mode === "econ" && toks.join() === pickDirs(strs, "alt").join()) return; // sin barridos posibles: idéntico al alternate
+  /* la decisión de omitir el economy se toma con el mapa original para que la numeración no cambie */
+  const strs0 = map.orig ? SEQS[seq].f(map.orig) : strs;
+  if(mode === "econ" && pickDirs(strs0, "econ").join() === pickDirs(strs0, "alt").join()) return; // sin barridos posibles: idéntico al alternate
   const subs = SEQ_SUB[seq]; let sub = subs.find(x => toks.length % x === 0) || subs[0];
   while(toks.length % sub) toks.push("-");
   if(SEQS[seq].rest) toks = toks.concat(fill(sub, "-"));
@@ -2649,9 +2692,25 @@ function posMapN(pcs, f0, w){
   return n;
 }
 const distOfN = map => [6,5,4,3,2,1].map(s => map.filter(x => x.s === s).length).join("·");
+/* Rellena los huecos de una posición: si entre dos notas seguidas del mapa falta una nota de la escala (o del acorde),
+   se añade en la cuerda de la nota grave estirando un traste por encima de la ventana, o en la de la aguda un traste por debajo.
+   La selección de posiciones (y por tanto la numeración) no cambia: solo se completa el contenido. */
+function fillGaps(notes, pcs, f0, w){
+  const out = notes.slice(), pc = m => ((m % 12) + 12) % 12;
+  const off = c => c.f < f0 ? f0 - c.f : c.f > f0 + w - 1 ? c.f - (f0 + w - 1) : 0;
+  for(let i = 0; i < out.length - 1; i++){
+    const a = out[i], b = out[i+1];
+    let q = a.m + 1; while(q < b.m && !pcs.includes(pc(q))) q++;
+    if(q >= b.m) continue;
+    const c = [a.s, b.s].map(s => ({s, f: q - TUNE[s], m: q})).filter(x => x.f >= Math.max(0, f0 - 1) && x.f <= f0 + w).sort((x, y) => off(x) - off(y))[0];
+    if(c) out.splice(i + 1, 0, c);
+  }
+  return out;
+}
 function uniqueMapsN(pcs, w, ok = () => true){
   const seen = new Set(), out = [];
-  for(let f0=1; f0<=12; f0++){ const map = posMapN(pcs, f0, w), d = distOfN(map); if(seen.has(d) || !ok(map.map(x => x.s))) continue; seen.add(d); out.push({map, d}); }
+  for(let f0=1; f0<=12; f0++){ const map = posMapN(pcs, f0, w), d = distOfN(map); if(seen.has(d) || !ok(map.map(x => x.s))) continue; seen.add(d);
+    const full = fillGaps(map, pcs, f0, w); full.forEach(x => { if(x.d === undefined) x.d = x.f < f0 ? 1 : 4; }); full.orig = map; out.push({map: full, d: distOfN(full)}); }
   return out;
 }
 /* Frases y escala 3 nps: La menor natural en 5.ª posición (con extensiones) */
@@ -2718,7 +2777,8 @@ const ART_TIP = {
 function addMap(cat, name, notes, seq, mode, lvl, d, extraTip){
   const ordered = SEQS[seq].f(notes);
   const strs = ordered.map(n => n.s);
-  if(mode === "econ" && pickDirs(strs, "econ").join() === pickDirs(strs, "alt").join()) return;
+  const strs0 = notes.orig ? SEQS[seq].f(notes.orig).map(n => n.s) : strs;
+  if(mode === "econ" && pickDirs(strs0, "econ").join() === pickDirs(strs0, "alt").join()) return;
   let steps = mode === "alt" ? legato(ordered.map(n => N(n.s, n.f, n.d))) : ordered.map(n => N(n.s, n.f, n.d, "st"));
   const subs = SEQ_SUB[seq]; const sub = subs.find(x => steps.length % x === 0) || subs[0];
   while(steps.length % sub) steps.push(null);
@@ -3853,7 +3913,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "1.9.1 · octubre 2026";
+const APP_VER = "1.9.2 · octubre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
