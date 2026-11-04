@@ -1478,7 +1478,7 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "04/11/2026 10:53";
+window.DS_BUILD = "04/11/2026 16:30";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -2161,10 +2161,11 @@ add("alt","Galope y ráfagas", "Ráfaga cruzada 3-2-1-2-3-2", 6, alt([3,2,1,2,3,
   add("alt","Desplazamientos", `Frase en ${n}`, 4, mask(m.repeat(4),4,{string:3}), {nps:9, lvl:3, tip:"La frase no empieza en el tiempo. La mano sigue en movimiento continuo y los golpes sin sonar mantienen la dirección."}));
 
 /* --- Hybrid avanzado --- */
-H("Grupos impares","Quintillo 5-4-3-2-1", 5, "5D 4U 3m 2a 1c", {nps:10, lvl:4, tip:"Púa ⊓V y tres dedos. Cinco ataques iguales por tiempo."});
-H("Grupos impares","Quintillo 6-5-4-3-2", 5, "6D 5U 4D 3m 2a", {nps:10, lvl:4, tip:"Tres golpes de púa con cruce outside y luego inside, y dos dedos."});
-H("Grupos impares","Septillo 5→1→3", 7, "5D 4U 3m 2a 1c 2a 3m", {nps:11, lvl:4, tip:"Subida y bajada por dedos tras dos golpes de púa: el retorno a la 5 llega tras el medio."});
-H("Seisillos","Seisillo 6-5-4 púa + 3 dedos", 6, "6D 5U 4D 3m 2a 1c", {nps:11, lvl:4, tip:"Seis cuerdas consecutivas: tres con púa, tres con dedos."});
+/* v2.4 · púa en cuerdas contiguas hacia el mismo lado = sweep, como se toca en hybrid picking */
+H("Grupos impares","Quintillo 5-4-3-2-1", 5, "5D 4D 3m 2a 1c", {nps:10, lvl:4, tip:"Sweep ⊓⊓ de la 5 a la 4 y tres dedos. Cinco ataques iguales por tiempo."});
+H("Grupos impares","Quintillo 6-5-4-3-2", 5, "6D 5D 4D 3m 2a", {nps:10, lvl:4, tip:"Sweep ⊓⊓⊓ de la 6 a la 4 y dos dedos: un solo movimiento de púa hacia el suelo, sin cruces."});
+H("Grupos impares","Septillo 5→1→3", 7, "5D 4D 3m 2a 1c 2a 3m", {nps:11, lvl:4, tip:"Sweep ⊓⊓ en la 5 y la 4, subida m a c y bajada a m. La púa vuelve a la 5 mientras tocan los dedos."});
+H("Seisillos","Seisillo 6-5-4 púa + 3 dedos", 6, "6D 5D 4D 3m 2a 1c", {nps:11, lvl:4, tip:"Seis cuerdas consecutivas: sweep ⊓⊓⊓ en las tres graves y m a c en las agudas."});
 H("Travis","Pinza doble sincopada", 4, "5D+2m+1a - 4D 3m 6D+2m+1a - 4D 3m", {nps:7, lvl:3, tip:"Tres voces simultáneas: púa, medio y anular sin flam."});
 [[4,3,2],[5,3,1],[6,4,2]].forEach(([a,b,c]) => {
   H("Rolls", `Roll hacia delante 3-3-2 · ${a}-${b}-${c}`, 4, `${a}D ${b}m ${c}a ${a}D ${b}m ${c}a ${a}D ${b}m`, {nps:9, lvl:3, tip:"Roll en cuerdas separadas: la púa salta sola y los dedos no se mueven de su cuerda."});
@@ -2286,8 +2287,10 @@ F("Bossa","Bossa · batida invertida", 2, ["5p","-",C3,"-","6p",C3,"-","-","5p+"
     }
     if(ex.b === "hyb"){
       if(ex.steps.includes("-") || ex.cat === "Travis") return;
+      /* v2.4 · si la púa hace sweep (⊓ seguidos en cuerdas contiguas), al revés es sweep V hacia el techo */
+      const sweep = ex.steps.some((t, i) => /^\d+D$/.test(t) && /^\d+D$/.test(ex.steps[i + 1] || "") && Math.abs(parseInt(t) - parseInt(ex.steps[i + 1])) === 1);
       derive(ex, ex.steps.slice().reverse().map(flip), " · descendente",
-        `«${ex.name}» al revés: los dedos inician desde las agudas y la púa cierra en las graves. Cada golpe de púa invierte su dirección para que el movimiento siga siendo continuo.`, 1, "descendente");
+        `«${ex.name}» al revés: los dedos inician desde las agudas y la púa cierra en las graves. ` + (sweep ? `La púa cierra con sweep V hacia el techo, en un solo movimiento.` : `Cada golpe de púa invierte su dirección para que el movimiento siga siendo continuo.`), 1, "descendente");
     }
     if(ex.b === "ras" || ex.b === "rit"){
       if(ex.cat === "Country" || ex.cat === "Bossa") return;
@@ -3987,7 +3990,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.3 · November 2026";
+const APP_VER = "2.4 · November 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -6079,6 +6082,12 @@ Object.assign(SEG, {"Pedal con el dedo #":"Pedal note with finger #"});
 Object.assign(TIPS, {"El dedo # se queda fijo en el traste # todo el ejercicio.":"Finger # stays down on fret # for the whole exercise.",
   "El dedo # es la nota pedal: vuelve entre cada nota y liga con los demás con hammer-on y pull-off.":"Finger # plays the pedal note: it comes back between every note and connects to the others with hammer-ons and pull-offs.",
   "Para bajar a una nota más grave se levanta (pull-off) y vuelve a caer con hammer-on, sin que la mano entera se mueva.":"To reach a lower note it lifts off (pull-off) and comes back down with a hammer-on, without moving the whole hand."});
+Object.assign(TIPS, {"Sweep ⊓⊓ de la # a la # y tres dedos.":"Sweep ⊓⊓ from string # to string # and three fingers.",
+  "Sweep ⊓⊓⊓ de la # a la # y dos dedos: un solo movimiento de púa hacia el suelo, sin cruces.":"Sweep ⊓⊓⊓ from string # to string # and two fingers: one single pick motion toward the floor, no string crossings.",
+  "Sweep ⊓⊓ en la # y la #, subida m a c y bajada a m.":"Sweep ⊓⊓ on strings # and #, up with m a c and back down to m.",
+  "La púa vuelve a la # mientras tocan los dedos.":"The pick gets back to string # while the fingers play.",
+  "Seis cuerdas consecutivas: sweep ⊓⊓⊓ en las tres graves y m a c en las agudas.":"Six adjacent strings: sweep ⊓⊓⊓ on the three low ones and m a c on the high ones."});
+Object.assign(TIPS, {"La púa cierra con sweep V hacia el techo, en un solo movimiento.":"The pick finishes with a V sweep toward the ceiling, in one single motion."});
 const NR = /\d+/g;
 function tm(s, D){ const n = s.match(NR) || []; const t = D[s.replace(NR, "#")]; if(t == null) return null;
   if(/\{\d\}/.test(t)) return t.replace(/\{(\d)\}/g, (m, j) => n[+j]); let i = 0; return t.replace(/#/g, () => n[i++]); }

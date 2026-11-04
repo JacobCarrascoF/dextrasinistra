@@ -1,5 +1,5 @@
 // Dextra Sinistra · funciona sin conexión. Sube VERSION al publicar cambios.
-const VERSION = "ds-v42";
+const VERSION = "ds-v43";
 const PAGES = {es: "index.html", en: "en.html"};
 const ASSETS = ["manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "icons/maskable-512.png"];
 const NET_WAIT = 3500; // ms: con wifi de avión o de tren que no responde, se abre la copia guardada
