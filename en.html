@@ -1478,7 +1478,7 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
   </form>
 </div>
 <script>window.DS_LANG = "en"; document.documentElement.lang = "en";
-window.DS_BUILD = "04/11/2026 16:30";
+window.DS_BUILD = "05/11/2026 09:51";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3990,7 +3990,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.4 · November 2026";
+const APP_VER = "2.5 · November 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -5696,7 +5696,7 @@ const T19 = window.DS_LANG === "en" ? {
   $("#exName").after(panel);
   const clear = () => { clearTimeout(L.t); clearInterval(L.ti); L.t = 0; L.ti = 0; };
   const barMs = () => 16 * 60000 / M.bpm;
-  function draw(){
+  function draw19(){
     const ch = C(); if(!L.on || !ch || S0.cur !== ch.id){ panel.hidden = true; return; }
     panel.hidden = false;
     const r = rec(ch.id) || ch.base, enter = Math.round(r * .85), burst = Math.round(r * 1.1);
@@ -5708,22 +5708,22 @@ const T19 = window.DS_LANG === "en" ? {
        `<p>${T19.ph3(L.work, Math.round(L.work * 1.1))}</p><div class="c19row"><button type="button" class="btn" id="c19burst">${T19.burst}</button><button type="button" class="btn primary" id="c19log">${T19.log}</button></div>`);
     const b = id => panel.querySelector(id);
     if(b("#c19go")) b("#c19go").onclick = async () => { setBpm(enter); if(!M.playing) await start(); L.phase = 1; L.until = Date.now() + 60000; clear();
-      L.ti = setInterval(draw, 1000); L.t = setTimeout(climb, 60000); draw(); };
-    if(b("#c19stop")) b("#c19stop").onclick = () => { clear(); L.phase = 0; if(M.playing) stop(false); draw(); };
-    if(b("#c19ten")) b("#c19ten").onclick = () => { clear(); L.work = Math.max(30, Math.round(M.bpm / 1.03 / 1.03)); setBpm(L.work); L.phase = 3; L.until = 0; draw(); };
-    if(b("#c19burst")) b("#c19burst").onclick = async () => { clear(); setBpm(Math.round(L.work * 1.1)); if(!M.playing) await start(); L.t = setTimeout(() => { setBpm(L.work); draw(); }, 15000); };
+      L.ti = setInterval(draw19, 1000); L.t = setTimeout(climb, 60000); draw19(); };
+    if(b("#c19stop")) b("#c19stop").onclick = () => { clear(); L.phase = 0; if(M.playing) stop(false); draw19(); };
+    if(b("#c19ten")) b("#c19ten").onclick = () => { clear(); L.work = Math.max(30, Math.round(M.bpm / 1.03 / 1.03)); setBpm(L.work); L.phase = 3; L.until = 0; draw19(); };
+    if(b("#c19burst")) b("#c19burst").onclick = async () => { clear(); setBpm(Math.round(L.work * 1.1)); if(!M.playing) await start(); L.t = setTimeout(() => { setBpm(L.work); draw19(); }, 15000); };
     if(b("#c19log")) b("#c19log").onclick = () => { clear(); $("#logBtn").click(); };
   }
   function climb(){
-    L.phase = 2; clearInterval(L.ti); L.ti = setInterval(draw, 1000);
-    const step = () => { if(!M.playing){ clear(); return; } setBpm(Math.round(M.bpm * 1.03)); L.until = Date.now() + barMs(); L.t = setTimeout(step, barMs()); draw(); };
-    L.until = Date.now() + barMs(); L.t = setTimeout(step, barMs()); draw();
+    L.phase = 2; clearInterval(L.ti); L.ti = setInterval(draw19, 1000);
+    const step = () => { if(!M.playing){ clear(); return; } setBpm(Math.round(M.bpm * 1.03)); L.until = Date.now() + barMs(); L.t = setTimeout(step, barMs()); draw19(); };
+    L.until = Date.now() + barMs(); L.t = setTimeout(step, barMs()); draw19();
   }
   window.startChallenge = () => { const ch = C(); if(!ch) return openPick(); if(!canPractice(exById(ch.id))){ openPlus(); return; }
     if(M.playing) stop(false); clear(); Session.list = []; Session.plan = false; Session.note = ""; renderQueue();
-    L.on = true; L.phase = 0; show("practice"); select(ch.id); window.scrollTo(0, 0); draw(); };
-  const _sel = select; select = function(id, item){ _sel(id, item); const ch = C(); if(!ch || id !== ch.id){ if(L.on){ clear(); L.on = false; } } draw(); };
-  const _sh = show; show = function(v){ _sh(v); if(v !== "practice" && L.on){ clear(); L.on = false; draw(); } };
+    L.on = true; L.phase = 0; show("practice"); select(ch.id); window.scrollTo(0, 0); draw19(); };
+  const _sel = select; select = function(id, item){ _sel(id, item); const ch = C(); if(!ch || id !== ch.id){ if(L.on){ clear(); L.on = false; } } draw19(); };
+  const _sh = show; show = function(v){ _sh(v); if(v !== "practice" && L.on){ clear(); L.on = false; draw19(); } };
 
   /* Inicio: tercer botón en la fila del calentamiento (sin añadir filas) */
   const openResult = ch => {
@@ -5753,7 +5753,7 @@ const T19 = window.DS_LANG === "en" ? {
     b.onclick = () => { if(!ch) return openPick(); stats(ch).over ? openResult(ch) : startChallenge(); };
   };
   /* el registro del reto vuelve a pintar el panel (el nuevo récord cuenta) */
-  const _rq = renderQueue; renderQueue = function(){ _rq(); if(L.on && L.phase === 3) draw(); };
+  const _rq = renderQueue; renderQueue = function(){ _rq(); if(L.on && L.phase === 3) draw19(); };
 }
 
 /* ============ v2.1 · al terminar el día del plan: pantalla de «día hecho» y paso al siguiente ============ */
@@ -5833,7 +5833,7 @@ const T21 = window.DS_LANG === "en" ? {
     if(!p.length && all.length){ const near = all.map(e => e.lvl).sort((a, b) => Math.min(...lvls.map(l => Math.abs(a - l))) - Math.min(...lvls.map(l => Math.abs(b - l))))[0]; p = all.filter(e => e.lvl === near); }
     return p;
   }
-  function build(spec){
+  function build21(spec){
     const {days, min, weeks, lvl} = spec;
     let focus = spec.focus && spec.focus.length ? spec.focus : ["alt", "rit", "leg", "ind", "map"];
     const side = k => FOCUS.D[k] ? "D" : FOCUS.S[k] ? "S" : "B";
@@ -5883,7 +5883,7 @@ const T21 = window.DS_LANG === "en" ? {
     const spec = A.custom;
     if(!spec){ if(HANDS.A.PLANS.cus){ delete HANDS.A.PLANS.cus; if(PS().tpl === "cus"){ PS().tpl = "libre"; savePlan(); } } return; }
     if(HANDS.A.PLANS.cus && HANDS.A.PLANS.cus.sig === JSON.stringify(spec)) return;
-    HANDS.A.PLANS.cus = build(spec);
+    HANDS.A.PLANS.cus = build21(spec);
   }
   window.ensureCustomPlan = ensureCustom;
   const _sh = setHand; setHand = function(h, f){ const r = _sh(h, f); ensureCustom(); return r; };
@@ -5893,7 +5893,7 @@ const T21 = window.DS_LANG === "en" ? {
   const OPT = [[2, 3, 4, 5, 6], [10, 15, 20, 30, 45, 60], [4, 6, 8, 12], [1, 2, 3, 4, 5]];
   let st = 0, ans = {};
   const fmt = [T21.daysO, T21.minO, T21.weeksO];
-  function draw(){
+  function draw21(){
     const N = 5, key = ["days", "min", "weeks", "lvl", "focus"][st];
     let body = `<h3 id="c21t">${T21.q[st]}</h3>`;
     if(st < 3) body += `<div class="c21opts">${OPT[st].map(v => `<button type="button" data-v="${v}" aria-pressed="${ans[key] === v}">${fmt[st](v)}</button>`).join("")}</div>`;
@@ -5906,13 +5906,13 @@ const T21 = window.DS_LANG === "en" ? {
       <div class="g18top"><span class="g18dots">${Array.from({length: N}, (_, k) => `<i class="${k === st ? "on" : ""}"></i>`).join("")}</span><button type="button" class="linkbtn" id="c21x">${T21.skip}</button></div>
       <div class="g18body c21body">${body}</div>
       <div class="g18acts"><button type="button" class="btn ghost" id="c21b" style="visibility:${st ? "visible" : "hidden"}">${T21.back}</button><button type="button" class="btn primary big" id="c21n">${st === N - 1 ? T21.make : T21.next}</button></div></div>`;
-    m.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { ans[key] = +b.dataset.v; draw(); });
-    m.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { const f = new Set(ans.focus || []); f.has(b.dataset.f) ? f.delete(b.dataset.f) : f.add(b.dataset.f); ans.focus = [...f]; draw(); });
+    m.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { ans[key] = +b.dataset.v; draw21(); });
+    m.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { const f = new Set(ans.focus || []); f.has(b.dataset.f) ? f.delete(b.dataset.f) : f.add(b.dataset.f); ans.focus = [...f]; draw21(); });
     $("#c21n").disabled = st < 4 && ans[key] === undefined;
     $("#c21x").onclick = () => m.hidden = true;
-    $("#c21b").onclick = () => { if(st){ st--; draw(); } };
+    $("#c21b").onclick = () => { if(st){ st--; draw21(); } };
     $("#c21n").onclick = () => {
-      if(st < N - 1){ st++; draw(); return; }
+      if(st < N - 1){ st++; draw21(); return; }
       if(typeof isPlus === "function" && !isPlus()){ m.hidden = true; openPlus(); return; }
       const A = PlanState.A; A.custom = {days: ans.days, min: ans.min, weeks: ans.weeks, lvl: ans.lvl, focus: ans.focus || []};
       A.days = A.days || {}; A.days.cus = 0; if(A.sessBy) delete A.sessBy.cus;
@@ -5921,7 +5921,7 @@ const T21 = window.DS_LANG === "en" ? {
       m.hidden = true; show("home"); renderHome(); window.scrollTo(0, 0);
     };
   }
-  window.openCustomPlan = () => { const c = PlanState.A && PlanState.A.custom; ans = c ? JSON.parse(JSON.stringify(c)) : {}; st = 0; draw(); m.hidden = false; };
+  window.openCustomPlan = () => { const c = PlanState.A && PlanState.A.custom; ans = c ? JSON.parse(JSON.stringify(c)) : {}; st = 0; draw21(); m.hidden = false; };
 
   /* entradas: Inicio (niveles) y pantalla Plan */
   const _rh = renderHome; renderHome = function(){
@@ -5946,6 +5946,7 @@ const T21 = window.DS_LANG === "en" ? {
   const _sps = startPlanSession; startPlanSession = function(){ ensureCustom(); return _sps(); };
 }
 
+/* Nota: dentro de bloques { } no se declara «function draw» ni otros nombres globales: en JavaScript no estricto la declaración sale del bloque y sustituye a la global (así se rompió la barra de la tablatura en v2.0–v2.4). */
 /* ============ v2.3 · respiro al repetir: un tiempo de silencio al final de la vuelta ============
    En algunos ejercicios la última nota queda lejos de la primera (de la 1.ª cuerda a la 6.ª, o diez trastes más abajo)
    y al repetir en bucle no da tiempo a volver. Se activa solo cuando el salto de la vuelta es mayor que cualquier
