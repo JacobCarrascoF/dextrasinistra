@@ -1433,7 +1433,7 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
       <p class="setp">Técnica de guitarra eléctrica por manos: <b>Dextra</b> para la mano que pulsa, <b>Sinistra</b> para la que pisa y <b>Ambas</b> para sincronizarlas. Cada ejercicio trae tablatura, metrónomo, reloj y registro.</p>
       <details class="legal"><summary>Cómo funciona la numeración</summary><div>
         <p>Cada ejercicio tiene un código: <span class="mono">D-</span> Dextra, <span class="mono">S-</span> Sinistra, <span class="mono">A-</span> Ambas. Los números del <span class="mono">1000</span> al <span class="mono">1612</span> son mapas compartidos: <span class="mono">D-1204</span> es el patrón de púa, <span class="mono">S-1204</span> la digitación sobre el mismo recorrido y <span class="mono">A-1204</span> las dos manos a la vez.</p>
-        <p>Del <span class="mono">2000</span> en adelante son ejercicios propios de Dextra; del <span class="mono">3000</span> en adelante, propios de Sinistra. Los enclosures van del <span class="mono">4000</span> al <span class="mono">6999</span> y comparten número en las tres manos; en Dextra, los que tienen la misma púa se muestran una sola vez. Los voicings van del <span class="mono">7000</span> al <span class="mono">7999</span> con el mismo criterio. El nivel V es el nivel experto: enclosures y voicings.</p></div></details>
+        <p>Del <span class="mono">2000</span> en adelante son ejercicios propios de Dextra; del <span class="mono">3000</span> en adelante, propios de Sinistra. Los enclosures van del <span class="mono">4000</span> al <span class="mono">6999</span> y comparten número en las tres manos; en Dextra, los que tienen la misma púa se muestran una sola vez. Los voicings van del <span class="mono">7000</span> al <span class="mono">7999</span> con el mismo criterio. El nivel V es el nivel experto: enclosures y voicings. Tabula, el reto de intervalos del inicio, usa códigos propios: <span class="mono">T-3.2-UX</span> es fila 3, columna 2, Up, Alternate.</p></div></details>
       <details class="legal"><summary>Método de trabajo</summary><div>
         <p>1. Empieza en el tempo mínimo del rango, aunque te parezca lento.</p>
         <p>2. Registra cómo ha salido. <b>Limpio</b>: la próxima vez sube 4 BPM. <b>Controlado</b>: repite el tempo. <b>Con tensión</b>: baja un 10 %.</p>
@@ -1477,7 +1477,7 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
     <div class="acts"><button type="button" class="btn ghost" id="mCancel">Cancelar</button><button type="submit" class="btn primary big" id="mSave">Guardar</button></div>
   </form>
 </div>
-<script>window.DS_BUILD = "05/11/2026 09:51";
+<script>window.DS_BUILD = "12/11/2026 18:30";
 /* ======================= ENCLOSURES (generador compartido por Dextra, Sinistra y Ambas) =======================
    Cada nota objetivo de una tríada, cuatriada o escala se rodea por arriba y por abajo y cae en el tiempo.
    Trastes reales en Do: tríada mayor y Maj7 con Do mayor, tríada menor y m7 con Do dórico, 7 con Do mixolidio,
@@ -3061,7 +3061,7 @@ function renderBranches(){
     b.innerHTML = (color ? `<span class="dot" style="background:${color}"></span>` : "") + label;
     b.onclick = () => {S0.branch = k; S0.cat = ""; saveUI(); renderBranches(); renderList();}; el.appendChild(b);};
   mk("", "Todas");
-  Object.entries(BRANCHES).forEach(([k,v]) => mk(k, v.n, v.c));
+  Object.entries(BRANCHES).filter(([k]) => k !== "tab" || S0.branch === "tab").forEach(([k,v]) => mk(k, v.n, v.c));
   const subs = $("#subs"); subs.innerHTML = "";
   if(S0.branch){
     const cats = [...new Set(EX.filter(e => e.b === S0.branch).map(e => e.cat))];
@@ -3071,7 +3071,7 @@ function renderBranches(){
 }
 function filtered(){
   const q = S0.q.trim().toLowerCase();
-  return EX.filter(e => (!S0.branch || e.b===S0.branch) && (!S0.cat || e.cat===S0.cat) && (!S0.lvl || e.lvl==S0.lvl) &&
+  return EX.filter(e => (S0.branch ? e.b===S0.branch : e.b !== "tab") && (!S0.cat || e.cat===S0.cat) && (!S0.lvl || e.lvl==S0.lvl) &&
     (!q || (e.code + " " + e.num + " " + e.name + " " + e.cat + " " + e.subLabel + " " + BRANCHES[e.b].n + " nivel " + ROMAN[e.lvl] + (e.shared ? " compartido sinistra ambidextra dextra" : "")).toLowerCase().includes(q)));
 }
 function renderList(){
@@ -3520,12 +3520,98 @@ const AMB = [];
       lvl:5, bpm:it.bpm.slice(), tip: VOI.tip(it, "A")});
   });
 })();
+/* ======================= TABULA (las dos manos a la vez) =======================
+   Inspirada en la Interval Matrix de Jonathan Kreisberg. 11 × 11 piezas × 6 variantes = 726 ejercicios.
+   Fila: intervalo construido sobre la raíz. Columna: distancia entre raíces.
+   Up / Down: las raíces suben o bajan. Ascend: raíz y luego el intervalo por encima.
+   Descend: el intervalo por encima y cae a la raíz. Alternate: una pareja subiendo y la siguiente bajando.
+   Corcheas, púa alternate, desde Do. Código: T-<fila>.<columna>-<variante>, p. ej. T-3.2-UX. */
+const TAB = (function(){
+  const EN = window.DS_LANG === "en";
+  const TUNE = {6:40,5:45,4:50,3:55,2:59,1:64}, MAXF = 17;
+  const IV = ["2b","2","3b","3","4","5b","5","6b","6","7b","7"];
+  const IVN = EN ? ["minor 2nd","major 2nd","minor 3rd","major 3rd","perfect 4th","tritone","perfect 5th","minor 6th","major 6th","minor 7th","major 7th"]
+                 : ["2.ª menor","2.ª mayor","3.ª menor","3.ª mayor","4.ª justa","tritono","5.ª justa","6.ª menor","6.ª mayor","7.ª menor","7.ª mayor"];
+  const NN = EN ? ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"] : ["Do","Do#","Re","Re#","Mi","Fa","Fa#","Sol","Sol#","La","La#","Si"];
+  const VAR = [{k:"UA", n:"Up, Ascend", r:1, a:"asc"}, {k:"UD", n:"Up, Descend", r:1, a:"desc"}, {k:"UX", n:"Up, Alternate", r:1, a:"alt"},
+               {k:"DA", n:"Down, Ascend", r:-1, a:"asc"}, {k:"DD", n:"Down, Descend", r:-1, a:"desc"}, {k:"DX", n:"Down, Alternate", r:-1, a:"alt"}];
+  const LO = TUNE[6] + 1, HI = TUNE[1] + MAXF;
+  /* raíces desde un Do: el número de raíces (máx. 6) depende de lo que cabe en el mástil */
+  function roots(ap, step, dir){
+    let best = null;
+    [48, 60, 72].forEach(st => {
+      if(st + ap > HI || st < LO) return;
+      const room = dir > 0 ? (HI - ap - st) : (st - LO);
+      const n = Math.min(6, Math.floor(room / step) + 1);
+      if(n >= 2 && (!best || n > best.n || (n === best.n && Math.abs(st - 60) < Math.abs(best.st - 60)))) best = {st, n};
+    });
+    return Array.from({length: best.n}, (_, k) => best.st + k * step * dir);
+  }
+  /* digitación por posiciones: ventanas de 5 trastes; se cambia de posición solo cuando la línea no cabe */
+  function fret(ms){
+    const cand = ms.map(m => [6,5,4,3,2,1].map(s => ({s, f:m - TUNE[s]})).filter(c => c.f >= 1 && c.f <= MAXF));
+    const fits = (i, x) => cand[i].filter(c => c.f >= x && c.f <= x + 4);
+    const out = []; let i = 0, prevX = null;
+    while(i < ms.length){
+      let best = null;
+      for(let x = 1; x <= MAXF - 4; x++){
+        let j = i; while(j < ms.length && fits(j, x).length) j++;
+        const len = j - i; if(!len) continue;
+        const d = prevX === null ? Math.abs(x - 5) : Math.abs(x - prevX);
+        if(!best || len > best.len || (len === best.len && d < best.d)) best = {x, len, d};
+      }
+      /* dentro de la ventana: cuerdas con el menor salto posible (programación dinámica) */
+      const seg = []; for(let k = i; k < i + best.len; k++) seg.push(fits(k, best.x));
+      const cost = [seg[0].map(c => out.length ? Math.abs(c.s - out[out.length-1].s) * 0.5 : 0)], back = [];
+      for(let k = 1; k < seg.length; k++){
+        cost.push([]); back.push([]);
+        seg[k].forEach(c => { let bv = Infinity, bj = 0; seg[k-1].forEach((p, j) => { const v = cost[k-1][j] + Math.abs(c.s - p.s) + Math.abs(c.f - p.f) * 0.1; if(v < bv){ bv = v; bj = j; } }); cost[k].push(bv); back[k-1].push(bj); });
+      }
+      let j = cost[seg.length-1].indexOf(Math.min(...cost[seg.length-1])); const part = [];
+      for(let k = seg.length - 1; k >= 0; k--){ part.unshift(Object.assign({}, seg[k][j], {x:best.x})); if(k) j = back[k-1][j]; }
+      /* dedos: un dedo por traste; la quinta casilla de la ventana se toca extendiendo el 4 o el 1 */
+      const lo = Math.min(...part.map(n => n.f)), hi = Math.max(...part.map(n => n.f));
+      const base = hi - lo >= 4 ? (part.filter(n => n.f === lo).length <= part.filter(n => n.f === hi).length ? lo + 1 : lo) : lo;
+      part.forEach(n => { n.d = Math.max(1, Math.min(4, n.f - base + 1)); });
+      out.push(...part); prevX = best.x; i += best.len;
+    }
+    return out;
+  }
+  const items = [];
+  IV.forEach((ra, ri) => IV.forEach((ca, ci) => VAR.forEach(v => {
+    const ap = ri + 1, step = ci + 1, rs = roots(ap, step, v.r);
+    const pairs = rs.map((r, k) => { const up = v.a === "asc" || (v.a === "alt" && k % 2 === 0); return up ? [r, r + ap] : [r + ap, r]; });
+    const ms = pairs.flat(), fr = fret(ms);
+    const steps = fr.map((n, i) => ({notes:[{s:n.s, f:n.f, d:n.d, k: i % 2 ? "U" : "D"}]})).concat([{rest:true}, {rest:true}]);
+    const info = steps.map((_, i) => ({b: Math.floor(i / 2), k: i % 2, sub: 2}));
+    const names = pairs.map(([a, b]) => NN[a % 12] + " " + NN[b % 12]).join(" · ");
+    const shifts = fr.reduce((c, n, i) => c + (i && n.x !== fr[i-1].x ? 1 : 0), 0);
+    const lo = Math.min(...fr.filter(n => n.f).map(n => n.f)), hi = Math.max(...fr.map(n => n.f));
+    const tip = EN
+      ? [`Interval: ${IVN[ri]} built on each root. Roots ${v.r > 0 ? "rise" : "fall"} by a ${IVN[ci]} from C (${rs.length} roots).`,
+         v.a === "asc" ? "Ascend: root first, then the interval above." : v.a === "desc" ? "Descend: the interval above first, landing on the root." : "Alternate: one pair rising (root first), the next falling onto the root.",
+         `Notes: ${names}.`, "Eighth notes with alternate picking: the first note of each pair is on the beat; the last beat is a rest to start again.",
+         `Suggested fingering between frets ${lo} and ${hi}` + (shifts ? `, with ${shifts} position shift${shifts > 1 ? "s" : ""}.` : ", without shifting position."),
+         "Inspired by Jonathan Kreisberg's Interval Matrix."].join(" ")
+      : [`Intervalo: ${IVN[ri]} construida sobre cada raíz. Las raíces ${v.r > 0 ? "suben" : "bajan"} por ${IVN[ci]} desde Do (${rs.length} raíces).`,
+         v.a === "asc" ? "Ascend: la raíz y luego el intervalo por encima." : v.a === "desc" ? "Descend: el intervalo por encima y cae a la raíz." : "Alternate: una pareja subiendo (primero la raíz) y la siguiente bajando a la raíz.",
+         `Notas: ${names}.`, "Corcheas con púa alternate: la primera nota de cada pareja va en el tiempo; el último tiempo es silencio para volver a empezar.",
+         `Digitación sugerida entre los trastes ${lo} y ${hi}` + (shifts ? `, con ${shifts} cambio${shifts > 1 ? "s" : ""} de posición.` : ", sin cambiar de posición."),
+         "Inspirado en la Interval Matrix de Jonathan Kreisberg."].join(" ");
+    const code = `T-${ra}.${ca}-${v.k}`;
+    items.push({id:code, code, h:"A", b:"tab", cat:(EN ? "Row " : "Fila ") + ra, name:`Tabula ${ra} · ${ca} · ${v.n}`, name_es:`Tabula ${ra} · ${ca} · ${v.n}`,
+      sub:2, steps, parsed:steps, info, nBeats:steps.length / 2, beats:[2], mixed:false, subLabel:SUBN[2], shared:false,
+      tags:["Tabula", v.n], lvl:5, bpm:[60, 160], tip, row:ra, col:ca, vk:v.k, vn:v.n});
+  })));
+  items.forEach(e => AMB.push(e));
+  return {items, IV, IVN, VAR, GOAL:100, FREE_ROW:"2b"};
+})();
 const HANDS = {
   D:{name:"Dextra", short:"Dextra", sub:"Mano derecha · pulsar", EX:DEX.EX, BRANCHES:DEX.BRANCHES, PLANS:DEX.PLANS, exByName:DEX.exByName, ph:"Buscar: D-1204, cuerda 3, seisillos, inside…",
      legend:"⊓ púa abajo · V púa arriba · m a c dedos (medio, anular, meñique) · p i m a e dedos de mano derecha · trazo discontinuo = movimiento sin sonar · × = nota o rasgueo apagado"},
   S:{name:"Sinistra", short:"Sinistra", sub:"Mano izquierda · pisar", EX:SIN.EX, BRANCHES:SIN.BRANCHES, PLANS:SIN.PLANS, exByName:SIN.exByName, ph:"Buscar: S-1204, trino, vibrato, cejilla…",
      legend:"Número = traste (0 = al aire) · h hammer-on · p pull-off · / \\ slide · ↗ ↘ cambio de posición · b½ b1 b1½ b2 bend · pb pre-bend · r release · ~ ciclo de vibrato · • pisar y cortar · × apagado · = mantener"},
-  A:{name:"Ambas manos", short:"Ambas", sub:"Sincronía · púa y dedo a la vez", EX:AMB, BRANCHES:{map:{n:"Mapas del mástil", c:"var(--acc-d)"}, enc:{n:"Enclosures", c:"var(--red)"}, voi:{n:"Voicings", c:"var(--acc-s)"}}, PLANS:{}, exByName: n => AMB.find(e => e.name === n), ph:"Buscar: A-1204, mayor, arpegio, terceras…",
+  A:{name:"Ambas manos", short:"Ambas", sub:"Sincronía · púa y dedo a la vez", EX:AMB, BRANCHES:{map:{n:"Mapas del mástil", c:"var(--acc-d)"}, enc:{n:"Enclosures", c:"var(--red)"}, voi:{n:"Voicings", c:"var(--acc-s)"}, tab:{n:"Tabula", c:"var(--yellow)"}}, PLANS:{}, exByName: n => AMB.find(e => e.name === n), ph:"Buscar: A-1204, mayor, arpegio, terceras…",
      legend:"Arriba, en azul: dirección de púa (Dextra). En cada cuerda: el traste que pisa la izquierda (Sinistra). A-1204 combina D-1204 y S-1204."}
 };
 const ALL = new Map(); [DEX.EX, SIN.EX, AMB].forEach(a => a.forEach(e => ALL.set(e.id, e)));
@@ -3633,7 +3719,7 @@ function renderTab(ex){ (ex.h === "S" ? renderTabS : ex.h === "A" ? renderTabA :
 /* ---- Sesión aleatoria (una por rama; en Ambas, cinco mapas distintos) ---- */
 $("#mkSession").onclick = () => {
   const levelPool = e => !S0.lvl || e.lvl == S0.lvl;
-  const keys = Object.keys(BRANCHES), per = keys.length < 3 ? 5 : 1, ids = [];
+  const keys = Object.keys(BRANCHES).filter(k => k !== "tab"), per = keys.length < 3 ? 5 : 1, ids = [];
   keys.forEach(b => {
     const pool = EX.filter(e => e.b === b && levelPool(e)).sort((x,y) => lastOf(x.id) - lastOf(y.id));
     let cand = pool.slice(0, Math.max(3*per, Math.ceil(pool.length/4)));
@@ -4215,7 +4301,7 @@ let plusSigOK = false;
 function trialLeft(){ const d = Math.floor((Date.now() - new Date(PL.trialStart + "T00:00:00").getTime()) / 864e5); return Math.max(0, TRIAL_DAYS - d); }
 function plusState(){ if(!PL.code || !plusSigOK) return "none"; if(PL.plan === "year" && PL.exp && PL.exp < isoDay(new Date())) return "expired"; return PL.plan === "life" ? "life" : "year"; }
 function isPlus(){ const s = plusState(); return s === "life" || s === "year" || trialLeft() > 0; }
-const isFree = e => (e.h === "D" || e.h === "S") && e.lvl === 1;
+const isFree = e => ((e.h === "D" || e.h === "S") && e.lvl === 1) || (e.b === "tab" && e.row === "2b");
 const canPractice = e => isPlus() || isFree(e);
 const fmtDay = d => new Date(d + "T00:00:00").toLocaleDateString(PLX.locale, {day:"numeric", month:"long", year:"numeric"});
 
@@ -6067,6 +6153,128 @@ const T22 = window.DS_LANG === "en" ? {
   };
   const _rt = renderTab; renderTab = function(ex){ _rt(ex); sync(); };
   sync();
+}
+
+/* ======================= TABULA · pantalla del reto ======================= */
+{
+  const EN = window.DS_LANG === "en";
+  const TT = EN ? {
+    title:"Tabula", sub:"Interval challenge · both hands", pieces:"pieces", rows:"Interval on the root", cols:"Distance between roots",
+    how:"Each piece combines an interval built on the root (row) with the distance between roots (column), in 6 variants. A piece is complete when its 6 variants are logged as clean at %s BPM or more.",
+    credit:"Inspired by Jonathan Kreisberg's Interval Matrix.", pick:"Choose a piece", play:"Play", best:"clean record", none:"no record", lock:"Plus",
+    legend:"● clean at the goal tempo · ◐ logged below it · ○ not yet", free:"The first row is free.", back:"Back to Tabula", home:"Tabula", homeSub:"11 × 11 interval challenge"
+  } : {
+    title:"Tabula", sub:"Reto de intervalos · las dos manos", pieces:"piezas", rows:"Intervalo sobre la raíz", cols:"Distancia entre raíces",
+    how:"Cada pieza combina un intervalo construido sobre la raíz (fila) con la distancia entre raíces (columna), en 6 variantes. Una pieza está completa cuando sus 6 variantes están registradas como limpias a %s BPM o más.",
+    credit:"Inspirado en la Interval Matrix de Jonathan Kreisberg.", pick:"Elige una pieza", play:"Tocar", best:"récord limpio", none:"sin registro", lock:"Plus",
+    legend:"● limpia al tempo objetivo · ◐ registrada por debajo · ○ pendiente", free:"La primera fila es gratis.", back:"Volver a Tabula", home:"Tabula", homeSub:"Reto de intervalos 11 × 11"
+  };
+  const css = document.createElement("style");
+  css.textContent = `
+  #tabula{max-width:1100px;margin:0 auto;padding:8px 0 48px}
+  #tabula .tbhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px;margin-bottom:6px}
+  #tabula h2{margin:0;font-size:28px;font-weight:600;letter-spacing:-.01em}
+  #tabula .tbsub{color:var(--muted);font-size:14px}
+  #tabula .tbcount{font-family:var(--f-mono);font-size:15px;color:var(--fg)}
+  #tabula .tbhow{color:var(--muted);font-size:14px;max-width:70ch;margin:6px 0 4px}
+  #tabula .tbleg{color:var(--faint);font-size:12.5px;font-family:var(--f-mono);margin-bottom:14px}
+  #tabula .tbwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--raise)}
+  #tabula table{border-collapse:collapse;margin:0 auto}
+  #tabula th{text-transform:none;letter-spacing:0;font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--muted);padding:6px 4px;text-align:center}
+  #tabula th.corner{font-family:var(--f-ui);font-size:10.5px;color:var(--faint);text-align:left;line-height:1.25;min-width:64px}
+  #tabula td{padding:2px}
+  #tabula .pc{width:44px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;display:grid;grid-template-columns:repeat(3,6px);gap:4px;place-content:center;padding:0}
+  #tabula .pc:hover{border-color:var(--line2)}
+  #tabula .pc:focus-visible{outline:2px solid var(--acc-d);outline-offset:1px}
+  #tabula .pc[aria-pressed="true"]{border-color:var(--acc-d);box-shadow:0 0 0 1px var(--acc-d) inset}
+  #tabula .pc.done{background:var(--hl-d);border-color:var(--acc-d)}
+  #tabula .pc.lock{opacity:.55}
+  #tabula .pc i{width:6px;height:6px;border-radius:50%;border:1px solid var(--line2);box-sizing:border-box}
+  #tabula .pc i.ok{background:var(--acc-d);border-color:var(--acc-d)}
+  #tabula .pc i.part{background:linear-gradient(90deg,var(--acc-d) 50%,transparent 50%);border-color:var(--acc-d)}
+  #tabula .tbpanel{margin-top:16px;border:1px solid var(--line);border-radius:var(--r);background:var(--raise);padding:16px}
+  #tabula .tbpanel h3{margin:0 0 4px;font-size:18px;font-weight:600}
+  #tabula .tbpanel p{margin:0 0 12px;color:var(--muted);font-size:14px}
+  #tabula .tbvars{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+  #tabula .tbv{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface);cursor:pointer;text-align:left;font:inherit;color:var(--fg)}
+  #tabula .tbv:hover{border-color:var(--line2)}
+  #tabula .tbv small{display:block;color:var(--faint);font-family:var(--f-mono);font-size:11.5px;margin-top:2px}
+  #tabula .tbv .st{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
+  #tabula .tbv .st.ok{color:var(--acc-d)}
+  #tabula .tbcredit{color:var(--faint);font-size:12.5px;margin-top:14px}
+  .tabcard{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--raise);color:var(--fg);font:inherit;cursor:pointer;text-align:left}
+  .tabcard:hover{border-color:var(--line2)}
+  .tabcard b{font-size:16px;font-weight:600}
+  .tabcard span.s{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+  .tabcard .n{font-family:var(--f-mono);font-size:14px;white-space:nowrap}
+  .tabback{display:inline-flex;align-items:center;gap:6px;margin:0 0 8px;font:inherit;font-size:13px;color:var(--acc-d);background:none;border:0;padding:4px 0;cursor:pointer}
+  @media (max-width:640px){#tabula .pc{width:30px;height:30px;gap:2px;grid-template-columns:repeat(3,5px)} #tabula .pc i{width:5px;height:5px} #tabula th{font-size:10.5px;padding:4px 2px} #tabula th.corner{min-width:0;max-width:56px;font-size:9px;line-height:1.15}}
+  `;
+  document.head.appendChild(css);
+  const byPiece = new Map();
+  TAB.items.forEach(e => { const k = e.row + "." + e.col; if(!byPiece.has(k)) byPiece.set(k, []); byPiece.get(k).push(e); });
+  const status = e => { const b = bestOf(e.id); return b >= TAB.GOAL ? 2 : Store.items.some(i => i.ex === e.id) ? 1 : 0; };
+  const pieceDone = k => byPiece.get(k).every(e => status(e) === 2);
+  const doneCount = () => [...byPiece.keys()].filter(pieceDone).length;
+  const free = e => e.row === TAB.FREE_ROW;
+  const view = document.createElement("main");
+  view.id = "tabula"; view.hidden = true;
+  $("#home").after(view);
+  let sel = null;
+  function render(){
+    const n = doneCount();
+    let h = `<div class="tbhead"><div><h2>${TT.title}</h2><div class="tbsub">${TT.sub}</div></div><div class="tbcount">${n} / 121 ${TT.pieces}</div></div>
+      <p class="tbhow">${TT.how.replace("%s", TAB.GOAL)} ${isPlus() ? "" : TT.free}</p><div class="tbleg">${TT.legend}</div>
+      <div class="tbwrap"><table><thead><tr><th class="corner">${TT.rows} ↓<br>${TT.cols} →</th>${TAB.IV.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>`;
+    TAB.IV.forEach(r => {
+      h += `<tr><th>${r}</th>`;
+      TAB.IV.forEach(c => {
+        const k = r + "." + c, list = byPiece.get(k), st = list.map(status), lock = !isPlus() && r !== TAB.FREE_ROW;
+        h += `<td><button type="button" class="pc${st.every(x => x === 2) ? " done" : ""}${lock ? " lock" : ""}" data-k="${k}" aria-pressed="${sel === k}" aria-label="${r} / ${c}">${st.map(x => `<i class="${x === 2 ? "ok" : x === 1 ? "part" : ""}"></i>`).join("")}</button></td>`;
+      });
+      h += `</tr>`;
+    });
+    h += `</tbody></table></div><div class="tbpanel" id="tbPanel">`;
+    if(sel){
+      const [r, c] = sel.split("."), list = byPiece.get(sel), ri = TAB.IV.indexOf(r), ci = TAB.IV.indexOf(c);
+      h += `<h3>${r} · ${c}</h3><p>${EN ? `${TAB.IVN[ri]} on each root · roots move by a ${TAB.IVN[ci]}` : `${TAB.IVN[ri]} sobre cada raíz · las raíces se mueven por ${TAB.IVN[ci]}`}</p><div class="tbvars">` +
+        list.map(e => { const b = bestOf(e.id), lock = !isPlus() && !free(e);
+          return `<button type="button" class="tbv" data-id="${e.id}"><span><b>${e.vn}</b><small>${e.code}</small></span><span class="st${b >= TAB.GOAL ? " ok" : ""}">${lock ? TT.lock : b ? b + " BPM" : TT.none}</span></button>`; }).join("") + `</div>`;
+    } else h += `<p style="margin:0">${TT.pick}</p>`;
+    h += `</div><p class="tbcredit">${TT.credit}</p>`;
+    view.innerHTML = h;
+    view.querySelectorAll(".pc").forEach(b => b.onclick = () => { sel = b.dataset.k; render(); $("#tbPanel").scrollIntoView({block:"nearest", behavior:"smooth"}); });
+    view.querySelectorAll(".tbv").forEach(b => b.onclick = () => open(b.dataset.id));
+  }
+  function open(id){
+    const e = exById(id);
+    select(id);
+    S0.branch = "tab"; S0.cat = e.cat; renderBranches(); renderList();
+    show("practice");
+  }
+  const _show = show;
+  show = function(v){
+    if(v === "tabula"){
+      if(M.playing) stop(false);
+      ["home","practice","plan","progress"].forEach(k => { $("#"+k).hidden = true; $("#v-"+k).setAttribute("aria-pressed", false); });
+      view.hidden = false; render(); window.scrollTo(0,0); return;
+    }
+    view.hidden = true; _show(v);
+  };
+  /* tarjeta en el inicio */
+  const card = document.createElement("button");
+  card.type = "button"; card.className = "tabcard"; card.id = "hTabula";
+  const paintCard = () => { card.innerHTML = `<span><b>${TT.home}</b><span class="s">${TT.homeSub}</span></span><span class="n">${doneCount()} / 121</span>`; };
+  paintCard(); card.onclick = () => show("tabula");
+  const anchor = document.querySelector("#home #continue") || document.querySelector("#home .hands"); if(anchor) anchor.after(card); else $("#home").appendChild(card);
+  /* desde un ejercicio de Tabula, volver a la tabla */
+  const back = document.createElement("button");
+  back.type = "button"; back.className = "tabback"; back.textContent = "← " + TT.back; back.hidden = true;
+  back.onclick = () => { if(sel === null){ const e = exById(S0.cur); if(e && e.b === "tab") sel = e.row + "." + e.col; } show("tabula"); };
+  const eb = $("#exEyebrow"); if(eb) eb.before(back);
+  const _sel = select;
+  select = function(id, it){ const r = _sel(id, it); const e = exById(id); back.hidden = !(e && e.b === "tab"); if(e && e.b === "tab") sel = e.row + "." + e.col; return r; };
+  Store.listeners.push(() => { paintCard(); if(!view.hidden) render(); });
 }
 
 setHand(state.hand && HANDS[state.hand] ? state.hand : "D", true);
