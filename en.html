@@ -5260,6 +5260,59 @@ const ICO_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2
   ["D","S"].forEach(h => Object.values(HANDS[h].PLANS).forEach(p => { try { convert(h, p); } catch(err){ console.warn("ciclos", h, p.n, err); } }));
 }
 
+/* ======================= MÉTODO DE CICLOS SOLAPADOS (planes guiados) =======================
+   Cada semana entra un ejercicio núcleo y cada núcleo vive tres semanas:
+   semana 1 focus (subir tempo con las 4 reglas) · semana 2 focus · semana 3 masterización (90 % del récord) y test el último día.
+   Las sesiones A/B/C comparten los núcleos y solo cambia la variación, que es del mismo movimiento que el núcleo más nuevo.
+   Los núcleos salen, en orden, de la progresión que ya tenía cada plan. */
+{
+  const EN = window.DS_LANG === "en";
+  const L = EN ? {wk: w => `Week ${w}`, nw: "New", go: "Ongoing", ts: "Test", fc: (a, b, c) => [a && `New: ${a}.`, b && `Ongoing: ${b}.`, c && `Test week: ${c}.`].filter(Boolean).join(" ")}
+               : {wk: w => `Semana ${w}`, nw: "Nuevo", go: "En curso", ts: "Test", fc: (a, b, c) => [a && `Nuevo: ${a}.`, b && `En curso: ${b}.`, c && `Semana de test: ${c}.`].filter(Boolean).join(" ")};
+  const items = ph => ["A","B","C"].flatMap(t => ph.s[t] || []);
+  function convert(h, p){
+    const H = HANDS[h], byName = n => H.exByName(n);
+    const W = p.weeks, N = Math.max(1, W - 2);
+    /* candidatos a núcleo: los bloques de trabajo de la progresión original, en orden y sin repetir */
+    const seen = new Set(), cand = [];
+    p.phases.forEach(ph => ["A","B","C"].forEach(t => (ph.s[t] || []).forEach(([n, , tp]) => { if(tp === "trabajo" && !seen.has(n) && byName(n)){ seen.add(n); cand.push(n); } })));
+    const nuc = Array.from({length: N}, (_, i) => cand[Math.round(i * (cand.length - 1) / Math.max(1, N - 1))]);
+    const uniq = [...new Set(nuc)];
+    const phaseOf = w => p.phases.find(ph => w >= ph.w[0] && w <= ph.w[1]) || p.phases[p.phases.length - 1];
+    /* variaciones: mismo movimiento (misma categoría) que el núcleo, nivel parecido, sin tocar los núcleos */
+    const varOf = (name, k) => {
+      const e = byName(name); if(!e) return null;
+      const pool = H.EX.filter(x => x.cat === e.cat && x.b === e.b && Math.abs(x.lvl - e.lvl) <= 1 && !uniq.includes(x.name_es || x.name) && x.id !== e.id && !(x.b === "tab"));
+      return pool.length ? (pool[k % pool.length].name_es || pool[k % pool.length].name) : null;
+    };
+    const phases = [];
+    for(let w = 1; w <= W; w++){
+      const act = uniq.map((n, k) => ({n, age: w - k})).filter(x => x.age >= 1 && x.age <= 3);
+      const orig = phaseOf(w), s = {};
+      ["A","B","C"].forEach((t, ti) => {
+        const src = orig.s[t] || [];
+        const warm = src.find(b => b[2] === "lento") || items(orig).find(b => b[2] === "lento");
+        const burst = (p.min >= 50) ? src.find(b => b[2] === "rafaga") : null;
+        const newest = act.length ? act[act.length - 1].n : null;
+        const vr = newest ? varOf(newest, (w - 1) * 3 + ti) : null;
+        const out = [];
+        if(warm) out.push([warm[0], 0, "lento", .1]);
+        act.forEach(x => out.push([x.n, 0, x.age === 3 ? "master" : "trabajo", x.age === 1 ? 1.25 : x.age === 2 ? 1.1 : .85]));
+        if(vr && !act.some(x => x.n === vr) && (!warm || warm[0] !== vr)) out.push([vr, 0, "trabajo", .5]);
+        if(burst && !out.some(b => b[0] === burst[0])) out.push([burst[0], 0, "rafaga", .3]);
+        const wsum = out.reduce((a, b) => a + b[3], 0);
+        out.forEach(b => { b[1] = Math.max(2, Math.round(p.min * b[3] / wsum)); b.length = 3; });
+        s[t] = out;
+      });
+      const by = a => act.filter(x => x.age === a).map(x => x.n).join(", ");
+      phases.push({n: L.wk(w), w: [w, w], focus: L.fc(by(1), by(2), by(3)), s, cyc: {days: p.days}});
+    }
+    p.phases = phases; p.cycles = true;
+    p.nucleos = uniq;
+  }
+  ["D","S"].forEach(h => Object.values(HANDS[h].PLANS).forEach(p => { try { convert(h, p); } catch(err){ console.warn("ciclos", h, p.n, err); } }));
+}
+
 /* ---------- 1 · Planes conjuntos ---------- */
 {
   /* se construyen al arrancar la app (primer setHand), después de la capa de traducción de la versión inglesa */
@@ -6443,6 +6496,116 @@ const trTip = s => s ? s.replace(/([.!?])\s+/g, "$1\u0001").split("\u0001").map(
     const ex = exById(S0.cur), it = Session.list.find(x => x.id === ex.id), bpm = +$("#mBpm").value, q = mQ;
     await _sub(e);
     if(it && it.tempo === "test"){ const t = target(ex); Session.note = (q === 3 && bpm >= t) ? L.pass(t) : L.fail(t); if(typeof renderQueue === "function") renderQueue(); }
+  };
+}
+
+/* ======================= MÉTODO · masterización, test, refuerzo y las 4 reglas ======================= */
+{
+  const EN = window.DS_LANG === "en";
+  const L = EN ? {
+    master: "Mastery · 90 % of your record", test: "Test · cycle goal", reinf: "Reinforcement",
+    rulesT: "To log it as Clean, all four:", rules: ["The whole exercise, start to finish", "Complete, nothing left out", "It sounds good", "In time"],
+    pass: t => `Test passed (goal ${t} BPM). This exercise leaves the plan.`, fail: t => `Test not passed yet (goal ${t} BPM). It stays one more week in mastery.`,
+    sMaster: "Mastery", sTest: "Test"
+  } : {
+    master: "Masterización · 90 % de tu récord", test: "Test · objetivo del ciclo", reinf: "Refuerzo",
+    rulesT: "Para registrarlo como Limpio, las cuatro:", rules: ["Todo el ejercicio, de principio a fin", "Completo, sin dejarse nada", "Suena bien", "A tempo"],
+    pass: t => `Test superado (objetivo ${t} BPM). Este ejercicio sale del plan.`, fail: t => `Test aún no superado (objetivo ${t} BPM). Se queda una semana más en masterización.`,
+    sMaster: "Masterización", sTest: "Test"
+  };
+  /* tempos */
+  const target = ex => Math.round((ex.bpm[0] + (ex.bpm[1] - ex.bpm[0]) * 0.5) / 2) * 2;
+  window.cycleTarget = target;
+  TEMPO_N.master = L.master; TEMPO_N.test = L.test;
+  if(typeof T12P === "object" && T12P.tempo){ T12P.tempo.master = L.sMaster; T12P.tempo.test = L.sTest; }
+  const _tf = tempoFor;
+  tempoFor = function(ex, mode){
+    if(mode === "master"){ const b = bestOf(ex.id); return b ? Math.max(ex.bpm[0], Math.round(b * .9)) : ex.bpm[0]; }
+    if(mode === "test") return target(ex);
+    return _tf(ex, mode);
+  };
+  /* sesión: el último día de la semana la masterización es test; los núcleos que no pasaron su test vuelven como refuerzo */
+  const curPlan = () => { const h = PlanState.hand, ps = PlanState[h]; return ps && HANDS[h].PLANS[ps.tpl]; };
+  const _sb = sessionBlocks;
+  sessionBlocks = function(pos){
+    const out = _sb(pos), p = curPlan();
+    if(!p || pos.deload || !p.phases.some(ph => Object.values(ph.s).some(l => l.some(b => b[2] === "master")))) return out;
+    if(pos.dw === p.days) out.forEach(b => { if(b.tempo === "master") b.tempo = "test"; });
+    const here = new Set(out.map(b => b.id)), extra = [];
+    p.phases.filter(ph => ph.w[1] < pos.week).forEach(ph => Object.values(ph.s).forEach(l => l.forEach(([n, , t]) => {
+      if(t !== "master") return;
+      const e = HANDS[PlanState.hand].exByName(n) || exById(n); if(!e || here.has(e.id) || extra.some(x => x.id === e.id)) return;
+      if(bestOf(e.id) < target(e)) extra.push({id: e.id, min: 3, tempo: "master", reinf: true});
+    })));
+    return out.concat(extra.slice(0, 2));
+  };
+  /* las 4 reglas antes de Limpio */
+  const box = document.createElement("div");
+  box.id = "rules4"; box.className = "rules4";
+  box.innerHTML = `<div class="r4t">${L.rulesT}</div>` + L.rules.map((r, i) => `<label><input type="checkbox" id="r4_${i}"> ${r}</label>`).join("");
+  const css = document.createElement("style");
+  css.textContent = `.rules4{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:14px}
+    .rules4 .r4t{font-size:12.5px;color:var(--muted)} #rules4 label{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;text-align:left!important;gap:10px;margin:0!important;cursor:pointer;color:var(--fg);font-size:14px} #rules4 input{accent-color:var(--green);width:18px!important;height:18px!important;min-width:18px;margin:0!important;padding:0!important;flex:none}`;
+  document.head.appendChild(css);
+  const qual = $("#mQual"); if(qual) qual.after(box);
+  const checks = () => [0,1,2,3].every(i => $("#r4_" + i).checked);
+  const _setQ = setQ;
+  setQ = function(q){ if(q === 3 && !checks()){ const f = [...box.querySelectorAll("input")].find(c => !c.checked); if(f) f.focus(); _setQ(2); return; } _setQ(q); };
+  box.addEventListener("change", () => { if(checks()) _setQ(3); else if(mQ === 3) _setQ(2); });
+  const _om = openModal;
+  openModal = function(){ _om(); box.querySelectorAll("input").forEach(c => c.checked = false); _setQ(2); };
+  /* aviso al registrar un test */
+  const _sub = $("#logForm").onsubmit;
+  $("#logForm").onsubmit = async e => {
+    const ex = exById(S0.cur), it = Session.list.find(x => x.id === ex.id), bpm = +$("#mBpm").value, q = mQ;
+    await _sub(e);
+    if(it && it.tempo === "test"){ const t = target(ex); Session.note = (q === 3 && bpm >= t) ? L.pass(t) : L.fail(t); if(typeof renderQueue === "function") renderQueue(); }
+  };
+}
+
+/* ======================= FORMATO PROFESIONAL: la mitad de bloques, el doble de tiempo ======================= */
+{
+  const EN = window.DS_LANG === "en";
+  const L = EN ? {t: "Session format", std: "Standard", pro: "Professional", d0: "More exercises, shorter blocks.", d1: "Half the exercises, double the time on each: the core exercises and the test stay."}
+               : {t: "Formato de sesión", std: "Estándar", pro: "Profesional", d0: "Más ejercicios, bloques cortos.", d1: "La mitad de ejercicios y el doble de tiempo en cada uno: se quedan los núcleos y el test."};
+  const isPro = () => PREF.sessPro === true;
+  /* prioridad: test, masterización, núcleos (los bloques de trabajo más largos), refuerzo, Ambas, calentamiento, ráfaga */
+  const rank = b => {
+    const e = exById(b.id), base = b.tempo === "test" ? 0 : b.tempo === "master" && !b.reinf ? 1 : b.tempo === "trabajo" ? 2 : b.reinf ? 3 : b.tempo === "lento" ? 5 : b.tempo === "rafaga" ? 6 : 4;
+    return base * 100 - b.min + (e && e.h === "A" ? 40 : 0);
+  };
+  const _sb = sessionBlocks;
+  sessionBlocks = function(pos){
+    const out = _sb(pos);
+    if(!isPro() || out.length < 4) return out;
+    const tot = out.reduce((a, b) => a + b.min, 0), keepN = Math.max(2, 2 * Math.round(out.length / 4));
+    const keep = new Set(out.map((b, i) => ({b, i, r: rank(b)})).sort((x, y) => x.r - y.r || x.i - y.i).slice(0, keepN).map(x => x.i));
+    const kept = out.filter((_, i) => keep.has(i)), ksum = kept.reduce((a, b) => a + b.min, 0);
+    let res = kept.map(b => Object.assign({}, b, {min: Math.max(3, Math.round(b.min * tot / ksum))}));
+    let diff = tot - res.reduce((a, b) => a + b.min, 0), k = 0;
+    while(diff !== 0 && k < 200){ const j = k % res.length; if(diff > 0){ res[j].min++; diff--; } else if(res[j].min > 3){ res[j].min--; diff++; } k++; }
+    return res;
+  };
+  const css = document.createElement("style");
+  css.textContent = `.fmt{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 14px}
+    .fmt .ft{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+    .fmt .seg2{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+    .fmt .seg2 button{font:inherit;font-size:13.5px;border:0;background:none;color:var(--muted);padding:6px 14px;border-radius:999px;cursor:pointer}
+    .fmt .seg2 button[aria-pressed="true"]{background:var(--raise);color:var(--fg);box-shadow:0 1px 2px rgba(46,52,64,.12)}
+    .fmt .fd{font-size:13px;color:var(--muted);flex-basis:100%}`;
+  document.head.appendChild(css);
+  const _rp = renderPlan;
+  renderPlan = function(){
+    _rp();
+    const body = $("#planBody"); if(!body || PS().tpl === "libre" || body.querySelector(".fmt")) return;
+    const d = document.createElement("div"); d.className = "fmt";
+    d.innerHTML = `<span class="ft">${L.t}</span><span class="seg2" role="group" aria-label="${L.t}"><button type="button" data-pro="0" aria-pressed="${!isPro()}">${L.std}</button><button type="button" data-pro="1" aria-pressed="${isPro()}">${L.pro}</button></span><span class="fd">${isPro() ? L.d1 : L.d0}</span>`;
+    d.querySelectorAll("[data-pro]").forEach(b => b.onclick = () => {
+      PREF.sessPro = b.dataset.pro === "1"; savePrefs();
+      if(Session.plan){ const p = HANDS[PlanState.hand].PLANS[PS().tpl]; if(p){ const keep = Session.done; Session.list = sessionBlocks(planPos(p, planDay())); Session.done = new Set([...keep].filter(id => Session.list.some(it => it.id === id))); if(typeof renderQueue === "function") renderQueue(); } }
+      renderPlan(); if(typeof renderHome === "function" && !$("#home").hidden) renderHome();
+    });
+    body.prepend(d);
   };
 }
 
