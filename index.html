@@ -4075,7 +4075,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.5 · noviembre 2026";
+const APP_VER = "2.6 · noviembre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -6573,6 +6573,58 @@ if("serviceWorker" in navigator){
   // cuando entra una versión nueva, se recarga sola una vez
   let reloaded = false;
   navigator.serviceWorker.addEventListener("controllerchange", () => { if(hadSW && !reloaded){ reloaded = true; location.reload(); } });
+}
+</script>
+<script>
+/* ============ v2.6 · voicings: nombre del acorde arriba y trastes del voicing en la tablatura ============
+   Dextra: en lugar de «0» se escribe el traste que pisa la izquierda; arriba, el acorde cuando cambia.
+   Ambas: ya tenía los trastes; se añade el nombre del acorde. Si el patrón de Dextra sirve para varios
+   voicings (el nombre no lleva acorde), los acordes son un ejemplo y el primero lleva «ej.». */
+{
+  const EG = window.DS_LANG === "en" ? "e.g. " : "ej. ";
+  const byNum = new Map(VOI.items.map(it => [it.num, it]));
+  function voiChords(ex){
+    if(!ex || ex.b !== "voi" || (ex.h !== "D" && ex.h !== "A")) return;
+    const it = byNum.get(ex.num); if(!it || !it.seg || it.seg.length !== ex.steps.length) return;
+    const svg = document.querySelector("#tab > svg"); if(!svg) return;
+    const cols = [...svg.querySelectorAll("rect.col")]; if(!cols.length) return;
+    const L = +cols[0].getAttribute("x"), W = +cols[0].getAttribute("width"), n = ex.steps.length;
+    const ys = [...new Set([...svg.querySelectorAll("line")].filter(l => l.getAttribute("y1") === l.getAttribute("y2")).map(l => +l.getAttribute("y1")))].sort((a, b) => a - b);
+    if(ys.length < 6) return;
+    const NS = "http://www.w3.org/2000/svg", generic = !(it.dname || "").startsWith(it.sq.name);
+    /* Dextra: trastes del voicing */
+    if(ex.h === "D"){
+      const texts = [...svg.querySelectorAll("text")].filter(t => t.textContent === "0");
+      for(let i = 0; i < n; i++){
+        const ch = it.sq.chords[it.seg[i]], st = ex.parsed[i]; if(!ch || !st || !st.notes) continue;
+        const cx = L + i * W + W / 2 - 2;
+        st.notes.forEach(nn => {
+          const f = (ch.notes.find(x => x.s === nn.s) || {}).f; if(f === undefined) return;
+          const y = ys[nn.s - 1] + 4, t = texts.find(t => Math.abs(+t.getAttribute("x") - cx) < .6 && Math.abs(+t.getAttribute("y") - y) < .6);
+          if(!t) return;
+          t.textContent = f;
+          const r = t.previousElementSibling;
+          if(String(f).length > 1 && r && r.tagName === "rect"){ r.setAttribute("x", cx - 10); r.setAttribute("width", 20); }
+        });
+      }
+    }
+    /* nombre del acorde arriba, cuando cambia */
+    const yL = ex.h === "D" ? 18 : 20;
+    let last = "", first = true;
+    for(let i = 0; i < n; i++){
+      if(i && it.seg[i] === it.seg[i - 1]) continue;
+      const lab = it.sq.chords[it.seg[i]].label; if(lab === last) continue; last = lab;
+      const t = document.createElementNS(NS, "text");
+      t.setAttribute("x", L + i * W + 2); t.setAttribute("y", yL); t.setAttribute("font-size", 11); t.setAttribute("font-weight", 600);
+      t.setAttribute("font-family", "var(--f-mono)"); t.setAttribute("fill", generic ? "var(--muted)" : "var(--fg)"); t.setAttribute("class", "chd26");
+      t.textContent = lab; svg.appendChild(t);
+      if(generic && first){ const e = t.cloneNode(); e.setAttribute("x", 4); e.textContent = EG.trim(); e.setAttribute("font-weight", 400); svg.appendChild(e); }
+      first = false;
+    }
+  }
+  { const f = renderTabD; renderTabD = function(ex){ f(ex); voiChords(ex); }; }
+  { const f = renderTabA; renderTabA = function(ex){ f(ex); voiChords(ex); }; }
+  try{ const ex = exById(S0.cur); if(ex && ex.b === "voi") renderTab(ex); }catch(e){}
 }
 </script>
 </body>
