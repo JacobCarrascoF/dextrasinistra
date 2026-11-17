@@ -1,14 +1,23 @@
 // Dextra Sinistra · funciona sin conexión. Sube VERSION al publicar cambios.
-const VERSION = "ds-v49";
-const PAGES = {es: "index.html", en: "en.html"};
+const VERSION = "ds-v50";
+// v2.7: portada en la raíz (index.html, en.html) y la app en /app/ (app/index.html, app/en.html)
+const PAGES = {es: "index.html", en: "en.html", app: "app/index.html", appEn: "app/en.html"};
 const ASSETS = ["manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "icons/maskable-512.png"];
 const NET_WAIT = 3500; // ms: con wifi de avión o de tren que no responde, se abre la copia guardada
 
 // Cloudflare redirige /index.html → / y /en.html → /en. Una respuesta «redirigida» no sirve para abrir
 // una página, así que se guarda siempre una copia limpia, pidiendo las direcciones sin redirección.
 const clean = r => r.redirected ? r.blob().then(b => new Response(b, {status: r.status, statusText: r.statusText, headers: r.headers})) : Promise.resolve(r);
-const pageUrl = k => k === "en.html" ? "en" : "./";
-const keyOf = url => /\/en(\.html)?$/.test(url.pathname) ? PAGES.en : PAGES.es;
+const pageUrl = k => ({"index.html": "./", "en.html": "en", "app/index.html": "app/", "app/en.html": "app/en"})[k];
+// qué copia guarda cada dirección; otras páginas (privacidad) no se guardan con el nombre de ninguna de estas
+const keyOf = url => {
+  const p = url.pathname.replace(/\/index\.html$/, "/");
+  if(/^\/app(\/|$)/.test(p)) return /^\/app\/en(\.html)?$/.test(p) ? PAGES.appEn : PAGES.app;
+  if(p === "/") return PAGES.es;
+  if(/^\/en(\.html)?$/.test(p)) return PAGES.en;
+  return null;
+};
+const ALT = {"index.html": ["en.html", "app/index.html"], "en.html": ["index.html", "app/en.html"], "app/index.html": ["app/en.html"], "app/en.html": ["app/index.html"]};
 const isHtml = r => r && r.ok && (r.headers.get("content-type") || "").includes("text/html");
 
 async function savePage(c, key, r){ if(isHtml(r)) await c.put(key, await clean(r)); }
@@ -32,7 +41,8 @@ self.addEventListener("activate", e => {
 
 async function cachedPage(key){
   const c = await caches.open(VERSION);
-  let r = await c.match(key) || await c.match(key === PAGES.en ? PAGES.es : PAGES.en);
+  let r = await c.match(key);
+  for(const k of ALT[key] || []){ if(r) break; r = await c.match(k); }
   if(!r){ for(const k of await caches.keys()){ r = await (await caches.open(k)).match(key); if(r) break; } }
   return r ? clean(r) : new Response("<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width'><body style='font:16px system-ui;padding:40px;background:#ECEFF4;color:#2E3440'>Dextra Sinistra: abre la app una vez con conexión para poder usarla sin ella.", {headers: {"Content-Type": "text/html; charset=utf-8"}});
 }
@@ -44,6 +54,7 @@ self.addEventListener("fetch", e => {
   if(req.mode === "navigate"){
     // página: la red si contesta rápido (así se ven las versiones nuevas); si no hay red o tarda, la copia guardada
     const key = keyOf(url);
+    if(!key){ e.respondWith(fetch(req).catch(() => caches.match(req).then(r => r || cachedPage(PAGES.es)))); return; }
     const net = fetch(url.href, {cache: "no-store", credentials: "same-origin"});
     e.waitUntil(net.then(r => caches.open(VERSION).then(c => savePage(c, key, r.clone()))).catch(() => {}));
     e.respondWith(new Promise(resolve => {

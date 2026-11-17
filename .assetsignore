@@ -4,3 +4,5 @@ wrangler.jsonc
 .assetsignore
 .git
 .github
+
+tools/

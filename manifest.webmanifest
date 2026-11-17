@@ -4,7 +4,7 @@
   "description": "Ejercicios de mano derecha, mano izquierda y ambas manos, con metrónomo, reloj y registro.",
   "lang": "es",
   "id": "./",
-  "start_url": "./",
+  "start_url": "/app/",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

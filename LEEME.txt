@@ -5,8 +5,12 @@ Publicada en https://dextrasinistra.com (Cloudflare Workers con archivos estáti
 Cada push a la rama main de GitHub se publica solo en uno o dos minutos.
 
 Contenido
-  index.html            la app en español (Dextra, Sinistra y Ambas)
-  en.html               la app en inglés
+  index.html            portada de la web en español (se genera con landing.py)
+  en.html               portada de la web en inglés
+  app/index.html        la app en español (Dextra, Sinistra y Ambas)
+  app/en.html           la app en inglés
+  img/                  capturas de la app para la web e imágenes para compartir (og_es.jpg, og_en.jpg)
+  robots.txt, sitemap.xml  para los buscadores
   privacidad.html       política de privacidad (ES/EN), necesaria para Google Play
   manifest.webmanifest  nombre, colores e iconos para instalarla
   sw.js                 permite abrirla sin conexión
@@ -14,8 +18,8 @@ Contenido
   wrangler.jsonc        configuración de Cloudflare
 
 Actualizar
-  1. Monta index.html y en.html con el código fuente (construir.sh).
-  2. Cópialos aquí y sube VERSION en sw.js (por ejemplo, de "ds-v24" a "ds-v25").
+  1. La app vive en app/index.html y app/en.html: los cambios se hacen ahí.
+  2. Sube VERSION en sw.js y sube VERSION en sw.js (por ejemplo, de "ds-v24" a "ds-v25").
   3. Commit y push a main.
 
 Instalar en el teléfono
