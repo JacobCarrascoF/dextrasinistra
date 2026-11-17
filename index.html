@@ -4075,7 +4075,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.6.1 · noviembre 2026";
+const APP_VER = "2.6.2 · noviembre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -6505,6 +6505,25 @@ if("serviceWorker" in navigator){
       first = false;
     }
   }
+  /* «Escuchar» en Dextra: con el acorde pisado (antes sonaban las cuerdas al aire) */
+  const fretAt = (ex, i, s) => { const it = byNum.get(ex.num); if(!it || !it.seg) return undefined; const ch = it.sq.chords[it.seg[i]]; return ch ? (ch.notes.find(x => x.s === s) || {}).f : undefined; };
+  { const f = lStep; lStep = function(ex, i, t, dur, nextGap){
+      if(!(ex && ex.h === "D" && ex.b === "voi" && byNum.has(ex.num))) return f(ex, i, t, dur, nextGap);
+      const st = ex.parsed[i]; if(!st || st.rest) return;
+      const vel = st.acc ? 1 : .68;
+      if(st.strum){
+        if(st.ghost) return;
+        const ss = []; for(let s = st.lo; s >= st.hi; s--) ss.push(s);
+        if(st.dir !== "D") ss.reverse();
+        ss.forEach((s, k) => { const fr = fretAt(ex, i, s);
+          lPluck(s, fr === undefined ? 0 : fr, t + k * .011, {kind: (st.mute || fr === undefined) ? "mute" : "pick", vel: vel * (st.dir === "D" ? .55 : .42)}); });
+        return;
+      }
+      st.notes.forEach(nn => {
+        const pick = nn.k === "D" || nn.k === "U", fr = fretAt(ex, i, nn.s);
+        lPluck(nn.s, fr === undefined ? 0 : fr, t, {kind: fr === undefined ? "mute" : pick ? "pick" : "finger", vel: vel * (pick && nn.k === "U" ? .9 : 1)});
+      });
+    }; }
   { const f = renderTabD; renderTabD = function(ex){ f(ex); voiChords(ex); }; }
   { const f = renderTabA; renderTabA = function(ex){ f(ex); voiChords(ex); }; }
   try{ const ex = exById(S0.cur); if(ex && ex.b === "voi") renderTab(ex); }catch(e){}
