@@ -437,7 +437,7 @@ def page(code):
 <section class="sec" id="{ids[2][1:]}" style="padding-top:0"><div class="wrap">
   <div class="sec-h"><h2>{t["sec_how"]}</h2><p>{t["sec_how_p"]}</p></div>
   <div class="steps">{steps}</div>
-  <div class="tabula"><div><h2>{t["tabula_t"]}</h2><p>{t["tabula_p"]}</p><small>{t["tabula_credit"]}</small></div>{phone(t, "tabula")}</div>
+  <div class="tabula"><div><h2>{t["tabula_t"]}</h2><p>{t["tabula_p"]}</p></div>{phone(t, "tabula")}</div>
   <h3 style="margin-top:56px">{t["install_t"]}</h3>
   <div class="install">{install}</div>
   <p class="inote">{t["install_note"]}</p>

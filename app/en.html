@@ -3522,7 +3522,7 @@ const AMB = [];
   });
 })();
 /* ======================= TABULA (las dos manos a la vez) =======================
-   Inspirada en la Interval Matrix de Jonathan Kreisberg. 11 × 11 piezas × 6 variantes = 726 ejercicios.
+   11 × 11 piezas × 6 variantes = 726 ejercicios.
    Fila: intervalo construido sobre la raíz. Columna: distancia entre raíces.
    Up / Down: las raíces suben o bajan. Ascend: raíz y luego el intervalo por encima.
    Descend: el intervalo por encima y cae a la raíz. Alternate: una pareja subiendo y la siguiente bajando.
@@ -3599,13 +3599,11 @@ const TAB = (function(){
       ? [`Interval: ${IVN[ri]} built on each root. Roots ${v.r > 0 ? "rise" : "fall"} by a ${IVN[ci]}, ` + (v.r > 0 ? `from the C on string 6, fret 8, to the C on string 1, fret 8, two octaves up` : `from the C on string 1, fret 8, down to the C on string 6, fret 8`) + ` (${rs.length} roots).`,
          v.a === "asc" ? "Ascend: root first, then the interval above." : v.a === "desc" ? "Descend: the interval above first, landing on the root." : "Alternate: one pair rising (root first), the next falling onto the root.",
          `Notes: ${names}.`, "Eighth notes with alternate picking: the first note of each pair is on the beat. The starting and closing C each take a beat of their own; the last beat is a rest to start again.",
-         `Suggested fingering between frets ${lo} and ${hi}` + (shifts ? `, with ${shifts} position shift${shifts > 1 ? "s" : ""}.` : ", without shifting position."),
-         "Inspired by Jonathan Kreisberg's Interval Matrix."].join(" ")
+         `Suggested fingering between frets ${lo} and ${hi}` + (shifts ? `, with ${shifts} position shift${shifts > 1 ? "s" : ""}.` : ", without shifting position.")].join(" ")
       : [`Intervalo: ${IVN[ri]} construida sobre cada raíz. Las raíces ${v.r > 0 ? "suben" : "bajan"} por ${IVN[ci]}, ` + (v.r > 0 ? `desde el Do de la cuerda 6, traste 8, hasta el Do de la cuerda 1, traste 8, dos octavas por encima` : `desde el Do de la cuerda 1, traste 8, hasta el Do de la cuerda 6, traste 8`) + ` (${rs.length} raíces).`,
          v.a === "asc" ? "Ascend: la raíz y luego el intervalo por encima." : v.a === "desc" ? "Descend: el intervalo por encima y cae a la raíz." : "Alternate: una pareja subiendo (primero la raíz) y la siguiente bajando a la raíz.",
          `Notas: ${names}.`, "Corcheas con púa alternate: la primera nota de cada pareja va en el tiempo. El Do de salida y el de llegada ocupan cada uno su tiempo; el último tiempo es silencio para volver a empezar.",
-         `Digitación sugerida entre los trastes ${lo} y ${hi}` + (shifts ? `, con ${shifts} cambio${shifts > 1 ? "s" : ""} de posición.` : ", sin cambiar de posición."),
-         "Inspirado en la Interval Matrix de Jonathan Kreisberg."].join(" ");
+         `Digitación sugerida entre los trastes ${lo} y ${hi}` + (shifts ? `, con ${shifts} cambio${shifts > 1 ? "s" : ""} de posición.` : ", sin cambiar de posición.")].join(" ");
     const code = `T-${ra}.${ca}-${v.k}`;
     items.push({id:code, code, h:"A", b:"tab", cat:(EN ? "Row " : "Fila ") + ra, name:`Tabula ${ra} · ${ca} · ${v.n}`, name_es:`Tabula ${ra} · ${ca} · ${v.n}`,
       sub:2, steps, parsed:steps, info, nBeats:steps.length / 2, beats:[2], mixed:false, subLabel:SUBN[2], shared:false,
@@ -4083,7 +4081,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.8.1 · November 2026";
+const APP_VER = "2.8.2 · November 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -6273,12 +6271,12 @@ const trTip = s => s ? s.replace(/([.!?])\s+/g, "$1\u0001").split("\u0001").map(
   const TT = EN ? {
     title:"Tabula", sub:"Interval challenge · both hands", pieces:"pieces", rows:"Interval on the root", cols:"Distance between roots",
     how:"Each piece combines an interval built on the root (row) with the distance between roots (column), in 6 variants. A piece is complete when its 6 variants are logged as clean at %s BPM or more.",
-    credit:"Inspired by Jonathan Kreisberg's Interval Matrix.", pick:"Choose a piece", play:"Play", best:"clean record", none:"no record", lock:"Plus",
+    credit:"", pick:"Choose a piece", play:"Play", best:"clean record", none:"no record", lock:"Plus",
     legend:"● clean at the goal tempo · ◐ logged below it · ○ not yet", free:"The first row is free.", back:"Back to Tabula", home:"Tabula", homeSub:"11 × 11 interval challenge"
   } : {
     title:"Tabula", sub:"Reto de intervalos · las dos manos", pieces:"piezas", rows:"Intervalo sobre la raíz", cols:"Distancia entre raíces",
     how:"Cada pieza combina un intervalo construido sobre la raíz (fila) con la distancia entre raíces (columna), en 6 variantes. Una pieza está completa cuando sus 6 variantes están registradas como limpias a %s BPM o más.",
-    credit:"Inspirado en la Interval Matrix de Jonathan Kreisberg.", pick:"Elige una pieza", play:"Tocar", best:"récord limpio", none:"sin registro", lock:"Plus",
+    credit:"", pick:"Elige una pieza", play:"Tocar", best:"récord limpio", none:"sin registro", lock:"Plus",
     legend:"● limpia al tempo objetivo · ◐ registrada por debajo · ○ pendiente", free:"La primera fila es gratis.", back:"Volver a Tabula", home:"Tabula", homeSub:"Reto de intervalos 11 × 11"
   };
   const css = document.createElement("style");
@@ -6353,7 +6351,7 @@ const trTip = s => s ? s.replace(/([.!?])\s+/g, "$1\u0001").split("\u0001").map(
         list.map(e => { const b = bestOf(e.id), lock = !isPlus() && !free(e);
           return `<button type="button" class="tbv" data-id="${e.id}"><span><b>${e.vn}</b><small>${e.code}</small></span><span class="st${b >= TAB.GOAL ? " ok" : ""}">${lock ? TT.lock : b ? b + " BPM" : TT.none}</span></button>`; }).join("") + `</div>`;
     } else h += `<p style="margin:0">${TT.pick}</p>`;
-    h += `</div><p class="tbcredit">${TT.credit}</p>`;
+    h += `</div>` + (TT.credit ? `<p class="tbcredit">${TT.credit}</p>` : "");
     view.innerHTML = h;
     view.querySelectorAll(".pc").forEach(b => b.onclick = () => { sel = b.dataset.k; render(); $("#tbPanel").scrollIntoView({block:"nearest", behavior:"smooth"}); });
     view.querySelectorAll(".tbv").forEach(b => b.onclick = () => open(b.dataset.id));
