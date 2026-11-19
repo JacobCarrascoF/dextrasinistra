@@ -1,5 +1,5 @@
 // Dextra Sinistra · funciona sin conexión. Sube VERSION al publicar cambios.
-const VERSION = "ds-v50";
+const VERSION = "ds-v51";
 // v2.7: portada en la raíz (index.html, en.html) y la app en /app/ (app/index.html, app/en.html)
 const PAGES = {es: "index.html", en: "en.html", app: "app/index.html", appEn: "app/en.html"};
 const ASSETS = ["manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "icons/maskable-512.png"];

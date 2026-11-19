@@ -3536,20 +3536,19 @@ const TAB = (function(){
   const VAR = [{k:"UA", n:"Up, Ascend", r:1, a:"asc"}, {k:"UD", n:"Up, Descend", r:1, a:"desc"}, {k:"UX", n:"Up, Alternate", r:1, a:"alt"},
                {k:"DA", n:"Down, Ascend", r:-1, a:"asc"}, {k:"DD", n:"Down, Descend", r:-1, a:"desc"}, {k:"DX", n:"Down, Alternate", r:-1, a:"alt"}];
   const LO = TUNE[6] + 1, HI = TUNE[1] + MAXF;
-  /* raíces desde un Do: el número de raíces (máx. 6) depende de lo que cabe en el mástil */
+  /* v2.8 · raíces: Up sube desde el Do de la cuerda 6, traste 8 (C3), hasta que la nota más aguda llega a la cuerda 1
+     (traste 7 o más); Down es el espejo: empieza arriba, en la cuerda 1, y baja hasta ese mismo Do. */
+  const C3 = 48, TOP = TUNE[1] + 7;
   function roots(ap, step, dir){
-    let best = null;
-    [48, 60, 72].forEach(st => {
-      if(st + ap > HI || st < LO) return;
-      const room = dir > 0 ? (HI - ap - st) : (st - LO);
-      const n = Math.min(6, Math.floor(room / step) + 1);
-      if(n >= 2 && (!best || n > best.n || (n === best.n && Math.abs(st - 60) < Math.abs(best.st - 60)))) best = {st, n};
-    });
-    return Array.from({length: best.n}, (_, k) => best.st + k * step * dir);
+    let n = 1; while(C3 + (n - 1) * step + ap < TOP) n++;
+    const up = Array.from({length: n}, (_, k) => C3 + k * step);
+    return dir > 0 ? up : up.reverse();
   }
   /* digitación por posiciones: ventanas de 5 trastes; se cambia de posición solo cuando la línea no cabe */
   function fret(ms){
-    const cand = ms.map(m => [6,5,4,3,2,1].map(s => ({s, f:m - TUNE[s]})).filter(c => c.f >= 1 && c.f <= MAXF));
+    const top = ms.indexOf(Math.max(...ms));
+    const cand = ms.map((m, i) => [6,5,4,3,2,1].map(s => ({s, f:m - TUNE[s]})).filter(c => c.f >= 1 && c.f <= MAXF)
+      .filter(c => m === C3 ? c.s === 6 : i === top ? c.s === 1 : true));
     const fits = (i, x) => cand[i].filter(c => c.f >= x && c.f <= x + 4);
     const out = []; let i = 0, prevX = null;
     while(i < ms.length){
@@ -3557,7 +3556,7 @@ const TAB = (function(){
       for(let x = 1; x <= MAXF - 4; x++){
         let j = i; while(j < ms.length && fits(j, x).length) j++;
         const len = j - i; if(!len) continue;
-        const d = prevX === null ? Math.abs(x - 5) : Math.abs(x - prevX);
+        const d = prevX === null ? Math.abs(x - 7) : Math.abs(x - prevX);
         if(!best || len > best.len || (len === best.len && d < best.d)) best = {x, len, d};
       }
       /* dentro de la ventana: cuerdas con el menor salto posible (programación dinámica) */
@@ -3588,12 +3587,12 @@ const TAB = (function(){
     const shifts = fr.reduce((c, n, i) => c + (i && n.x !== fr[i-1].x ? 1 : 0), 0);
     const lo = Math.min(...fr.filter(n => n.f).map(n => n.f)), hi = Math.max(...fr.map(n => n.f));
     const tip = EN
-      ? [`Interval: ${IVN[ri]} built on each root. Roots ${v.r > 0 ? "rise" : "fall"} by a ${IVN[ci]} from C (${rs.length} roots).`,
+      ? [`Interval: ${IVN[ri]} built on each root. Roots ${v.r > 0 ? "rise" : "fall"} by a ${IVN[ci]}, ` + (v.r > 0 ? `from the C on string 6, fret 8, up to string 1` : `from string 1 down to the C on string 6, fret 8`) + ` (${rs.length} roots).`,
          v.a === "asc" ? "Ascend: root first, then the interval above." : v.a === "desc" ? "Descend: the interval above first, landing on the root." : "Alternate: one pair rising (root first), the next falling onto the root.",
          `Notes: ${names}.`, "Eighth notes with alternate picking: the first note of each pair is on the beat; the last beat is a rest to start again.",
          `Suggested fingering between frets ${lo} and ${hi}` + (shifts ? `, with ${shifts} position shift${shifts > 1 ? "s" : ""}.` : ", without shifting position."),
          "Inspired by Jonathan Kreisberg's Interval Matrix."].join(" ")
-      : [`Intervalo: ${IVN[ri]} construida sobre cada raíz. Las raíces ${v.r > 0 ? "suben" : "bajan"} por ${IVN[ci]} desde Do (${rs.length} raíces).`,
+      : [`Intervalo: ${IVN[ri]} construida sobre cada raíz. Las raíces ${v.r > 0 ? "suben" : "bajan"} por ${IVN[ci]}, ` + (v.r > 0 ? `desde el Do de la cuerda 6, traste 8, hasta la cuerda 1` : `desde la cuerda 1 hasta el Do de la cuerda 6, traste 8`) + ` (${rs.length} raíces).`,
          v.a === "asc" ? "Ascend: la raíz y luego el intervalo por encima." : v.a === "desc" ? "Descend: el intervalo por encima y cae a la raíz." : "Alternate: una pareja subiendo (primero la raíz) y la siguiente bajando a la raíz.",
          `Notas: ${names}.`, "Corcheas con púa alternate: la primera nota de cada pareja va en el tiempo; el último tiempo es silencio para volver a empezar.",
          `Digitación sugerida entre los trastes ${lo} y ${hi}` + (shifts ? `, con ${shifts} cambio${shifts > 1 ? "s" : ""} de posición.` : ", sin cambiar de posición."),
@@ -4075,7 +4074,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.6.2 · noviembre 2026";
+const APP_VER = "2.8 · noviembre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
