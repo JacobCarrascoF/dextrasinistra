@@ -1771,7 +1771,9 @@ const VOI = (function(){
     let d = 0; for(let i=0;i<Math.max(x.length,y.length);i++) d += Math.abs((x[i] ?? x[x.length-1]) - (y[i] ?? y[y.length-1])); return d; };
   const posOf = c => c.notes.reduce((a,n) => a + n.f, 0) / c.notes.length;
   /* conducción de voces: cada acorde elige la colocación más cercana al anterior */
-  function lead(first, options){ const seq = [first]; options.forEach(opts => { const prev = seq[seq.length-1]; seq.push(opts.slice().sort((a,b) => dist(prev,a) - dist(prev,b) || Math.abs(posOf(prev) - posOf(a)) - Math.abs(posOf(prev) - posOf(b)))[0]); }); return seq; }
+  /* v2.8.3 · conducción de voces: notas cercanas, pero sin saltos de más de 4 trastes si hay un acorde en la zona */
+  const cost = (a, b, f) => dist(a, b) + (Math.abs(posOf(a) - posOf(b)) > 4 || Math.abs(posOf(f) - posOf(b)) > 4 ? 1000 : 0);
+  function lead(first, options){ const seq = [first]; options.forEach(opts => { const prev = seq[seq.length-1]; seq.push(opts.slice().sort((a,b) => cost(prev,a,first) - cost(prev,b,first) || Math.abs(posOf(prev) - posOf(a)) - Math.abs(posOf(prev) - posOf(b)))[0]); }); return seq; }
   const II_V_I = {may:{n:"ii–V–I mayor", ch:[["m7",2],["7",7],["Maj7",0],["Maj7",0]], lab:"Dm7 · G7 · Cmaj7"},
                   men:{n:"ii–V–i menor", ch:[["m7♭5",2],["7",7],["m7",0],["m7",0]], lab:"Dm7♭5 · G7 · Cm7"}};
   const SEQS = [];
@@ -4080,7 +4082,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.8.2 · noviembre 2026";
+const APP_VER = "2.8.3 · noviembre 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
