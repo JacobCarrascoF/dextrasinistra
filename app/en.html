@@ -4090,7 +4090,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.9 · November 2026";
+const APP_VER = "2.10 · November 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){
@@ -6593,6 +6593,62 @@ if("serviceWorker" in navigator){
   { const f = renderTabD; renderTabD = function(ex){ f(ex); voiChords(ex); }; }
   { const f = renderTabA; renderTabA = function(ex){ f(ex); voiChords(ex); }; }
   try{ const ex = exById(S0.cur); if(ex && ex.b === "voi") renderTab(ex); }catch(e){}
+}
+</script>
+<script>
+/* ============ v2.10 · biblioteca visible y con orden ============
+   En el móvil la biblioteca estaba detrás de un icono de tres rayas: ahora es un botón «Biblioteca» en Practicar
+   y en la barra de arriba de todas las pantallas. Selector de orden (se recuerda) que siguen también las flechas ‹ ›. */
+{
+  const EN = window.DS_LANG === "en", LOC = EN ? "en-US" : "es-ES";
+  const T = EN ? {lib: "Library", all: n => `Library · ${n} exercises`, sort: "Order",
+                  o: {prog: "Progression (I → V)", num: "By number", todo: "Not practiced first", old: "Least recent first"}}
+               : {lib: "Biblioteca", all: n => `Biblioteca · ${n} ejercicios`, sort: "Orden",
+                  o: {prog: "Progresión (I → V)", num: "Por número", todo: "Sin practicar primero", old: "Menos recientes primero"}};
+  const BOOK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h5.5A2.5 2.5 0 0 1 12 8v11a2 2 0 0 0-2-2H4zM20 5.5h-5.5A2.5 2.5 0 0 0 12 8v11a2 2 0 0 1 2-2h6z"/></svg>';
+  const css = document.createElement("style");
+  css.textContent = `
+  .standbar .iconbtn.libbtn10{width:auto;padding:0 13px 0 10px;gap:6px;border-radius:999px;font:500 14px var(--f-ui);white-space:nowrap}
+  .libbtn10 svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+  .libtop10{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px 0 11px;border:0;border-radius:999px;background:var(--surface);color:var(--fg);font:500 14.5px var(--f-ui);white-space:nowrap;cursor:pointer;flex:none}
+  .libtop10 svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+  @media (max-width:760px){ header.top .brand .libtop10{margin-left:auto} header.top .brand .libtop10 + .gsbtn{margin-left:0} }
+  @media (min-width:761px){ header.top .brand .libtop10{margin-left:8px} }
+  @media (max-width:400px){ header.top .brand h1{white-space:nowrap;font-size:19px} header.top .brand{gap:8px} .libtop10{padding:0 12px 0 10px;font-size:14px}
+    .standbar #gsOpen2{display:none} .standbar .iconbtn.libbtn10{padding:0 11px 0 9px} }
+  #sortSel{flex:0 1 auto;max-width:52%}`;
+  document.head.appendChild(css);
+
+  /* 1 · botón con nombre en Practicar */
+  const lb = $("#libBtn"); lb.classList.add("libbtn10"); lb.innerHTML = BOOK + `<span>${T.lib}</span>`; lb.setAttribute("aria-label", T.lib);
+
+  /* 2 · orden */
+  const sel = document.createElement("select"); sel.id = "sortSel"; sel.setAttribute("aria-label", T.sort);
+  sel.innerHTML = Object.entries(T.o).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+  sel.value = T.o[PREF.sort] ? PREF.sort : "prog";
+  $("#lvl").after(sel);
+  sel.onchange = () => { PREF.sort = sel.value; savePrefs(); renderList(); };
+  const num = e => typeof e.num === "number" ? e.num : 1e9;
+  function sortEx(xs){
+    if(S0.fav) return xs;   /* los favoritos van en el orden en que los guardaste */
+    const m = T.o[PREF.sort] ? PREF.sort : "prog", ks = Object.keys(BRANCHES), bi = b => { const i = ks.indexOf(b); return i < 0 ? 99 : i; };
+    const prog = (a, b) => a.lvl - b.lvl || bi(a.b) - bi(b.b) || num(a) - num(b);
+    const arr = xs.map((e, i) => [e, i]), tie = (a, b) => a[1] - b[1];
+    if(m === "num") arr.sort((a, b) => num(a[0]) - num(b[0]) || tie(a, b));
+    else if(m === "todo"){ const L = new Set(Store.items.map(x => x.ex)); arr.sort((a, b) => (L.has(a[0].id) - L.has(b[0].id)) || prog(a[0], b[0]) || tie(a, b)); }
+    else if(m === "old"){ const last = {}; Store.items.forEach(x => { if(!last[x.ex] || x.t > last[x.ex]) last[x.ex] = x.t; });
+      arr.sort((a, b) => (last[a[0].id] || 0) - (last[b[0].id] || 0) || prog(a[0], b[0]) || tie(a, b)); }
+    else arr.sort((a, b) => prog(a[0], b[0]) || tie(a, b));
+    return arr.map(x => x[0]);
+  }
+  { const f = filtered; filtered = function(){ return sortEx(f()); }; }
+  renderList();
+
+  /* 3 · acceso siempre visible: botón «Biblioteca» en la barra de arriba, junto a la lupa */
+  const openLib = () => { show("practice"); document.body.classList.add("libopen"); window.scrollTo(0, 0); };
+  const tb = document.createElement("button"); tb.type = "button"; tb.className = "libtop10"; tb.id = "libTop";
+  tb.innerHTML = BOOK + `<span>${T.lib}</span>`; tb.title = T.all(ALL.size.toLocaleString(LOC)); tb.onclick = openLib;
+  const gs = $("#gsOpen"); gs ? gs.before(tb) : $("header.top .brand").append(tb);
 }
 </script>
 </body>
