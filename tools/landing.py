@@ -79,6 +79,7 @@ T = {
   final_t="Coge la guitarra. El plan de hoy ya está listo.",
   final_cta="Empezar gratis",
   foot_priv="Privacidad", foot_rights="© 2026 Jacob Carrasco",
+  guides=[("ejercicios-guitarra-mano-derecha","Ejercicios mano derecha"),("ejercicios-guitarra-mano-izquierda","Ejercicios mano izquierda"),("rutina-de-practica-de-guitarra","Rutina de práctica")],
   phone_alt={"home":"Pantalla de Inicio con el plan de hoy","practice_voi":"Pantalla de práctica con tablatura, acordes y metrónomo","log":"Registro de una pasada","plan":"Vista del plan","progress":"Progreso","tabula":"Tabula, el reto de intervalos"},
 ),
 "en": dict(
@@ -151,6 +152,7 @@ T = {
   final_t="Pick up the guitar. Today's plan is ready.",
   final_cta="Start free",
   foot_priv="Privacy", foot_rights="© 2026 Jacob Carrasco",
+  guides=[("right-hand-guitar-exercises","Right-hand exercises"),("left-hand-guitar-exercises","Left-hand exercises"),("guitar-practice-routine","Practice routine")],
   phone_alt={"home":"Home screen with today's plan","practice_voi":"Practice screen with tab, chords and metronome","log":"Logging a run","plan":"Plan view","progress":"Progress","tabula":"Tabula, the interval challenge"},
 ),
 }
@@ -370,6 +372,8 @@ def page(code):
     ld = json.dumps({"@context":"https://schema.org","@type":"SoftwareApplication","name":"Dextra Sinistra","applicationCategory":"MusicApplication",
           "operatingSystem":"Web, iOS, Android, Windows, macOS","inLanguage":code,"url":canon,"description":t["desc"],
           "offers":[{"@type":"Offer","price":p,"priceCurrency":"EUR"} for p in ("0","19.99","49.99")]}, ensure_ascii=False)
+    ld_faq = json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":html.unescape(q),"acceptedAnswer":{"@type":"Answer","text":html.unescape(a)}} for q, a in t["faq"]]}, ensure_ascii=False)
+    guides = "".join(f'<a href="/{s}">{n}</a>' for s, n in t["guides"])
     app_target = t["app"]
     return f"""<!doctype html>
 <html lang="{code}">
@@ -402,6 +406,7 @@ def page(code):
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <link rel="preload" as="image" href="/img/{t["img"]}_practice_voi.webp">
 <script type="application/ld+json">{ld}</script>
+<script type="application/ld+json">{ld_faq}</script>
 <style>{CSS}</style>
 </head>
 <body>
@@ -457,6 +462,7 @@ def page(code):
 <footer><div class="wrap">
   <span>{t["foot_rights"]}</span>
   <a href="/privacidad">{t["foot_priv"]}</a>
+  {guides}
   <a href="{t["other_href"]}" hreflang="{t["other"]}" lang="{t["other"]}">{t["other_label"]}</a>
   <a class="sp" href="{app_target}">{t["open_app"]} →</a>
 </div></footer>
