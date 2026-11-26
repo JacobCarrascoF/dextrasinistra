@@ -54,7 +54,7 @@ ul,ol{padding-left:22px}li{margin:6px 0}
 ol.steps{list-style:none;counter-reset:s;padding:0}ol.steps li{counter-increment:s;position:relative;padding:0 0 14px 52px}
 ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:2px;font:500 14px var(--f-mono);color:var(--faint);border:1px solid var(--line);border-radius:8px;padding:3px 7px;background:var(--card)}
 ol.steps b{display:block}
-pre.tab{font:13.5px/1.45 var(--f-mono);background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c,var(--acc-d));border-radius:12px;padding:14px 16px;overflow-x:auto;margin:14px 0 6px}
+pre.tab{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;font:13.5px/1.45 var(--f-mono);background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c,var(--acc-d));border-radius:12px;padding:14px 16px;overflow-x:auto;margin:14px 0 6px}
 .cap{font-size:14px;color:var(--faint);margin:0 0 18px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:18px 0}
 .box b{display:block;margin-bottom:4px}
@@ -94,14 +94,16 @@ footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--faint);f
 <p>String crossing with alternate picking, open strings only. Set the metronome to 60 BPM and play eighth notes: four on the A string, four on the D string, without stopping.</p>
 <pre class="tab" style="--c:var(--acc-d)">D|---------0-0-0-0-|
 A|-0-0-0-0---------|
-   ↓ ↑ ↓ ↑ ↓ ↑ ↓ ↑</pre>
-<p class="cap">↓ downstroke · ↑ upstroke. Keep alternating when you change strings.</p>
-<p>When it comes out clean four times in a row, add 4 BPM. If your arm or hand feels tense, drop 10% and build back up another day.</p>
+   ⊓ V ⊓ V ⊓ V ⊓ V</pre>
+<p class="cap">⊓ downstroke · V upstroke, the same symbols as in the app. Keep alternating when you change strings.</p>
+<p>When it comes out clean from start to finish, add 4 BPM next time. If your arm or hand feels tense, drop 10% and build back up another day.</p>
 <h3>And with fingers</h3>
 <p>The same work for fingerstyle: an arpeggio on open strings with p i m a, each finger on its own string.</p>
 <pre class="tab" style="--c:var(--acc-d)">e|-------0-------0-|
 B|-----0-------0---|
 G|---0-------0-----|
+D|-----------------|
+A|-----------------|
 E|-0-------0-------|
    p i m a p i m a</pre>
 <p class="cap">p thumb · i index · m middle · a ring.</p>

@@ -35,7 +35,7 @@ ul,ol{padding-left:22px}li{margin:6px 0}
 ol.steps{list-style:none;counter-reset:s;padding:0}ol.steps li{counter-increment:s;position:relative;padding:0 0 14px 52px}
 ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:2px;font:500 14px var(--f-mono);color:var(--faint);border:1px solid var(--line);border-radius:8px;padding:3px 7px;background:var(--card)}
 ol.steps b{display:block}
-pre.tab{font:13.5px/1.45 var(--f-mono);background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c,var(--acc-d));border-radius:12px;padding:14px 16px;overflow-x:auto;margin:14px 0 6px}
+pre.tab{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;font:13.5px/1.45 var(--f-mono);background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c,var(--acc-d));border-radius:12px;padding:14px 16px;overflow-x:auto;margin:14px 0 6px}
 .cap{font-size:14px;color:var(--faint);margin:0 0 18px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:18px 0}
 .box b{display:block;margin-bottom:4px}
@@ -64,20 +64,11 @@ L = {
   caps=["Tab, metronome and timer","Your plan, day by day","See your progress"]),
 }
 
-TAB_RH = """D|---------0-0-0-0-|
-A|-0-0-0-0---------|
-   ↓ ↑ ↓ ↑ ↓ ↑ ↓ ↑"""
-TAB_SPIDER = """G|-------------------------1-2-3-4-|
-D|-----------------1-2-3-4---------|
-A|---------1-2-3-4-----------------|
-E|-1-2-3-4-------------------------|"""
-TAB_LEGATO = """G|-5h7p5-----5h7p5-----|
-D|-------7h9p7-----7h9-|"""
-TAB_PIMA = """e|-------0-------0-|
-B|-----0-------0---|
-G|---0-------0-----|
-E|-0-------0-------|
-   p i m a p i m a"""
+TAB_RH = 'D|---------0-0-0-0-|\nA|-0-0-0-0---------|\n   ⊓ V ⊓ V ⊓ V ⊓ V'
+TAB_SPIDER = 'G|-------------------------5-6-7-8-|\nD|-----------------5-6-7-8---------|\nA|---------5-6-7-8-----------------|\nE|-5-6-7-8-------------------------|\n   1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4'
+TAB_ARANA = 'D|-----------6---8-|\nA|---6---8-5---7---|\nE|-5---7-----------|\n   1 2 3 4 1 2 3 4'
+TAB_LEGATO = 'G|-5h7p5-------5h7p5-------|\nD|-------7h9p7-------7h9p7-|'
+TAB_PIMA = 'e|-------0-------0-|\nB|-----0-------0---|\nG|---0-------0-----|\nD|-----------------|\nA|-----------------|\nE|-0-------0-------|\n   p i m a p i m a'
 
 def P(*a): return "".join(f"<p>{x}</p>" for x in a)
 
@@ -103,8 +94,8 @@ dict(lang="es", slug="ejercicios-guitarra-mano-derecha", pair="right-hand-guitar
 <h2>Un ejercicio para empezar hoy</h2>
 {P("Cruce de cuerda con púa alterna, solo cuerdas al aire. Pon el metrónomo a 60 BPM y toca corcheas: cuatro notas en la quinta cuerda y cuatro en la cuarta, sin parar.")}
 <pre class="tab" style="--c:var(--acc-d)">{html.escape(TAB_RH)}</pre>
-<p class="cap">↓ púa hacia abajo · ↑ púa hacia arriba. La púa sigue alternando al cambiar de cuerda.</p>
-{P("Cuando salga limpio cuatro veces seguidas, sube 4 BPM. Si notas el brazo o la mano tensos, baja un 10 % y vuelve a subir otro día.")}
+<p class="cap">⊓ púa hacia abajo · V púa hacia arriba, los mismos símbolos que en la app. La púa sigue alternando al cambiar de cuerda.</p>
+{P("Cuando salga limpio de principio a fin, la próxima vez súbelo 4 BPM. Si notas el brazo o la mano tensos, baja un 10 % y vuelve a subir otro día.")}
 <h3>Y con dedos</h3>
 {P("El mismo trabajo para fingerstyle: un arpegio sobre cuerdas al aire con p i m a, cada dedo en su cuerda.")}
 <pre class="tab" style="--c:var(--acc-d)">{html.escape(TAB_PIMA)}</pre>
@@ -144,8 +135,8 @@ dict(lang="en", slug="right-hand-guitar-exercises", pair="ejercicios-guitarra-ma
 <h2>One exercise to start today</h2>
 {P("String crossing with alternate picking, open strings only. Set the metronome to 60 BPM and play eighth notes: four on the A string, four on the D string, without stopping.")}
 <pre class="tab" style="--c:var(--acc-d)">{html.escape(TAB_RH)}</pre>
-<p class="cap">↓ downstroke · ↑ upstroke. Keep alternating when you change strings.</p>
-{P("When it comes out clean four times in a row, add 4 BPM. If your arm or hand feels tense, drop 10% and build back up another day.")}
+<p class="cap">⊓ downstroke · V upstroke, the same symbols as in the app. Keep alternating when you change strings.</p>
+{P("When it comes out clean from start to finish, add 4 BPM next time. If your arm or hand feels tense, drop 10% and build back up another day.")}
 <h3>And with fingers</h3>
 {P("The same work for fingerstyle: an arpeggio on open strings with p i m a, each finger on its own string.")}
 <pre class="tab" style="--c:var(--acc-d)">{html.escape(TAB_PIMA)}</pre>
@@ -168,7 +159,7 @@ dict(lang="en", slug="right-hand-guitar-exercises", pair="ejercicios-guitarra-ma
 # ---------------- MANO IZQUIERDA ----------------
 dict(lang="es", slug="ejercicios-guitarra-mano-izquierda", pair="left-hand-guitar-exercises",
  title="Ejercicios de guitarra para la mano izquierda: independencia de dedos y legato · Dextra Sinistra",
- desc="Ejercicios para la mano izquierda en guitarra: independencia de dedos, el ejercicio de la araña, legato, extensiones, cambios de posición, bends y cejilla. Con tablatura y metrónomo.",
+ desc="Ejercicios para la mano izquierda en guitarra: independencia de dedos, el cromático 1-2-3-4, la araña, legato, extensiones, cambios de posición, bends y cejilla. Con tablatura y metrónomo.",
  h1="Ejercicios de guitarra para la mano izquierda",
  lead="La mano izquierda necesita fuerza justa, dedos independientes y movimientos pequeños. Estos ejercicios la entrenan poco a poco, sin forzar y con el metrónomo como referencia.",
  body=f"""<h2>Qué trabaja la mano izquierda</h2>
@@ -180,11 +171,15 @@ dict(lang="es", slug="ejercicios-guitarra-mano-izquierda", pair="left-hand-guita
 <li><b>Acordes y cejilla:</b> pisar con la presión justa para que suenen todas las cuerdas.</li>
 <li><b>Apagado:</b> silenciar las cuerdas que no tocan con los dedos que sobran.</li>
 </ul>
-<h2>El ejercicio de la araña (1-2-3-4)</h2>
-{P("Es el clásico para la independencia de dedos: un dedo por traste, del índice al meñique, en cada cuerda. Empieza a 60 BPM, en corcheas, con la mano relajada.")}
+<h2>El ejercicio cromático 1-2-3-4</h2>
+{P("Es el clásico para empezar con la independencia de dedos: un dedo por traste, del índice al meñique, en cada cuerda. Empieza en el traste 5, a 60 BPM, en corcheas y con la mano relajada.")}
 <pre class="tab" style="--c:var(--acc-s)">{html.escape(TAB_SPIDER)}</pre>
-<p class="cap">1 índice · 2 medio · 3 anular · 4 meñique. Sigue igual en la segunda y la primera cuerda, y luego baja.</p>
-{P("Variaciones cuando salga limpio: 1-3-2-4, 1-4-2-3, o en el traste 5 y luego en el 1, donde los trastes son más anchos.")}
+<p class="cap">1 índice · 2 medio · 3 anular · 4 meñique. Sigue igual en la segunda y la primera cuerda, y luego baja. En la app es S-3000.</p>
+{P("Cuando salga limpio, cambia el orden de los dedos (1-3-2-4, 1-4-2-3) o bájalo al traste 1, donde los trastes son más anchos y la mano se abre más.")}
+<h3>El siguiente paso: la araña</h3>
+{P("Aquí cada dedo cambia de cuerda en cada nota: el 1 y el 3 en una cuerda, el 2 y el 4 en la siguiente. Deja cada dedo apoyado hasta que lo vuelvas a necesitar. Es mucho más exigente que el cromático: empieza más lento.")}
+<pre class="tab" style="--c:var(--acc-s)">{html.escape(TAB_ARANA)}</pre>
+<p class="cap">Sigue subiendo de cuerda en cuerda con el mismo dibujo. En la app es S-3049.</p>
 <h2>Legato: hammer-on y pull-off</h2>
 {P("Toca solo la primera nota de cada grupo con la púa y saca las otras con los dedos. Las tres notas deben sonar igual de fuertes.")}
 <pre class="tab" style="--c:var(--acc-s)">{html.escape(TAB_LEGATO)}</pre>
@@ -205,7 +200,7 @@ dict(lang="es", slug="ejercicios-guitarra-mano-izquierda", pair="left-hand-guita
       ("¿Sirve para zurdos?","Sí. Si tocas con la guitarra al revés, la mano que pisa es la derecha: los ejercicios son los mismos.")]),
 dict(lang="en", slug="left-hand-guitar-exercises", pair="ejercicios-guitarra-mano-izquierda",
  title="Left-hand guitar exercises: finger independence and legato · Dextra Sinistra",
- desc="Fretting-hand guitar exercises: finger independence, the spider exercise, legato, stretches, position shifts, bends and barre chords. With tab and metronome.",
+ desc="Fretting-hand guitar exercises: finger independence, the 1-2-3-4 chromatic, the spider, legato, stretches, position shifts, bends and barre chords. With tab and metronome.",
  h1="Left-hand guitar exercises",
  lead="Your fretting hand needs just enough pressure, independent fingers and small movements. These exercises train it step by step, without forcing, with the metronome as your guide.",
  body=f"""<h2>What the fretting hand works on</h2>
@@ -217,11 +212,15 @@ dict(lang="en", slug="left-hand-guitar-exercises", pair="ejercicios-guitarra-man
 <li><b>Chords and barre:</b> just enough pressure for every string to ring.</li>
 <li><b>Muting:</b> silencing the strings you're not playing with your spare fingers.</li>
 </ul>
-<h2>The spider exercise (1-2-3-4)</h2>
-{P("The classic for finger independence: one finger per fret, index to little finger, on every string. Start at 60 BPM, in eighth notes, with a relaxed hand.")}
+<h2>The 1-2-3-4 chromatic exercise</h2>
+{P("The classic first step for finger independence: one finger per fret, index to little finger, on every string. Start at the 5th fret, at 60 BPM, in eighth notes, with a relaxed hand.")}
 <pre class="tab" style="--c:var(--acc-s)">{html.escape(TAB_SPIDER)}</pre>
-<p class="cap">1 index · 2 middle · 3 ring · 4 little finger. Carry on the same way on the B and high E strings, then come back down.</p>
-{P("Variations once it's clean: 1-3-2-4, 1-4-2-3, or start at the 5th fret and then move to the 1st, where the frets are wider.")}
+<p class="cap">1 index · 2 middle · 3 ring · 4 little finger. Carry on the same way on the B and high E strings, then come back down. In the app it's S-3000.</p>
+{P("Once it's clean, change the finger order (1-3-2-4, 1-4-2-3) or move it down to the 1st fret, where the frets are wider and the hand opens more.")}
+<h3>The next step: the spider</h3>
+{P("Here every finger changes string on every note: 1 and 3 on one string, 2 and 4 on the next. Keep each finger down until you need it again. It's much harder than the chromatic: start slower.")}
+<pre class="tab" style="--c:var(--acc-s)">{html.escape(TAB_ARANA)}</pre>
+<p class="cap">Keep climbing string by string with the same shape. In the app it's S-3049.</p>
 <h2>Legato: hammer-ons and pull-offs</h2>
 {P("Pick only the first note of each group and sound the others with your fingers. All three notes should be equally loud.")}
 <pre class="tab" style="--c:var(--acc-s)">{html.escape(TAB_LEGATO)}</pre>
