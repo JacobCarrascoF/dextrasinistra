@@ -1,8 +1,9 @@
 // Dextra Sinistra · funciona sin conexión. Sube VERSION al publicar cambios.
-const VERSION = "ds-v54";
+const VERSION = "ds-v55";
 // v2.7: portada en la raíz (index.html, en.html) y la app en /app/ (app/index.html, app/en.html)
 const PAGES = {es: "index.html", en: "en.html", app: "app/index.html", appEn: "app/en.html"};
-const ASSETS = ["manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "icons/maskable-512.png"];
+const ASSETS = ["manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "icons/maskable-512.png",
+  "fonts/sans-400.woff", "fonts/sans-500.woff", "fonts/sans-600.woff", "fonts/mono-400.woff", "fonts/mono-500.woff"];
 const NET_WAIT = 3500; // ms: con wifi de avión o de tren que no responde, se abre la copia guardada
 
 // Cloudflare redirige /index.html → / y /en.html → /en. Una respuesta «redirigida» no sirve para abrir

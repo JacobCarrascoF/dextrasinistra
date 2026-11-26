@@ -21,11 +21,14 @@
 <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" href="/fonts/sans-400.woff" as="font" type="font/woff" crossorigin>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Article", "headline": "Rutina de práctica de guitarra: 25, 40 o 60 minutos al día · Dextra Sinistra", "description": "Cómo organizar una rutina de práctica de guitarra: cuánto tiempo, en qué orden, cuántos días a la semana y cómo subir el tempo. Con planes de 25, 40 y 60 minutos.", "inLanguage": "es", "url": "https://dextrasinistra.com/rutina-de-practica-de-guitarra", "image": "https://dextrasinistra.com/img/og_es.jpg", "author": {"@type": "Person", "name": "Jacob Carrasco"}, "publisher": {"@type": "Organization", "name": "Dextra Sinistra", "logo": {"@type": "ImageObject", "url": "https://dextrasinistra.com/icons/icon-512.png"}}, "datePublished": "2026-11-26", "dateModified": "2026-11-26"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Cuánto hay que practicar guitarra al día?", "acceptedAnswer": {"@type": "Answer", "text": "Entre 20 y 60 minutos, cinco días por semana, es una buena base. Lo importante es la constancia y practicar con metrónomo."}}, {"@type": "Question", "name": "¿Calentar antes de tocar es necesario?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Cinco minutos de ejercicios suaves preparan la mano y evitan tensiones, sobre todo antes de tocar rápido."}}, {"@type": "Question", "name": "¿Qué hago si me salto un día?", "acceptedAnswer": {"@type": "Answer", "text": "Nada grave. Retoma el plan donde lo dejaste; lo que cuenta es la semana, no un día suelto."}}, {"@type": "Question", "name": "¿Vale para cualquier estilo?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. La técnica de las dos manos es la base del rock, el jazz, el pop, el flamenco o la clásica."}}]}]</script>
-<style>
+<style>@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/sans-400.woff) format("woff")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/sans-500.woff) format("woff")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:600 700;font-display:swap;src:url(/fonts/sans-600.woff) format("woff")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/mono-400.woff) format("woff")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:500 700;font-display:swap;src:url(/fonts/mono-500.woff) format("woff")}
+
 :root{--bg:#ECEFF4;--surface:#E5E9F0;--card:#F7F8FA;--line:#D8DEE9;--fg:#2E3440;--muted:#4C566A;--faint:#7A8599;
 --acc-d:#5E81AC;--acc-s:#B4664D;--green:#7F9A6A;--shadow:0 30px 60px -30px rgba(46,52,64,.45),0 10px 24px -12px rgba(46,52,64,.25);
 --f-ui:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;color-scheme:light}
@@ -103,8 +106,13 @@ footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--faint);f
 <h2>Preguntas frecuentes</h2><details><summary>¿Cuánto hay que practicar guitarra al día?</summary><p>Entre 20 y 60 minutos, cinco días por semana, es una buena base. Lo importante es la constancia y practicar con metrónomo.</p></details><details><summary>¿Calentar antes de tocar es necesario?</summary><p>Sí. Cinco minutos de ejercicios suaves preparan la mano y evitan tensiones, sobre todo antes de tocar rápido.</p></details><details><summary>¿Qué hago si me salto un día?</summary><p>Nada grave. Retoma el plan donde lo dejaste; lo que cuenta es la semana, no un día suelto.</p></details><details><summary>¿Vale para cualquier estilo?</summary><p>Sí. La técnica de las dos manos es la base del rock, el jazz, el pop, el flamenco o la clásica.</p></details>
 <h2>Sigue leyendo</h2><div class="more"><a href="/ejercicios-guitarra-mano-derecha" hreflang="es">Mano derecha</a><a href="/ejercicios-guitarra-mano-izquierda" hreflang="es">Mano izquierda</a><a href="/right-hand-guitar-exercises" hreflang="en">In English</a></div>
 </article></main>
-<footer><div class="wrap"><span>© 2026 Jacob Carrasco</span><a href="/">Dextra Sinistra</a><a href="/privacidad">Privacidad</a><a href="/guitar-practice-routine" hreflang="en" lang="en">English</a></div></footer>
+<footer><div class="wrap"><span>© 2026 Jacob Carrasco</span><a href="/">Dextra Sinistra</a><a href="/legal">Aviso legal y privacidad</a><a href="/guitar-practice-routine" hreflang="en" lang="en">English</a></div></footer>
 <div class="stick" id="stick"><span><b>Técnica de guitarra para las dos manos</b>Gratis · sin cuenta · funciona sin conexión</span><a class="btn" href="/app/">Empezar gratis</a></div>
 <script>(function(){var s=document.getElementById('stick');function f(){s.classList.toggle('on',scrollY>420)}addEventListener('scroll',f,{passive:true});f()})()</script>
+<script>/* recuento de visitas sin cookies ni datos personales (GoatCounter); ?ref=ig, ?ref=wa… dicen de dónde llega la visita */
+(function(){try{if(!/(^|\.)dextrasinistra\.com$/.test(location.hostname))return;if(matchMedia("(display-mode: standalone)").matches)return;
+var q=new URLSearchParams(location.search),r=q.get("ref")||document.referrer||"";
+var i=new Image();i.src="https://dextrasinistra.goatcounter.com/count?p="+encodeURIComponent(location.pathname)+"&t="+encodeURIComponent(document.title)+"&r="+encodeURIComponent(r)+"&rnd="+Math.random().toString(36).slice(2);}catch(e){}})();</script>
+
 </body>
 </html>

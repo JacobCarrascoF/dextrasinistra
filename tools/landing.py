@@ -4,6 +4,8 @@ Uso: python3 landing.py <carpeta del repositorio>"""
 import sys, html, json
 
 REPO = sys.argv[1]
+FONTS = open(REPO + "/tools/fontface.css").read()
+COUNTER = open(REPO + "/tools/counter.html").read()
 PAY_YEAR = "https://payhip.com/b/zntXF"
 PAY_LIFE = "https://payhip.com/b/N3Hnp"
 MAIL = "jcfabricalenta@gmail.com"
@@ -63,7 +65,7 @@ T = {
   year=("Plus anual","19,99 €","al año",["Los 9.817 ejercicios, del nivel I al V","Ambas manos y Tabula completa","Los 4 planes guiados y tu plan personalizado","El año empieza cuando activas el código"],"Comprar Plus anual"),
   life=("Plus para siempre","49,99 €","un solo pago",["Todo lo de Plus anual","Sin renovaciones","Las novedades que lleguen, incluidas"],"Comprar para siempre"),
   best="Mejor valor",
-  price_note="Pago seguro con Payhip. Recibes un código que activas en Ajustes → Plus; funciona también sin conexión y en todos tus dispositivos.",
+  price_note="Pago seguro con Payhip. Recibes un código que activas en Ajustes → Plus; funciona también sin conexión y en todos tus dispositivos. Sin renovación automática. <a href=\"/legal#condiciones\">Condiciones de venta</a>.",
   sec_faq="Preguntas frecuentes",
   faq=[
     ("¿Necesito crear una cuenta?","No. No hay registro ni contraseña: abres la app y empiezas a tocar."),
@@ -78,7 +80,7 @@ T = {
   faq_contact="¿Otra pregunta? Escribe a",
   final_t="Coge la guitarra. El plan de hoy ya está listo.",
   final_cta="Empezar gratis",
-  foot_priv="Privacidad", foot_rights="© 2026 Jacob Carrasco",
+  foot_priv="Aviso legal y privacidad", legal="/legal", foot_rights="© 2026 Jacob Carrasco",
   guides=[("ejercicios-guitarra-mano-derecha","Ejercicios mano derecha"),("ejercicios-guitarra-mano-izquierda","Ejercicios mano izquierda"),("rutina-de-practica-de-guitarra","Rutina de práctica")],
   phone_alt={"home":"Pantalla de Inicio con el plan de hoy","practice_voi":"Pantalla de práctica con tablatura, acordes y metrónomo","log":"Registro de una pasada","plan":"Vista del plan","progress":"Progreso","tabula":"Tabula, el reto de intervalos"},
 ),
@@ -136,7 +138,7 @@ T = {
   year=("Plus yearly","€19.99","a year",["All 9,817 exercises, levels I to V","Both hands and the full Tabula","The 4 guided plans and your custom plan","The year starts when you activate your code"],"Buy Plus yearly"),
   life=("Plus forever","€49.99","one payment",["Everything in Plus yearly","No renewals","Future additions included"],"Buy Plus forever"),
   best="Best value",
-  price_note="Secure payment with Payhip. You get a code you activate in Settings → Plus; it also works offline and on all your devices.",
+  price_note="Secure payment with Payhip. You get a code you activate in Settings → Plus; it also works offline and on all your devices. No automatic renewal. <a href=\"/legal-en#terms\">Terms of sale</a>.",
   sec_faq="FAQ",
   faq=[
     ("Do I need an account?","No. No sign-up and no password: open the app and start playing."),
@@ -151,7 +153,7 @@ T = {
   faq_contact="Another question? Write to",
   final_t="Pick up the guitar. Today's plan is ready.",
   final_cta="Start free",
-  foot_priv="Privacy", foot_rights="© 2026 Jacob Carrasco",
+  foot_priv="Legal and privacy", legal="/legal-en", foot_rights="© 2026 Jacob Carrasco",
   guides=[("right-hand-guitar-exercises","Right-hand exercises"),("left-hand-guitar-exercises","Left-hand exercises"),("guitar-practice-routine","Practice routine")],
   phone_alt={"home":"Home screen with today's plan","practice_voi":"Practice screen with tab, chords and metronome","log":"Logging a run","plan":"Plan view","progress":"Progress","tabula":"Tabula, the interval challenge"},
 ),
@@ -401,13 +403,12 @@ def page(code):
 <link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" href="/fonts/sans-400.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/sans-600.woff" as="font" type="font/woff" crossorigin>
 <link rel="preload" as="image" href="/img/{t["img"]}_practice_voi.webp">
 <script type="application/ld+json">{ld}</script>
 <script type="application/ld+json">{ld_faq}</script>
-<style>{CSS}</style>
+<style>{FONTS}{CSS}</style>
 </head>
 <body>
 <div class="back" id="back"><div class="wrap"><span>{t["back_bar"]}</span><a href="{app_target}">{t["back_cta"]}</a></div></div>
@@ -461,7 +462,7 @@ def page(code):
 </main>
 <footer><div class="wrap">
   <span>{t["foot_rights"]}</span>
-  <a href="/privacidad">{t["foot_priv"]}</a>
+  <a href="{t["legal"]}">{t["foot_priv"]}</a>
   {guides}
   <a href="{t["other_href"]}" hreflang="{t["other"]}" lang="{t["other"]}">{t["other_label"]}</a>
   <a class="sp" href="{app_target}">{t["open_app"]} →</a>
@@ -474,6 +475,7 @@ var tp=document.getElementById("top");addEventListener("scroll",function(){{tp.c
 /* la portada también se guarda para abrirla sin conexión */
 if("serviceWorker" in navigator)addEventListener("load",function(){{navigator.serviceWorker.register("/sw.js",{{updateViaCache:"none"}}).catch(function(){{}})}});
 </script>
+{COUNTER}
 </body>
 </html>
 """

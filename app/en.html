@@ -15,7 +15,14 @@
 <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <script>document.documentElement.classList.add("boot");setTimeout(function(){document.documentElement.classList.remove("boot")},8000);</script>
-<style>[hidden]{display:none!important}html,body{margin:0}
+<style>
+/* tipografías alojadas en la web (sin Google Fonts) */
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/sans-400.woff) format("woff")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/sans-500.woff) format("woff")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:600 700;font-display:swap;src:url(/fonts/sans-600.woff) format("woff")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/mono-400.woff) format("woff")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:500 700;font-display:swap;src:url(/fonts/mono-500.woff) format("woff")}
+[hidden]{display:none!important}html,body{margin:0}
 /* mientras arranca la app solo se ve el icono: así no aparece un instante la pantalla sin montar */
 html.boot body{visibility:hidden}
 html.boot::after{content:"";position:fixed;inset:0;z-index:9999;background:#ECEFF4 url(/icons/icon-192.png) center/84px no-repeat}
@@ -23,8 +30,7 @@ html.boot::after{content:"";position:fixed;inset:0;z-index:9999;background:#ECEF
 @media (display-mode: standalone){ header.top, .standbar{padding-top:max(10px, env(safe-area-inset-top))} body{overscroll-behavior-y:none} }</style>
 <script>try{var l=JSON.parse(localStorage.getItem("dys-lang")||"null");if(l==="es")location.replace("./");}catch(e){}</script>
 <title>Dextra Sinistra</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media=&#39;all&#39;">
+<link rel="preload" href="/fonts/sans-400.woff" as="font" type="font/woff" crossorigin>
 <style>
 /* Layout: inicio con la elección del día; después biblioteca + atril de la mano elegida. Nord: el acento lo pone la mano (azul Dextra, naranja Sinistra); claro u oscuro sigue al sistema. */
 :root{
@@ -1449,12 +1455,13 @@ body.land.practicing:not(.libopen) .chal19{margin:2px 0 6px;padding:8px 10px}
       <details class="legal"><summary>Privacy</summary><div>
         <p><b>No accounts, no tracking.</b> The app requires no sign-up, uses no analytics or advertising and sets no third-party cookies.</p>
         <p><b>Where your data lives.</b> Your sessions, notes and plans are stored on this device, in the browser’s storage. They are not sent to any server of the owner. If you clear your browser data or uninstall the app, they are lost: use “Export backup” to keep them.</p>
-        <p><b>Third-party services.</b> When you open the app, your browser downloads the fonts from Google Fonts and the page from the web host, so those providers receive your IP address, as with any website visit.</p>
+        <p><b>Third-party services.</b> When you open the app, your browser downloads the page and its fonts from the web host (Cloudflare), which receives your IP address, as with any website visit. It does not connect to Google Fonts or any other service.</p>
         <p><b>Your rights.</b> Since the owner does not store your data, you can view, export and delete it yourself from this screen. For any questions: <a href="mailto:jcfabricalenta@gmail.com">jcfabricalenta@gmail.com</a>.</p></div></details>
       <details class="legal"><summary>Terms of use</summary><div>
         <p>The app is provided for personal guitar study. Its content is guidance and does not replace a teacher.</p>
         <p><b>Health.</b> Practice without pain. If you notice pain, tingling, loss of control in a finger or tension that doesn’t go away when you stop, stop practicing and see a health professional. Take breaks and warm up before working at high tempos.</p>
-        <p>The owner may update the exercises and features. These terms are governed by Spanish law.</p></div></details>
+        <p>The owner may update the exercises and features. These terms are governed by Spanish law.</p>
+        <p>Full text and Plus terms of sale: <a href="/legal-en#terms" target="_blank" rel="noopener">dextrasinistra.com/legal-en</a>.</p></div></details>
       <details class="legal"><summary>Credits and licenses</summary><div>
         <p>Instrument Sans and JetBrains Mono typefaces, under the SIL Open Font License 1.1. Colors based on the Nord palette (MIT license). String sound synthesized on your device.</p></div></details>
     </div>
@@ -4083,7 +4090,7 @@ $("#listenBtn").onclick = () => L.playing ? listenStop() : listenStart();
 { const _show = show; show = function(v){ if(v !== "practice") listenStop(); _show(v); }; }
 
 /* ============ Ajustes, datos, acerca de y legal ============ */
-const APP_VER = "2.8.3 · November 2026";
+const APP_VER = "2.9 · November 2026";
 const PREF = Object.assign({theme:"auto", count:true, sub:false, wake:true}, LS.get("dys-prefs", {}));
 const savePrefs = () => LS.set("dys-prefs", PREF);
 function applyTheme(){

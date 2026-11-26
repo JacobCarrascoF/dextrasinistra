@@ -4,6 +4,8 @@ Uso: python3 guias.py <carpeta del repositorio>"""
 import sys, html, json
 
 REPO = sys.argv[1]
+FONTS = open(REPO + "/tools/fontface.css").read()
+COUNTER = open(REPO + "/tools/counter.html").read()
 BASE = "https://dextrasinistra.com/"
 DATE = "2026-11-26"
 
@@ -52,11 +54,11 @@ footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--faint);f
 """
 
 L = {
-"es": dict(app="/app/", home="/", open="Empezar gratis", other="English", priv="Privacidad", rights="© 2026 Jacob Carrasco",
+"es": dict(app="/app/", home="/", open="Empezar gratis", other="English", priv="Aviso legal y privacidad", legal="/legal", rights="© 2026 Jacob Carrasco",
   stick_t="Técnica de guitarra para las dos manos", stick_s="Gratis · sin cuenta · funciona sin conexión",
   faq_t="Preguntas frecuentes", more_t="Sigue leyendo", eyebrow="Guía · Dextra Sinistra",
   caps=["Tablatura, metrónomo y reloj","Tu plan día a día","Cómo avanzas"]),
-"en": dict(app="/app/en", home="/en", open="Start for free", other="Español", priv="Privacy", rights="© 2026 Jacob Carrasco",
+"en": dict(app="/app/en", home="/en", open="Start for free", other="Español", priv="Legal and privacy", legal="/legal-en", rights="© 2026 Jacob Carrasco",
   stick_t="Guitar technique for both hands", stick_s="Free · no account · works offline",
   faq_t="Frequently asked questions", more_t="Keep reading", eyebrow="Guide · Dextra Sinistra",
   caps=["Tab, metronome and timer","Your plan, day by day","See your progress"]),
@@ -352,11 +354,9 @@ def page(g):
 <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" href="/fonts/sans-400.woff" as="font" type="font/woff" crossorigin>
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
-<style>{CSS}</style>
+<style>{FONTS}{CSS}</style>
 </head>
 <body>
 <header class="top"><div class="wrap"><a class="brand" href="{l["home"]}"><img src="/icons/icon.svg" alt="" width="26" height="26">Dextra Sinistra</a><a class="btn sm" href="{l["app"]}">{l["open"]}</a></div></header>
@@ -370,9 +370,10 @@ def page(g):
 <h2>{l["faq_t"]}</h2>{faqh}
 <h2>{l["more_t"]}</h2><div class="more">{more}</div>
 </article></main>
-<footer><div class="wrap"><span>{l["rights"]}</span><a href="{l["home"]}">Dextra Sinistra</a><a href="/privacidad">{l["priv"]}</a><a href="/{g["pair"]}" hreflang="{alt_lang}" lang="{alt_lang}">{l["other"]}</a></div></footer>
+<footer><div class="wrap"><span>{l["rights"]}</span><a href="{l["home"]}">Dextra Sinistra</a><a href="{l["legal"]}">{l["priv"]}</a><a href="/{g["pair"]}" hreflang="{alt_lang}" lang="{alt_lang}">{l["other"]}</a></div></footer>
 <div class="stick" id="stick"><span><b>{l["stick_t"]}</b>{l["stick_s"]}</span><a class="btn" href="{l["app"]}">{l["open"]}</a></div>
 <script>(function(){{var s=document.getElementById('stick');function f(){{s.classList.toggle('on',scrollY>420)}}addEventListener('scroll',f,{{passive:true}});f()}})()</script>
+{COUNTER}
 </body>
 </html>
 """

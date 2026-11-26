@@ -24,13 +24,17 @@
 <link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" href="/fonts/sans-400.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/sans-600.woff" as="font" type="font/woff" crossorigin>
 <link rel="preload" as="image" href="/img/es_practice_voi.webp">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Dextra Sinistra", "applicationCategory": "MusicApplication", "operatingSystem": "Web, iOS, Android, Windows, macOS", "inLanguage": "es", "url": "https://dextrasinistra.com/", "description": "9.817 ejercicios de guitarra para la mano derecha, la izquierda y las dos a la vez, con tablatura, metrónomo, reloj, registro y planes guiados. Sin cuenta y sin conexión.", "offers": [{"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, {"@type": "Offer", "price": "19.99", "priceCurrency": "EUR"}, {"@type": "Offer", "price": "49.99", "priceCurrency": "EUR"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Necesito crear una cuenta?", "acceptedAnswer": {"@type": "Answer", "text": "No. No hay registro ni contraseña: abres la app y empiezas a tocar."}}, {"@type": "Question", "name": "¿Funciona sin internet?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Después de abrirla una vez con conexión, funciona en modo avión o con una wifi que no responde."}}, {"@type": "Question", "name": "¿Dónde se guarda mi práctica?", "acceptedAnswer": {"@type": "Answer", "text": "En tu dispositivo. Tu práctica no se envía a ningún servidor. Para pasarla a otro móvil, tablet u ordenador: Ajustes → Exportar copia, y en el otro, Importar."}}, {"@type": "Question", "name": "¿Puedo usar Plus en varios dispositivos?", "acceptedAnswer": {"@type": "Answer", "text": "Sí. Activa el mismo código en tu móvil, tu tablet y tu ordenador."}}, {"@type": "Question", "name": "¿Para qué guitarra y qué nivel?", "acceptedAnswer": {"@type": "Answer", "text": "Eléctrica o acústica, con púa, con dedos (p i m a) o en híbrido. Del nivel I, con los primeros cruces de cuerda, al V, con enclosures, voicings drop 2 y drop 3 y Tabula."}}, {"@type": "Question", "name": "¿Cuánto tiempo necesito al día?", "acceptedAnswer": {"@type": "Answer", "text": "Los planes van de 25 a 60 minutos, 5 días por semana. Con un Snack bastan 10 o 20 minutos, y el plan personalizado empieza en 10."}}, {"@type": "Question", "name": "¿Qué pasa si termina mi año de Plus?", "acceptedAnswer": {"@type": "Answer", "text": "Todo lo que registraste se queda. Vuelves a la versión gratuita hasta que renueves."}}, {"@type": "Question", "name": "¿Hay versión en App Store o Google Play?", "acceptedAnswer": {"@type": "Answer", "text": "Es una app web instalable: se instala desde el navegador en unos segundos y no ocupa espacio de más."}}]}</script>
-<style>
+<style>@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/sans-400.woff) format("woff")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/sans-500.woff) format("woff")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:600 700;font-display:swap;src:url(/fonts/sans-600.woff) format("woff")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/mono-400.woff) format("woff")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:500 700;font-display:swap;src:url(/fonts/mono-500.woff) format("woff")}
+
 :root{
   --bg:#ECEFF4; --surface:#E5E9F0; --raise:#F4F6F9; --card:#F7F8FA; --line:#D8DEE9; --line2:#C9D1DE;
   --fg:#2E3440; --muted:#4C566A; --faint:#7A8599;
@@ -254,7 +258,7 @@ footer .sp{margin-left:auto}
 <section class="sec" id="precios" style="padding-top:0"><div class="wrap">
   <div class="sec-h"><h2>Precios</h2><p>Al abrir la app tienes 14 días de Plus completo. Cuando terminan, conservas los ejercicios gratis y todo tu progreso.</p></div>
   <div class="prices"><div class="pc"><h3>Gratis</h3><div class="pr">0 €</div><div class="per">para siempre</div><ul><li>153 ejercicios: los 87 de nivel I de Dextra y Sinistra y la primera fila de Tabula</li><li>Tablatura, metrónomo, reloj y Escuchar</li><li>Registro, récords y progreso</li><li>Tus datos, siempre en tu dispositivo</li></ul><a class="btn sec2" href="/app/">Empezar gratis</a></div><div class="pc"><h3>Plus anual</h3><div class="pr">19,99 €</div><div class="per">al año</div><ul><li>Los 9.817 ejercicios, del nivel I al V</li><li>Ambas manos y Tabula completa</li><li>Los 4 planes guiados y tu plan personalizado</li><li>El año empieza cuando activas el código</li></ul><a class="btn sec2" href="https://payhip.com/b/zntXF" target="_blank" rel="noopener">Comprar Plus anual</a></div><div class="pc best"><span class="tag">Mejor valor</span><h3>Plus para siempre</h3><div class="pr">49,99 €</div><div class="per">un solo pago</div><ul><li>Todo lo de Plus anual</li><li>Sin renovaciones</li><li>Las novedades que lleguen, incluidas</li></ul><a class="btn pri" href="https://payhip.com/b/N3Hnp" target="_blank" rel="noopener">Comprar para siempre</a></div></div>
-  <p class="pnote">Pago seguro con Payhip. Recibes un código que activas en Ajustes → Plus; funciona también sin conexión y en todos tus dispositivos.</p>
+  <p class="pnote">Pago seguro con Payhip. Recibes un código que activas en Ajustes → Plus; funciona también sin conexión y en todos tus dispositivos. Sin renovación automática. <a href="/legal#condiciones">Condiciones de venta</a>.</p>
 </div></section>
 <section class="sec" id="preguntas" style="padding-top:0"><div class="wrap">
   <div class="sec-h"><h2>Preguntas frecuentes</h2></div>
@@ -265,7 +269,7 @@ footer .sp{margin-left:auto}
 </main>
 <footer><div class="wrap">
   <span>© 2026 Jacob Carrasco</span>
-  <a href="/privacidad">Privacidad</a>
+  <a href="/legal">Aviso legal y privacidad</a>
   <a href="/ejercicios-guitarra-mano-derecha">Ejercicios mano derecha</a><a href="/ejercicios-guitarra-mano-izquierda">Ejercicios mano izquierda</a><a href="/rutina-de-practica-de-guitarra">Rutina de práctica</a>
   <a href="/en" hreflang="en" lang="en">English</a>
   <a class="sp" href="/app/">Abrir la app →</a>
@@ -278,5 +282,10 @@ var tp=document.getElementById("top");addEventListener("scroll",function(){tp.cl
 /* la portada también se guarda para abrirla sin conexión */
 if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).catch(function(){})});
 </script>
+<script>/* recuento de visitas sin cookies ni datos personales (GoatCounter); ?ref=ig, ?ref=wa… dicen de dónde llega la visita */
+(function(){try{if(!/(^|\.)dextrasinistra\.com$/.test(location.hostname))return;if(matchMedia("(display-mode: standalone)").matches)return;
+var q=new URLSearchParams(location.search),r=q.get("ref")||document.referrer||"";
+var i=new Image();i.src="https://dextrasinistra.goatcounter.com/count?p="+encodeURIComponent(location.pathname)+"&t="+encodeURIComponent(document.title)+"&r="+encodeURIComponent(r)+"&rnd="+Math.random().toString(36).slice(2);}catch(e){}})();</script>
+
 </body>
 </html>

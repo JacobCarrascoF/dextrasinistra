@@ -21,11 +21,14 @@
 <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
 <link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" href="/fonts/sans-400.woff" as="font" type="font/woff" crossorigin>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Article", "headline": "Guitar practice routine: 25, 40 or 60 minutes a day · Dextra Sinistra", "description": "How to build a guitar practice routine: how long, in what order, how many days a week and how to raise the tempo. With 25, 40 and 60-minute plans.", "inLanguage": "en", "url": "https://dextrasinistra.com/guitar-practice-routine", "image": "https://dextrasinistra.com/img/og_en.jpg", "author": {"@type": "Person", "name": "Jacob Carrasco"}, "publisher": {"@type": "Organization", "name": "Dextra Sinistra", "logo": {"@type": "ImageObject", "url": "https://dextrasinistra.com/icons/icon-512.png"}}, "datePublished": "2026-11-26", "dateModified": "2026-11-26"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How long should I practise guitar each day?", "acceptedAnswer": {"@type": "Answer", "text": "Between 20 and 60 minutes, five days a week, is a solid base. What matters is consistency and practising with a metronome."}}, {"@type": "Question", "name": "Do I need to warm up before playing?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Five minutes of gentle exercises prepare your hand and prevent tension, especially before playing fast."}}, {"@type": "Question", "name": "What if I skip a day?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing serious. Pick the plan up where you left it; the week counts, not a single day."}}, {"@type": "Question", "name": "Does it work for any style?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Two-hand technique is the base of rock, jazz, pop, flamenco and classical."}}]}]</script>
-<style>
+<style>@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/sans-400.woff) format("woff")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/sans-500.woff) format("woff")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:600 700;font-display:swap;src:url(/fonts/sans-600.woff) format("woff")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/mono-400.woff) format("woff")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:500 700;font-display:swap;src:url(/fonts/mono-500.woff) format("woff")}
+
 :root{--bg:#ECEFF4;--surface:#E5E9F0;--card:#F7F8FA;--line:#D8DEE9;--fg:#2E3440;--muted:#4C566A;--faint:#7A8599;
 --acc-d:#5E81AC;--acc-s:#B4664D;--green:#7F9A6A;--shadow:0 30px 60px -30px rgba(46,52,64,.45),0 10px 24px -12px rgba(46,52,64,.25);
 --f-ui:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;color-scheme:light}
@@ -103,8 +106,13 @@ footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--faint);f
 <h2>Frequently asked questions</h2><details><summary>How long should I practise guitar each day?</summary><p>Between 20 and 60 minutes, five days a week, is a solid base. What matters is consistency and practising with a metronome.</p></details><details><summary>Do I need to warm up before playing?</summary><p>Yes. Five minutes of gentle exercises prepare your hand and prevent tension, especially before playing fast.</p></details><details><summary>What if I skip a day?</summary><p>Nothing serious. Pick the plan up where you left it; the week counts, not a single day.</p></details><details><summary>Does it work for any style?</summary><p>Yes. Two-hand technique is the base of rock, jazz, pop, flamenco and classical.</p></details>
 <h2>Keep reading</h2><div class="more"><a href="/right-hand-guitar-exercises" hreflang="en">Picking hand</a><a href="/left-hand-guitar-exercises" hreflang="en">Fretting hand</a><a href="/ejercicios-guitarra-mano-derecha" hreflang="es">En español</a></div>
 </article></main>
-<footer><div class="wrap"><span>© 2026 Jacob Carrasco</span><a href="/en">Dextra Sinistra</a><a href="/privacidad">Privacy</a><a href="/rutina-de-practica-de-guitarra" hreflang="es" lang="es">Español</a></div></footer>
+<footer><div class="wrap"><span>© 2026 Jacob Carrasco</span><a href="/en">Dextra Sinistra</a><a href="/legal-en">Legal and privacy</a><a href="/rutina-de-practica-de-guitarra" hreflang="es" lang="es">Español</a></div></footer>
 <div class="stick" id="stick"><span><b>Guitar technique for both hands</b>Free · no account · works offline</span><a class="btn" href="/app/en">Start for free</a></div>
 <script>(function(){var s=document.getElementById('stick');function f(){s.classList.toggle('on',scrollY>420)}addEventListener('scroll',f,{passive:true});f()})()</script>
+<script>/* recuento de visitas sin cookies ni datos personales (GoatCounter); ?ref=ig, ?ref=wa… dicen de dónde llega la visita */
+(function(){try{if(!/(^|\.)dextrasinistra\.com$/.test(location.hostname))return;if(matchMedia("(display-mode: standalone)").matches)return;
+var q=new URLSearchParams(location.search),r=q.get("ref")||document.referrer||"";
+var i=new Image();i.src="https://dextrasinistra.goatcounter.com/count?p="+encodeURIComponent(location.pathname)+"&t="+encodeURIComponent(document.title)+"&r="+encodeURIComponent(r)+"&rnd="+Math.random().toString(36).slice(2);}catch(e){}})();</script>
+
 </body>
 </html>

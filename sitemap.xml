@@ -24,5 +24,10 @@
   <url><loc>https://dextrasinistra.com/guitar-practice-routine</loc><lastmod>2026-11-26</lastmod>
     <xhtml:link rel="alternate" hreflang="es" href="https://dextrasinistra.com/rutina-de-practica-de-guitarra"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://dextrasinistra.com/guitar-practice-routine"/></url>
-  <url><loc>https://dextrasinistra.com/privacidad</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://dextrasinistra.com/legal</loc><lastmod>2026-11-26</lastmod>
+    <xhtml:link rel="alternate" hreflang="es" href="https://dextrasinistra.com/legal"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dextrasinistra.com/legal-en"/></url>
+  <url><loc>https://dextrasinistra.com/legal-en</loc><lastmod>2026-11-26</lastmod>
+    <xhtml:link rel="alternate" hreflang="es" href="https://dextrasinistra.com/legal"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dextrasinistra.com/legal-en"/></url>
 </urlset>
